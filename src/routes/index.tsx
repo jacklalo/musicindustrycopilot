@@ -521,10 +521,22 @@ function Sparkline({
 /* -------------------- FEATURED PANEL -------------------- */
 
 function FeaturedPanel({ artist }: { artist: Artist }) {
+  const { play } = usePlayer();
   return (
-    <div className="sticky top-24 overflow-hidden rounded-3xl border border-line bg-card">
-      <div className="relative aspect-[4/5] w-full overflow-hidden">
-        <img src={artist.cover} alt="" className="size-full object-cover" />
+    <div className="sticky top-24 overflow-hidden rounded-3xl border border-line bg-card transition-shadow hover:shadow-[0_30px_70px_-40px_rgba(0,0,0,0.4)]">
+      <div className="group relative aspect-[4/5] w-full overflow-hidden">
+        <img
+          src={artist.cover}
+          alt=""
+          className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+        />
+        <button
+          onClick={() => play(artist)}
+          aria-label={`Lire ${artist.track}`}
+          className="absolute right-4 top-4 grid size-12 place-items-center rounded-full bg-white/95 text-black opacity-0 shadow-xl ring-1 ring-black/10 transition-all duration-300 hover:scale-110 group-hover:opacity-100"
+        >
+          <Play className="size-5 fill-current" strokeWidth={0} />
+        </button>
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-6 text-white">
           <span
             className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]"

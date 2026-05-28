@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Sparkles, MapPin, Calendar, Users, Play } from "lucide-react";
+import { ArrowLeft, Sparkles, MapPin, Calendar, Users, Play, Heart, Share2 } from "lucide-react";
+import { toast } from "sonner";
 import { TopNav, Footer } from "@/components/TopNav";
+import { usePlayer } from "@/components/player/PlayerProvider";
 import { getArtist, ROSTER, type Artist } from "@/lib/roster";
 
 export const Route = createFileRoute("/artists/$slug")({
@@ -46,6 +48,8 @@ export const Route = createFileRoute("/artists/$slug")({
 
 function ArtistPage() {
   const { artist } = Route.useLoaderData();
+  const { play, toggleLike, state } = usePlayer();
+  const liked = !!state.liked[artist.slug];
   const others = ROSTER.filter((a) => a.slug !== artist.slug).slice(0, 4);
 
   return (
@@ -76,11 +80,38 @@ function ArtistPage() {
             <p className="max-w-[55ch] text-white/80">{artist.bio}</p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
-              <button className="group inline-flex h-12 items-center gap-3 rounded-full bg-white pl-2 pr-5 text-sm font-semibold text-black transition-transform hover:scale-[1.02]">
-                <span className="grid size-9 place-items-center rounded-full bg-black text-white">
+              <button
+                onClick={() => play(artist)}
+                className="group inline-flex h-12 items-center gap-3 rounded-full bg-white pl-2 pr-5 text-sm font-semibold text-black transition-all hover:scale-[1.02] hover:shadow-[0_20px_40px_-15px_rgba(255,255,255,0.5)]"
+              >
+                <span className="grid size-9 place-items-center rounded-full bg-black text-white transition-colors group-hover:bg-[color:var(--pop)]">
                   <Play className="size-4 fill-current" strokeWidth={0} />
                 </span>
                 Lire {artist.track}
+              </button>
+              <button
+                onClick={() => toggleLike(artist.slug)}
+                aria-pressed={liked}
+                className="grid h-12 w-12 place-items-center rounded-full border border-white/20 text-white/80 transition-all hover:scale-105 hover:border-white/40 hover:text-white"
+                aria-label={liked ? "Retirer des favoris" : "Ajouter aux favoris"}
+              >
+                <Heart
+                  className="size-4"
+                  fill={liked ? artist.accent : "none"}
+                  color={liked ? artist.accent : "currentColor"}
+                />
+              </button>
+              <button
+                onClick={() => {
+                  navigator.clipboard
+                    ?.writeText(`${window.location.origin}/artists/${artist.slug}`)
+                    .catch(() => {});
+                  toast("Lien fiche artiste copié");
+                }}
+                className="grid h-12 w-12 place-items-center rounded-full border border-white/20 text-white/80 transition-all hover:scale-105 hover:border-white/40 hover:text-white"
+                aria-label="Partager"
+              >
+                <Share2 className="size-4" />
               </button>
               <span className="inline-flex h-12 items-center gap-2 rounded-full border border-white/20 px-5 text-sm text-white/80">
                 Rang #{String(artist.rank).padStart(2, "0")} · cette semaine

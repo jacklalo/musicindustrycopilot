@@ -19,15 +19,25 @@ export function TopNav() {
               Intelligence
             </span>
           </Link>
-          <nav className="hidden items-center gap-7 text-[13px] font-medium md:flex">
+          <nav className="hidden items-center gap-1 text-[13px] font-medium md:flex">
             {NAV.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
                 activeOptions={{ exact: true }}
-                className="text-muted-foreground transition-colors hover:text-foreground data-[status=active]:text-foreground"
+                className="relative rounded-full px-3 py-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground data-[status=active]:text-foreground"
               >
-                {item.label}
+                {({ isActive }) => (
+                  <>
+                    {item.label}
+                    <span
+                      className={
+                        "pointer-events-none absolute inset-x-3 -bottom-0.5 h-[2px] origin-left rounded-full bg-[color:var(--pop)] transition-transform duration-300 " +
+                        (isActive ? "scale-x-100" : "scale-x-0")
+                      }
+                    />
+                  </>
+                )}
               </Link>
             ))}
           </nav>

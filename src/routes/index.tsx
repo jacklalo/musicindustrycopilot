@@ -199,13 +199,9 @@ function ArtistRow({ a }: { a: Artist }) {
   const rankDelta = a.prev - a.rank;
   return (
     <li
-      className="group relative grid grid-cols-12 items-center gap-4 border-b border-line py-4 transition-colors hover:bg-[color:var(--surface)]"
+      className="group relative grid grid-cols-12 items-center gap-4 border-b border-line px-3 py-4 transition-colors hover:rounded-2xl hover:border-transparent hover:bg-[color:var(--surface)] hover:shadow-[0_8px_24px_-16px_rgba(0,0,0,0.18)]"
       style={{ ["--row-accent" as string]: a.accent }}
     >
-      <span
-        className="absolute left-0 top-0 h-full w-[3px] origin-left scale-y-0 transition-transform duration-300 group-hover:scale-y-100"
-        style={{ background: a.accent }}
-      />
       <div className="col-span-1 flex items-center gap-2">
         <span className="tabular text-base font-semibold">
           {String(a.rank).padStart(2, "0")}
@@ -250,7 +246,7 @@ function ArtistRow({ a }: { a: Artist }) {
       </div>
 
       <div className="col-span-2 hidden md:block">
-        <Sparkline values={a.momentum} color={a.accent} />
+        <Sparkline status={a.status} delta={a.delta} />
       </div>
 
       <div className="col-span-2 text-right">
@@ -261,7 +257,7 @@ function ArtistRow({ a }: { a: Artist }) {
       </div>
 
       <div className="col-span-2 flex items-center justify-end gap-2">
-        <DeltaBadge delta={a.delta} status={a.status} accent={a.accent} />
+        <DeltaBadge delta={a.delta} status={a.status} />
         <button
           aria-label="Actions"
           className="grid size-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
@@ -291,88 +287,64 @@ function RankArrow({ delta }: { delta: number }) {
   );
 }
 
+type Trend = {
+  angle: number;
+  color: string;
+  label: string;
+};
+
+function getTrend(status: Artist["status"], delta: number): Trend {
+  if (status === "viral") return { angle: -90, color: "#16a34a", label: "Viral" };
+  if (status === "rising") return { angle: -45, color: "#2563eb", label: "Rising" };
+  if (status === "drop") {
+    return delta <= -10
+      ? { angle: 90, color: "#dc2626", label: "En chute" }
+      : { angle: 45, color: "#ea580c", label: "Baisse" };
+  }
+  return { angle: 0, color: "#9ca3af", label: "Stable" };
+}
+
 function DeltaBadge({
   delta,
   status,
-  accent,
 }: {
   delta: number;
   status: Artist["status"];
-  accent: string;
 }) {
-  const label =
-    status === "viral"
-      ? "Viral"
-      : status === "rising"
-        ? "Rising"
-        : status === "drop"
-          ? "Cooling"
-          : "Stable";
+  const trend = getTrend(status, delta);
   const positive = delta >= 0;
   return (
     <div
       className="hidden items-center gap-2 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider sm:inline-flex"
       style={{
-        borderColor:
-          status === "viral" || status === "rising" ? accent + "55" : "var(--line)",
-        background:
-          status === "viral" || status === "rising" ? accent + "12" : "transparent",
-        color:
-          status === "drop"
-            ? "rgb(225 29 72)"
-            : status === "viral" || status === "rising"
-              ? accent
-              : "var(--muted-foreground)",
+        borderColor: trend.color + "55",
+        background: trend.color + "14",
+        color: trend.color,
       }}
     >
       <span className="tabular">
         {positive ? "+" : ""}
         {delta.toFixed(1)}%
       </span>
-      <span className="hidden md:inline">{label}</span>
+      <span className="hidden md:inline">{trend.label}</span>
     </div>
   );
 }
 
-function Sparkline({ values, color }: { values: number[]; color: string }) {
-  // 5 niveaux: -2 forte baisse, -1 baisse, 0 stable, +1 hausse, +2 forte hausse
-  const first = values[0];
-  const last = values[values.length - 1];
-  const pct = ((last - first) / Math.max(first, 1)) * 100;
-  let level: -2 | -1 | 0 | 1 | 2 = 0;
-  if (pct >= 40) level = 2;
-  else if (pct >= 10) level = 1;
-  else if (pct <= -25) level = -2;
-  else if (pct <= -5) level = -1;
-
-  const angle = { [-2]: 90, [-1]: 45, 0: 0, 1: -45, 2: -90 }[level];
-  const tone =
-    level >= 2
-      ? "text-emerald-600"
-      : level === 1
-        ? "text-emerald-500"
-        : level === 0
-          ? "text-muted-foreground"
-          : level === -1
-            ? "text-rose-500"
-            : "text-rose-600";
-  const label =
-    level === 2
-      ? "Forte croissance"
-      : level === 1
-        ? "Croissance"
-        : level === 0
-          ? "Stable"
-          : level === -1
-            ? "Baisse"
-            : "Forte baisse";
-
+function Sparkline({
+  status,
+  delta,
+}: {
+  status: Artist["status"];
+  delta: number;
+}) {
+  const trend = getTrend(status, delta);
   return (
-    <div className="flex h-9 items-center" aria-label={label} title={label}>
+    <div className="flex h-9 items-center" aria-label={trend.label} title={trend.label}>
       <svg
         viewBox="0 0 24 24"
-        className={`size-6 ${tone}`}
-        style={{ transform: `rotate(${angle}deg)`, color: level === 0 ? undefined : color }}
+        className="size-6"
+        style={{ transform: `rotate(${trend.angle}deg)`, color: trend.color }}
         fill="none"
         stroke="currentColor"
         strokeWidth={3}
@@ -385,6 +357,7 @@ function Sparkline({ values, color }: { values: number[]; color: string }) {
     </div>
   );
 }
+
 
 /* -------------------- FEATURED PANEL -------------------- */
 

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Calendar, MapPin, ArrowUpRight } from "lucide-react";
+import { toast } from "sonner";
 import { TopNav, Footer } from "@/components/TopNav";
 import { ROSTER } from "@/lib/roster";
 
@@ -107,8 +108,14 @@ function ToursPage() {
                 return (
                   <li
                     key={i}
-                    className="group grid grid-cols-12 items-center gap-4 border-b border-line py-5 transition-colors hover:bg-[color:var(--surface)]"
+                    style={{ ["--row-accent" as string]: a.accent }}
+                    className="group relative grid grid-cols-12 items-center gap-4 rounded-2xl border border-transparent py-5 pl-3 pr-3 transition-all duration-200 hover:-translate-y-0.5 hover:border-[color:var(--row-accent)]/25 hover:bg-[color:var(--surface)] hover:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.3)]"
                   >
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-y-3 left-0 w-[3px] origin-center scale-y-0 rounded-full transition-transform duration-300 group-hover:scale-y-100"
+                      style={{ background: a.accent }}
+                    />
                     <div className="col-span-2 sm:col-span-1">
                       <p className="tabular text-2xl font-semibold leading-none">
                         {day}
@@ -126,10 +133,10 @@ function ToursPage() {
                         src={a.cover}
                         alt=""
                         loading="lazy"
-                        className="size-11 rounded-lg object-cover"
+                        className="size-11 rounded-lg object-cover transition-transform duration-300 group-hover:scale-[1.06]"
                       />
                       <div className="min-w-0">
-                        <p className="truncate text-[14px] font-semibold leading-tight group-hover:underline">
+                        <p className="truncate text-[14px] font-semibold leading-tight transition-colors group-hover:text-[color:var(--row-accent)]">
                           {a.name}
                         </p>
                         <p className="truncate text-[11px] text-muted-foreground">
@@ -144,12 +151,18 @@ function ToursPage() {
                         {s.city}
                       </p>
                     </div>
-                    <div className="col-span-5 flex justify-end sm:col-span-3">
+                    <div className="col-span-5 flex items-center justify-end gap-2 sm:col-span-3">
                       <span
                         className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${STATUS_STYLE[s.status]}`}
                       >
                         {s.status}
                       </span>
+                      <button
+                        onClick={() => toast(`Billetterie ${a.name} · ${s.venue}`)}
+                        className="hidden h-8 items-center gap-1.5 rounded-full bg-foreground px-3 text-[11px] font-semibold text-background opacity-0 transition-opacity hover:opacity-100 group-hover:opacity-100 sm:inline-flex"
+                      >
+                        Voir
+                      </button>
                     </div>
                   </li>
                 );

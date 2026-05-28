@@ -246,7 +246,7 @@ function ArtistRow({ a }: { a: Artist }) {
       </div>
 
       <div className="col-span-2 hidden md:block">
-        <Sparkline values={a.momentum} color={a.accent} />
+        <Sparkline status={a.status} delta={a.delta} />
       </div>
 
       <div className="col-span-2 text-right">
@@ -257,7 +257,7 @@ function ArtistRow({ a }: { a: Artist }) {
       </div>
 
       <div className="col-span-2 flex items-center justify-end gap-2">
-        <DeltaBadge delta={a.delta} status={a.status} accent={a.accent} />
+        <DeltaBadge delta={a.delta} status={a.status} />
         <button
           aria-label="Actions"
           className="grid size-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"

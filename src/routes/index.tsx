@@ -199,13 +199,9 @@ function ArtistRow({ a }: { a: Artist }) {
   const rankDelta = a.prev - a.rank;
   return (
     <li
-      className="group relative grid grid-cols-12 items-center gap-4 border-b border-line py-4 transition-colors hover:bg-[color:var(--surface)]"
+      className="group relative grid grid-cols-12 items-center gap-4 border-b border-line px-3 py-4 transition-colors hover:rounded-2xl hover:border-transparent hover:bg-[color:var(--surface)] hover:shadow-[0_8px_24px_-16px_rgba(0,0,0,0.18)]"
       style={{ ["--row-accent" as string]: a.accent }}
     >
-      <span
-        className="absolute left-0 top-0 h-full w-[3px] origin-left scale-y-0 transition-transform duration-300 group-hover:scale-y-100"
-        style={{ background: a.accent }}
-      />
       <div className="col-span-1 flex items-center gap-2">
         <span className="tabular text-base font-semibold">
           {String(a.rank).padStart(2, "0")}

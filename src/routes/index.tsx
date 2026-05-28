@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import {
   Play,
   MoreHorizontal,
@@ -6,9 +7,49 @@ import {
   TrendingDown,
   Sparkles,
   ArrowUpRight,
+  Download,
 } from "lucide-react";
 import { TopNav, Footer } from "@/components/TopNav";
 import { ROSTER, type Artist } from "@/lib/roster";
+
+type TabId = "top" | "viral" | "rising" | "catalogue";
+const TABS: { id: TabId; label: string }[] = [
+  { id: "top", label: "Top Roster" },
+  { id: "viral", label: "Viral" },
+  { id: "rising", label: "Rising" },
+  { id: "catalogue", label: "Catalogue" },
+];
+
+function filterArtists(tab: TabId, artists: Artist[]) {
+  switch (tab) {
+    case "viral":
+      return artists.filter((a) => a.status === "viral");
+    case "rising":
+      return artists.filter((a) => a.status === "rising");
+    case "catalogue":
+      return [...artists].sort((a, b) => a.name.localeCompare(b.name));
+    default:
+      return artists;
+  }
+}
+
+function exportCsv(artists: Artist[]) {
+  const header = ["rank", "name", "track", "genre", "country", "streams", "delta", "status"];
+  const rows = artists.map((a) =>
+    [a.rank, a.name, a.track, a.genre, a.country, a.streams, a.delta, a.status]
+      .map((v) => `"${String(v).replace(/"/g, '""')}"`)
+      .join(","),
+  );
+  const blob = new Blob([header.join(",") + "\n" + rows.join("\n")], {
+    type: "text/csv;charset=utf-8;",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `np-roster-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,15 +72,17 @@ export const Route = createFileRoute("/")({
 
 function Dashboard() {
   const featured = ROSTER[0];
+  const [tab, setTab] = useState<TabId>("top");
+  const filtered = useMemo(() => filterArtists(tab, ROSTER), [tab]);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <TopNav />
       <Hero featured={featured} />
       <main className="mx-auto max-w-[1440px] px-6 pb-32 lg:px-12">
-        <Toolbar />
+        <Toolbar tab={tab} onTabChange={setTab} onExport={() => exportCsv(filtered)} />
         <div className="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-12">
           <section className="lg:col-span-8">
-            <Leaderboard artists={ROSTER} />
+            <Leaderboard artists={filtered} />
           </section>
           <aside className="lg:col-span-4">
             <FeaturedPanel artist={featured} />
@@ -142,32 +185,56 @@ function CollageCard({
 
 /* -------------------- TOOLBAR -------------------- */
 
-function Toolbar() {
-  const tabs = ["Top Roster", "Viral", "Rising", "Catalogue"];
+function Toolbar({
+  tab,
+  onTabChange,
+  onExport,
+}: {
+  tab: TabId;
+  onTabChange: (t: TabId) => void;
+  onExport: () => void;
+}) {
   return (
     <div
       id="chart"
       className="flex flex-col gap-4 pt-10 sm:flex-row sm:items-center sm:justify-between"
     >
-      <div className="flex flex-wrap items-center gap-2">
-        {tabs.map((t, i) => (
-          <button
-            key={t}
-            className={
-              i === 0
-                ? "h-9 rounded-full bg-foreground px-4 text-[12px] font-semibold text-background"
-                : "h-9 rounded-full border border-line px-4 text-[12px] font-semibold text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
-            }
-          >
-            {t}
-          </button>
-        ))}
+      <div
+        role="tablist"
+        aria-label="Filtres roster"
+        className="flex flex-wrap items-center gap-2"
+      >
+        {TABS.map((t) => {
+          const active = tab === t.id;
+          return (
+            <button
+              key={t.id}
+              role="tab"
+              aria-selected={active}
+              onClick={() => onTabChange(t.id)}
+              className={
+                "h-9 cursor-pointer rounded-full px-4 text-[12px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background " +
+                (active
+                  ? "bg-foreground text-background shadow-[0_6px_20px_-10px_rgba(0,0,0,0.4)]"
+                  : "border border-line text-muted-foreground hover:-translate-y-px hover:border-foreground/40 hover:text-foreground")
+              }
+            >
+              {t.label}
+            </button>
+          );
+        })}
       </div>
       <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-        <span>Sync il y a 4 min</span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
+          Sync il y a 4 min
+        </span>
         <span className="size-1 rounded-full bg-line" />
-        <button className="font-semibold text-foreground underline-offset-4 hover:underline">
-          Export CSV
+        <button
+          onClick={onExport}
+          className="inline-flex items-center gap-1.5 font-semibold text-foreground transition-colors hover:text-[color:var(--pop)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          <Download className="size-3.5" /> Export CSV
         </button>
       </div>
     </div>
@@ -186,22 +253,47 @@ function Leaderboard({ artists }: { artists: Artist[] }) {
         <div className="col-span-2 text-right">Streams</div>
         <div className="col-span-2 text-right">Δ 7j</div>
       </div>
-      <ul>
-        {artists.map((a) => (
-          <ArtistRow key={a.slug} a={a} />
-        ))}
-      </ul>
+      {artists.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-line bg-[color:var(--surface)] py-16 text-center">
+          <p className="text-sm font-semibold">Aucun artiste dans ce filtre</p>
+          <p className="text-[12px] text-muted-foreground">
+            Essaie un autre onglet — le signal évolue chaque heure.
+          </p>
+        </div>
+      ) : (
+        <ul className="divide-y divide-line">
+          {artists.map((a) => (
+            <ArtistRow key={a.slug} a={a} />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
 function ArtistRow({ a }: { a: Artist }) {
+  const navigate = useNavigate();
   const rankDelta = a.prev - a.rank;
+  const goToArtist = () => navigate({ to: "/artists/$slug", params: { slug: a.slug } });
   return (
     <li
-      className="group relative grid grid-cols-12 items-center gap-4 border-b border-line px-3 py-4 transition-colors hover:rounded-2xl hover:border-transparent hover:bg-[color:var(--surface)] hover:shadow-[0_8px_24px_-16px_rgba(0,0,0,0.18)]"
+      role="link"
+      tabIndex={0}
+      onClick={goToArtist}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          goToArtist();
+        }
+      }}
+      className="group relative grid cursor-pointer grid-cols-12 items-center gap-4 rounded-2xl border border-transparent px-3 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-[color:var(--row-accent)]/30 hover:bg-[color:var(--surface)] hover:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.35)] focus-visible:outline-none focus-visible:border-[color:var(--row-accent)]/60 focus-visible:ring-2 focus-visible:ring-[color:var(--row-accent)]/40"
       style={{ ["--row-accent" as string]: a.accent }}
     >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-y-3 left-0 w-[3px] origin-center scale-y-0 rounded-full transition-transform duration-300 group-hover:scale-y-100"
+        style={{ background: a.accent }}
+      />
       <div className="col-span-1 flex items-center gap-2">
         <span className="tabular text-base font-semibold">
           {String(a.rank).padStart(2, "0")}
@@ -210,33 +302,25 @@ function ArtistRow({ a }: { a: Artist }) {
       </div>
 
       <div className="col-span-5 flex items-center gap-4">
-        <Link
-          to="/artists/$slug"
-          params={{ slug: a.slug }}
-          className="relative shrink-0"
-        >
+        <span className="relative shrink-0">
           <img
             src={a.cover}
             alt=""
             loading="lazy"
             width={56}
             height={56}
-            className="size-14 rounded-lg object-cover ring-1 ring-black/5 transition-transform group-hover:scale-[1.04]"
+            className="size-14 rounded-lg object-cover ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-[1.06] group-hover:shadow-[0_10px_24px_-12px_var(--row-accent)]"
           />
-          <span className="absolute inset-0 m-auto grid size-8 place-items-center rounded-full bg-white/95 opacity-0 shadow-lg ring-1 ring-black/10 transition-opacity group-hover:opacity-100">
+          <span className="absolute inset-0 m-auto grid size-8 translate-y-1 place-items-center rounded-full bg-white/95 opacity-0 shadow-lg ring-1 ring-black/10 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
             <Play className="size-3.5 fill-black" strokeWidth={0} />
           </span>
-        </Link>
+        </span>
         <div className="min-w-0">
-          <p className="truncate text-[15px] font-semibold leading-tight">{a.track}</p>
+          <p className="truncate text-[15px] font-semibold leading-tight transition-colors group-hover:text-[color:var(--row-accent)]">
+            {a.track}
+          </p>
           <p className="truncate text-[12px] text-muted-foreground">
-            <Link
-              to="/artists/$slug"
-              params={{ slug: a.slug }}
-              className="font-medium text-foreground/80 hover:text-foreground"
-            >
-              {a.name}
-            </Link>
+            <span className="font-medium text-foreground/80">{a.name}</span>
             <span className="mx-1.5 text-line">·</span>
             {a.genre}
             <span className="mx-1.5 text-line">·</span>
@@ -260,7 +344,8 @@ function ArtistRow({ a }: { a: Artist }) {
         <DeltaBadge delta={a.delta} status={a.status} />
         <button
           aria-label="Actions"
-          className="grid size-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          onClick={(e) => e.stopPropagation()}
+          className="grid size-8 cursor-pointer place-items-center rounded-full text-muted-foreground opacity-0 transition-all hover:bg-secondary hover:text-foreground group-hover:opacity-100 focus-visible:opacity-100"
         >
           <MoreHorizontal className="size-4" />
         </button>

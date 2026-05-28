@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Calendar, MapPin, Users, Play, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, Sparkles, MapPin, Calendar, Users, Play } from "lucide-react";
 import { TopNav, Footer } from "@/components/TopNav";
 import { getArtist, ROSTER, type Artist } from "@/lib/roster";
 
@@ -12,8 +12,14 @@ export const Route = createFileRoute("/artists/$slug")({
   head: ({ loaderData }) => ({
     meta: [
       { title: `${loaderData?.artist.name ?? "Artiste"} — #NP Intelligence` },
-      { name: "description", content: loaderData?.artist.bio ?? "Fiche artiste #NP." },
-      { property: "og:title", content: `${loaderData?.artist.name ?? "Artiste"} — #NP` },
+      {
+        name: "description",
+        content: loaderData?.artist.bio ?? "Fiche artiste #NP.",
+      },
+      {
+        property: "og:title",
+        content: `${loaderData?.artist.name ?? "Artiste"} — #NP`,
+      },
       { property: "og:description", content: loaderData?.artist.bio ?? "" },
       { property: "og:image", content: loaderData?.artist.cover ?? "" },
     ],
@@ -22,11 +28,13 @@ export const Route = createFileRoute("/artists/$slug")({
     <div className="min-h-screen bg-background">
       <TopNav />
       <div className="mx-auto max-w-xl px-6 py-32 text-center">
-        <p className="micro">404</p>
-        <h1 className="display-serif mt-3 text-5xl">Artiste introuvable</h1>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          404
+        </p>
+        <h1 className="display-tight mt-3 text-4xl">Artiste introuvable</h1>
         <Link
           to="/roster"
-          className="mt-6 inline-flex items-center gap-2 border-b border-foreground pb-0.5 text-sm"
+          className="mt-6 inline-flex items-center gap-2 text-sm font-semibold underline underline-offset-4"
         >
           <ArrowLeft className="size-4" /> Retour au roster
         </Link>
@@ -44,124 +52,171 @@ function ArtistPage() {
     <div className="min-h-screen bg-background text-foreground">
       <TopNav />
 
-      {/* EDITORIAL HERO — paper, no gradient */}
-      <section className="border-b border-line">
-        <div className="mx-auto max-w-[1320px] px-6 pt-10 lg:px-12">
-          <Link
-            to="/roster"
-            className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="size-3.5" /> Roster
-          </Link>
-        </div>
-        <div className="mx-auto grid max-w-[1320px] grid-cols-1 items-end gap-10 px-6 pb-16 pt-10 md:grid-cols-12 lg:px-12 lg:pb-24 lg:pt-14">
-          <div className="md:col-span-7 flex flex-col gap-7">
-            <p className="micro">
-              N°{String(artist.rank).padStart(2, "0")} · {artist.genre} · {artist.city}
+      {/* HERO */}
+      <section
+        className="relative overflow-hidden border-b border-line text-white"
+        style={{
+          background: `linear-gradient(135deg, ${artist.accent} 0%, #0B0B0B 75%)`,
+        }}
+      >
+        <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-10 px-6 py-14 md:grid-cols-12 lg:px-12 lg:py-20">
+          <div className="md:col-span-7 flex flex-col gap-6">
+            <Link
+              to="/roster"
+              className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/65 hover:text-white"
+            >
+              <ArrowLeft className="size-3.5" /> Roster
+            </Link>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/65">
+              {artist.genre} · {artist.city}, {artist.country}
             </p>
-            <h1 className="text-[clamp(56px,9vw,128px)] leading-[0.88] tracking-[-0.04em] text-balance">
-              <span className="display-serif italic text-muted-foreground">A portrait of </span>
-              <span className="display-tight">{artist.name}</span>
+            <h1 className="display-tight text-[clamp(48px,8vw,104px)] leading-[0.9] text-balance">
+              {artist.name}
             </h1>
-            <p className="max-w-[55ch] text-[15px] leading-relaxed text-muted-foreground text-pretty">
-              {artist.bio}
-            </p>
-            <div className="flex flex-wrap items-center gap-5 pt-2 text-[12px]">
-              <button className="group inline-flex items-center gap-2.5 border-b border-foreground pb-1 font-medium">
-                <Play className="size-3.5 fill-foreground" strokeWidth={0} />
-                Lire <span className="italic display-serif text-base">{artist.track}</span>
+            <p className="max-w-[55ch] text-white/80">{artist.bio}</p>
+
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <button className="group inline-flex h-12 items-center gap-3 rounded-full bg-white pl-2 pr-5 text-sm font-semibold text-black transition-transform hover:scale-[1.02]">
+                <span className="grid size-9 place-items-center rounded-full bg-black text-white">
+                  <Play className="size-4 fill-current" strokeWidth={0} />
+                </span>
+                Lire {artist.track}
               </button>
-              <span className="text-muted-foreground">
-                Album · {artist.album}
+              <span className="inline-flex h-12 items-center gap-2 rounded-full border border-white/20 px-5 text-sm text-white/80">
+                Rang #{String(artist.rank).padStart(2, "0")} · cette semaine
               </span>
             </div>
           </div>
 
-          <div className="md:col-span-5 md:justify-self-end w-full max-w-[420px]">
-            <div className="grain-card relative aspect-square overflow-hidden border border-line">
+          <div className="md:col-span-5 self-start">
+            <div className="relative">
               <img
                 src={artist.cover}
                 alt={artist.name}
-                className="size-full object-cover"
+                className="w-full rounded-3xl object-cover shadow-[0_40px_100px_-30px_rgba(0,0,0,0.7)] ring-1 ring-white/10"
               />
+              <span className="absolute -bottom-3 left-4 inline-flex items-center gap-1.5 rounded-full bg-black px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
+                <span
+                  className="size-1.5 rounded-full"
+                  style={{ background: artist.accent }}
+                />
+                {artist.album}
+              </span>
             </div>
-            <p className="micro mt-3 text-right">{artist.album}</p>
           </div>
         </div>
       </section>
 
       {/* KPI strip */}
       <section className="border-b border-line">
-        <div className="mx-auto grid max-w-[1320px] grid-cols-2 px-6 md:grid-cols-4 lg:px-12">
-          <Stat label="Auditeurs mensuels" value={artist.streams} />
-          <Stat label="Δ 7 jours" value={`${artist.delta >= 0 ? "+" : ""}${artist.delta}%`} divider />
-          <Stat label="Save rate" value={`${artist.saveRate}%`} divider />
-          <Stat label="Audience sociale" value={artist.socialReach} divider />
+        <div className="mx-auto grid max-w-[1440px] grid-cols-2 divide-x divide-line border-x border-line md:grid-cols-4">
+          <Stat label="Streams mensuels" value={artist.streams} />
+          <Stat
+            label="Δ 7j"
+            value={`${artist.delta >= 0 ? "+" : ""}${artist.delta}%`}
+            accent={artist.accent}
+          />
+          <Stat label="Save rate" value={`${artist.saveRate}%`} />
+          <Stat label="Audience sociale" value={artist.socialReach} />
         </div>
       </section>
 
-      <main className="mx-auto grid max-w-[1320px] grid-cols-1 gap-16 px-6 py-20 lg:grid-cols-12 lg:px-12">
-        {/* Momentum */}
+      <main className="mx-auto grid max-w-[1440px] grid-cols-1 gap-12 px-6 py-16 lg:grid-cols-12 lg:px-12">
+        {/* Momentum chart */}
         <section className="lg:col-span-8">
-          <div className="flex items-baseline justify-between border-b border-line pb-4">
-            <p className="micro">Momentum streaming · 8 semaines</p>
-            <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-              {artist.status}
-            </span>
+          <div className="rounded-3xl border border-line bg-card p-7">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                  Momentum streaming · 8 semaines
+                </p>
+                <h3 className="display-tight mt-1 text-2xl">{artist.track}</h3>
+              </div>
+              <span
+                className="rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                style={{
+                  background: artist.accent + "18",
+                  color: artist.accent,
+                }}
+              >
+                {artist.status}
+              </span>
+            </div>
+            <BigChart values={artist.momentum} color={artist.accent} />
           </div>
-          <BigChart values={artist.momentum} />
 
-          <div className="mt-12 border-t border-line pt-8">
-            <p className="micro">Note de la rédaction</p>
-            <p className="display-serif mt-4 max-w-[55ch] text-[28px] leading-[1.2] text-balance">
-              “{artist.insight}”
-            </p>
+          {/* Insight */}
+          <div
+            className="mt-6 flex items-start gap-4 rounded-3xl border border-line p-6"
+            style={{ background: artist.accent + "0A" }}
+          >
+            <span
+              className="grid size-9 shrink-0 place-items-center rounded-full"
+              style={{ background: artist.accent + "22", color: artist.accent }}
+            >
+              <Sparkles className="size-4" strokeWidth={2.5} />
+            </span>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                AI insight
+              </p>
+              <p className="mt-1 text-[15px] leading-snug text-foreground/85">
+                {artist.insight}
+              </p>
+            </div>
           </div>
         </section>
 
         {/* Side meta */}
-        <aside className="space-y-12 lg:col-span-4">
-          <div>
-            <p className="micro">Live</p>
-            <ul className="mt-5 space-y-4 text-[13px]">
-              <Meta icon={<Calendar className="size-3.5" strokeWidth={1.75} />} label={`${artist.tourDates} dates en tournée`} />
-              <Meta icon={<MapPin className="size-3.5" strokeWidth={1.75} />} label={`Base · ${artist.city}, ${artist.country}`} />
-              <Meta icon={<Users className="size-3.5" strokeWidth={1.75} />} label={`${artist.socialReach} sur les réseaux`} />
+        <aside className="space-y-6 lg:col-span-4">
+          <div className="rounded-3xl border border-line bg-card p-6">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              Live
+            </p>
+            <ul className="mt-4 space-y-3 text-sm">
+              <Meta icon={<Calendar className="size-3.5" />} label={`${artist.tourDates} dates en tournée`} />
+              <Meta icon={<MapPin className="size-3.5" />} label={`Base : ${artist.city}, ${artist.country}`} />
+              <Meta icon={<Users className="size-3.5" />} label={`${artist.socialReach} d'audience sociale`} />
             </ul>
             <Link
               to="/tours"
-              className="mt-6 inline-flex items-center gap-2 border-b border-foreground pb-0.5 text-[12px] font-medium"
+              className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-foreground py-2.5 text-[12px] font-semibold text-background hover:opacity-90"
             >
-              Voir l'agenda live <ArrowUpRight className="size-3.5" />
+              Voir l'agenda live
             </Link>
           </div>
 
-          <div className="border-t border-line pt-8">
-            <p className="micro">Aussi managés par #NP</p>
-            <ul className="mt-5 divide-y divide-line">
+          <div className="rounded-3xl border border-line bg-card p-6">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              Aussi managés par #NP
+            </p>
+            <ul className="mt-4 space-y-3">
               {others.map((o) => (
                 <li key={o.slug}>
                   <Link
                     to="/artists/$slug"
                     params={{ slug: o.slug }}
-                    className="group flex items-center gap-4 py-3"
+                    className="group flex items-center gap-3"
                   >
                     <img
                       src={o.cover}
                       alt=""
                       loading="lazy"
-                      className="size-10 object-cover"
+                      className="size-10 rounded-md object-cover"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13px] font-medium leading-tight group-hover:underline">
+                      <p className="truncate text-[13px] font-semibold leading-tight group-hover:underline">
                         {o.name}
                       </p>
                       <p className="truncate text-[11px] text-muted-foreground">
                         {o.genre}
                       </p>
                     </div>
-                    <span className="tabular text-[11px] text-muted-foreground">
-                      N°{String(o.rank).padStart(2, "0")}
+                    <span
+                      className="tabular text-[11px] font-semibold"
+                      style={{ color: o.accent }}
+                    >
+                      #{String(o.rank).padStart(2, "0")}
                     </span>
                   </Link>
                 </li>
@@ -179,41 +234,55 @@ function ArtistPage() {
 function Stat({
   label,
   value,
-  divider,
+  accent,
 }: {
   label: string;
   value: string;
-  divider?: boolean;
+  accent?: string;
 }) {
   return (
-    <div className={`py-8 ${divider ? "border-l border-line pl-6 lg:pl-10" : ""}`}>
-      <p className="micro">{label}</p>
-      <p className="display-serif tabular mt-2 text-[32px] leading-none">{value}</p>
+    <div className="px-6 py-7 lg:px-10">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+        {label}
+      </p>
+      <p
+        className="mt-2 tabular text-2xl font-bold"
+        style={accent ? { color: accent } : undefined}
+      >
+        {value}
+      </p>
     </div>
   );
 }
 
 function Meta({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <li className="flex items-center gap-3 text-foreground/85">
-      <span className="text-muted-foreground">{icon}</span>
+    <li className="flex items-center gap-2.5 text-foreground/80">
+      <span className="grid size-6 place-items-center rounded-full bg-secondary text-muted-foreground">
+        {icon}
+      </span>
       {label}
     </li>
   );
 }
 
-function BigChart({ values }: { values: Artist["momentum"] }) {
+function BigChart({ values, color }: { values: Artist["momentum"]; color: string }) {
   const w = 640;
-  const h = 220;
-  const pad = 8;
+  const h = 200;
   const step = w / (values.length - 1);
   const max = Math.max(...values);
-  const min = Math.min(...values);
-  const range = max - min || 1;
-  const y = (p: number) => h - ((p - min) / range) * (h - pad * 2) - pad;
-  const path = values.map((p, i) => `${i === 0 ? "M" : "L"} ${i * step} ${y(p)}`).join(" ");
+  const path = values
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${i * step} ${h - (p / max) * (h - 12) - 6}`)
+    .join(" ");
+  const area = `${path} L ${w} ${h} L 0 ${h} Z`;
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="mt-10 h-56 w-full">
+    <svg viewBox={`0 0 ${w} ${h}`} className="mt-6 h-48 w-full">
+      <defs>
+        <linearGradient id={`g-${color}`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.4" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+      </defs>
       {[0.25, 0.5, 0.75].map((p) => (
         <line
           key={p}
@@ -222,25 +291,25 @@ function BigChart({ values }: { values: Artist["momentum"] }) {
           y1={h * p}
           y2={h * p}
           stroke="var(--line)"
+          strokeDasharray="2 4"
         />
       ))}
+      <path d={area} fill={`url(#g-${color})`} />
       <path
         d={path}
         fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
+        stroke={color}
+        strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="text-foreground"
       />
       {values.map((p, i) => (
         <circle
           key={i}
           cx={i * step}
-          cy={y(p)}
-          r={i === values.length - 1 ? 4 : 1.75}
-          fill="currentColor"
-          className="text-foreground"
+          cy={h - (p / max) * (h - 12) - 6}
+          r={i === values.length - 1 ? 5 : 2.5}
+          fill={color}
         />
       ))}
     </svg>

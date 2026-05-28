@@ -136,7 +136,7 @@ function ToursPage() {
                         className="size-11 rounded-lg object-cover transition-transform duration-300 group-hover:scale-[1.06]"
                       />
                       <div className="min-w-0">
-                        <p className="truncate text-[14px] font-semibold leading-tight transition-colors group-hover:text-[color:var(--row-accent)]">
+                        <p className="truncate text-[14px] font-semibold leading-tight transition-colors group-hover:text-foreground">
                           {a.name}
                         </p>
                         <p className="truncate text-[11px] text-muted-foreground">

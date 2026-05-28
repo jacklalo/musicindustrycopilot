@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MapPin } from "lucide-react";
+import { Calendar, MapPin, ArrowUpRight } from "lucide-react";
 import { TopNav, Footer } from "@/components/TopNav";
 import { ROSTER } from "@/lib/roster";
 
@@ -26,7 +26,7 @@ type Show = {
   artistSlug: string;
   city: string;
   venue: string;
-  date: string;
+  date: string; // ISO
   status: "complet" | "limité" | "ouverture";
 };
 
@@ -49,52 +49,50 @@ const SHOWS: Show[] = [
   { artistSlug: "waxx-c-cole", city: "Paris", venue: "New Morning", date: "2026-07-03", status: "ouverture" },
 ];
 
-function statusDot(s: Show["status"]) {
-  return s === "complet"
-    ? "bg-foreground"
-    : s === "limité"
-      ? "bg-foreground/45"
-      : "bg-transparent ring-1 ring-foreground/40";
-}
+const STATUS_STYLE: Record<Show["status"], string> = {
+  complet: "bg-rose-50 text-rose-700 border-rose-200",
+  limité: "bg-amber-50 text-amber-700 border-amber-200",
+  ouverture: "bg-emerald-50 text-emerald-700 border-emerald-200",
+};
 
 function ToursPage() {
   const totalDates = ROSTER.reduce((s, a) => s + a.tourDates, 0);
   const sortedShows = [...SHOWS].sort((a, b) => a.date.localeCompare(b.date));
-  const soldOut = SHOWS.filter((s) => s.status === "complet").length;
-  const touring = ROSTER.filter((a) => a.tourDates > 0).length;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <TopNav />
 
-      <header className="border-b border-line">
-        <div className="mx-auto grid max-w-[1320px] grid-cols-1 items-end gap-12 px-6 pb-16 pt-20 md:grid-cols-12 lg:px-12 lg:pb-20 lg:pt-28">
-          <div className="md:col-span-8">
-            <p className="micro">Live · Été — Automne 2026</p>
-            <h1 className="mt-5 text-[clamp(56px,9vw,128px)] leading-[0.88] tracking-[-0.04em] text-balance">
-              <span className="display-serif italic text-muted-foreground">On </span>
-              <span className="display-tight">tour.</span>
+      <header className="border-b border-line bg-[var(--ink)] text-white">
+        <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-10 px-6 py-16 md:grid-cols-12 lg:px-12 lg:py-20">
+          <div className="md:col-span-7">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/55">
+              Live · Été — Automne 2026
+            </p>
+            <h1 className="display-tight mt-4 text-[clamp(40px,7vw,88px)] leading-[0.95] text-balance">
+              Tours <span className="italic text-white/60">en cours</span>.
             </h1>
-            <p className="mt-6 max-w-[52ch] text-[15px] leading-relaxed text-muted-foreground">
-              Salles, festivals, stades. La chaleur scène du roster #NP — restituée
-              date par date, sans tableaux de bord superflus.
+            <p className="mt-5 max-w-[58ch] text-white/65">
+              Salles, festivals, stades — la chaleur live du roster #NP en temps réel.
             </p>
           </div>
-          <div className="md:col-span-4 grid grid-cols-3 border-y border-line">
+          <div className="md:col-span-5 grid grid-cols-3 gap-px overflow-hidden rounded-2xl bg-white/10 ring-1 ring-white/10">
             <HeroStat label="Dates" value={String(totalDates)} />
-            <HeroStat label="Artistes" value={String(touring)} divider />
-            <HeroStat label="Sold-out" value={String(soldOut)} divider />
+            <HeroStat label="Artistes en tournée" value={String(ROSTER.filter((a) => a.tourDates > 0).length)} />
+            <HeroStat label="Sold-out" value={String(SHOWS.filter((s) => s.status === "complet").length)} />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1320px] px-6 pb-20 pt-14 lg:px-12">
-        <div className="grid grid-cols-1 gap-16 lg:grid-cols-12">
-          {/* Agenda */}
+      <main className="mx-auto max-w-[1440px] px-6 pb-32 pt-12 lg:px-12">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+          {/* Calendar list */}
           <section className="lg:col-span-8">
-            <div className="flex items-baseline justify-between border-b border-line pb-3">
-              <p className="micro">Prochains shows</p>
-              <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                Prochains shows
+              </p>
+              <span className="text-[11px] text-muted-foreground">
                 {sortedShows.length} dates
               </span>
             </div>
@@ -112,7 +110,9 @@ function ToursPage() {
                     className="group grid grid-cols-12 items-center gap-4 border-b border-line py-5 transition-colors hover:bg-[color:var(--surface)]"
                   >
                     <div className="col-span-2 sm:col-span-1">
-                      <p className="display-serif tabular text-[26px] leading-none">{day}</p>
+                      <p className="tabular text-2xl font-semibold leading-none">
+                        {day}
+                      </p>
                       <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                         {month}
                       </p>
@@ -120,16 +120,16 @@ function ToursPage() {
                     <Link
                       to="/artists/$slug"
                       params={{ slug: a.slug }}
-                      className="col-span-5 flex items-center gap-3"
+                      className="col-span-5 flex items-center gap-3 sm:col-span-5"
                     >
                       <img
                         src={a.cover}
                         alt=""
                         loading="lazy"
-                        className="size-10 object-cover"
+                        className="size-11 rounded-lg object-cover"
                       />
                       <div className="min-w-0">
-                        <p className="truncate text-[13px] font-medium leading-tight group-hover:underline">
+                        <p className="truncate text-[14px] font-semibold leading-tight group-hover:underline">
                           {a.name}
                         </p>
                         <p className="truncate text-[11px] text-muted-foreground">
@@ -140,13 +140,14 @@ function ToursPage() {
                     <div className="col-span-3 hidden text-[12px] text-foreground/80 sm:block">
                       <p className="font-medium">{s.venue}</p>
                       <p className="text-muted-foreground">
-                        <MapPin className="mr-1 inline size-3" strokeWidth={1.75} />
+                        <MapPin className="mr-1 inline size-3" />
                         {s.city}
                       </p>
                     </div>
-                    <div className="col-span-5 flex items-center justify-end gap-2 sm:col-span-3">
-                      <span className={`size-1.5 rounded-full ${statusDot(s.status)}`} />
-                      <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                    <div className="col-span-5 flex justify-end sm:col-span-3">
+                      <span
+                        className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${STATUS_STYLE[s.status]}`}
+                      >
                         {s.status}
                       </span>
                     </div>
@@ -156,31 +157,36 @@ function ToursPage() {
             </ul>
           </section>
 
-          {/* Demand */}
+          {/* Heatmap / Demand */}
           <aside className="lg:col-span-4">
-            <div className="sticky top-20 space-y-12">
-              <div>
-                <p className="micro">Chaleur de la demande</p>
-                <h3 className="display-serif mt-3 text-[28px] leading-tight">
-                  Top villes — 7 jours
-                </h3>
-                <ul className="mt-6 space-y-4">
+            <div className="sticky top-24 space-y-6">
+              <div className="rounded-3xl border border-line bg-card p-6">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                  Chaleur de la demande
+                </p>
+                <h3 className="display-tight mt-2 text-2xl">Top villes — 7j</h3>
+                <ul className="mt-5 space-y-3">
                   {[
-                    { city: "Paris", pct: 100 },
-                    { city: "Lyon", pct: 78 },
-                    { city: "Bordeaux", pct: 64 },
-                    { city: "Bruxelles", pct: 52 },
-                    { city: "Montréal", pct: 41 },
+                    { city: "Paris", pct: 100, color: "#ED2362" },
+                    { city: "Lyon", pct: 78, color: "#1E5BFF" },
+                    { city: "Bordeaux", pct: 64, color: "#5A8DB8" },
+                    { city: "Bruxelles", pct: 52, color: "#2DE07A" },
+                    { city: "Montréal", pct: 41, color: "#C8102E" },
                   ].map((row) => (
                     <li key={row.city}>
                       <div className="flex items-baseline justify-between text-[12px]">
-                        <span>{row.city}</span>
-                        <span className="tabular text-muted-foreground">{row.pct}</span>
+                        <span className="font-medium">{row.city}</span>
+                        <span className="tabular text-muted-foreground">
+                          {row.pct}
+                        </span>
                       </div>
-                      <div className="mt-1.5 h-px w-full bg-line">
+                      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-secondary">
                         <span
-                          className="block h-px bg-foreground"
-                          style={{ width: `${row.pct}%` }}
+                          className="block h-full rounded-full transition-all"
+                          style={{
+                            width: `${row.pct}%`,
+                            background: row.color,
+                          }}
                         />
                       </div>
                     </li>
@@ -188,16 +194,21 @@ function ToursPage() {
                 </ul>
               </div>
 
-              <div className="border-t border-line pt-8">
-                <p className="micro">Recommandation</p>
-                <p className="display-serif mt-3 text-[22px] leading-[1.2] text-balance">
-                  Ajouter Suzane sur les festivals OFF d'Avignon et Vieilles Charrues — fenêtre optimale juin-juillet.
+              <div className="rounded-3xl border border-line bg-[var(--ink)] p-6 text-white">
+                <Calendar className="size-5 text-white/70" />
+                <h3 className="display-tight mt-3 text-xl text-balance">
+                  Festival d'été — recommandation
+                </h3>
+                <p className="mt-2 text-[13px] text-white/65">
+                  La demande tour-model suggère d'ajouter <strong>Suzane</strong>{" "}
+                  sur les festivals OFF d'Avignon + Vieilles Charrues — fenêtre
+                  optimale juin / juillet.
                 </p>
                 <Link
                   to="/insights"
-                  className="mt-4 inline-flex items-center gap-2 border-b border-foreground pb-0.5 text-[12px] font-medium"
+                  className="mt-5 inline-flex items-center gap-2 text-[12px] font-semibold text-white"
                 >
-                  Lire l'analyse
+                  Lire l'analyse <ArrowUpRight className="size-3.5" />
                 </Link>
               </div>
             </div>
@@ -210,19 +221,11 @@ function ToursPage() {
   );
 }
 
-function HeroStat({
-  label,
-  value,
-  divider,
-}: {
-  label: string;
-  value: string;
-  divider?: boolean;
-}) {
+function HeroStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className={`py-5 ${divider ? "border-l border-line pl-4" : ""}`}>
-      <p className="display-serif tabular text-[32px] leading-none">{value}</p>
-      <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+    <div className="bg-[var(--ink)] p-5">
+      <p className="tabular text-3xl font-bold text-white">{value}</p>
+      <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-white/55">
         {label}
       </p>
     </div>

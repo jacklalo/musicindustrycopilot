@@ -34,6 +34,7 @@ function filterArtists(tab: TabId, artists: Artist[]) {
   }
 }
 
+import { toast } from "sonner";
 function exportCsv(artists: Artist[]) {
   const header = ["rank", "name", "track", "genre", "country", "streams", "delta", "status"];
   const rows = artists.map((a) =>
@@ -50,6 +51,9 @@ function exportCsv(artists: Artist[]) {
   a.download = `np-roster-${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
+  toast(`Export prêt — ${artists.length} artistes`, {
+    description: a.download,
+  });
 }
 
 export const Route = createFileRoute("/")({

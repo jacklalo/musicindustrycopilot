@@ -9,38 +9,99 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ToursRouteImport } from './routes/tours'
+import { Route as RosterRouteImport } from './routes/roster'
+import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ArtistsSlugRouteImport } from './routes/artists.$slug'
 
+const ToursRoute = ToursRouteImport.update({
+  id: '/tours',
+  path: '/tours',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RosterRoute = RosterRouteImport.update({
+  id: '/roster',
+  path: '/roster',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InsightsRoute = InsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArtistsSlugRoute = ArtistsSlugRouteImport.update({
+  id: '/artists/$slug',
+  path: '/artists/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/insights': typeof InsightsRoute
+  '/roster': typeof RosterRoute
+  '/tours': typeof ToursRoute
+  '/artists/$slug': typeof ArtistsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/insights': typeof InsightsRoute
+  '/roster': typeof RosterRoute
+  '/tours': typeof ToursRoute
+  '/artists/$slug': typeof ArtistsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/insights': typeof InsightsRoute
+  '/roster': typeof RosterRoute
+  '/tours': typeof ToursRoute
+  '/artists/$slug': typeof ArtistsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/insights' | '/roster' | '/tours' | '/artists/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/insights' | '/roster' | '/tours' | '/artists/$slug'
+  id: '__root__' | '/' | '/insights' | '/roster' | '/tours' | '/artists/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  InsightsRoute: typeof InsightsRoute
+  RosterRoute: typeof RosterRoute
+  ToursRoute: typeof ToursRoute
+  ArtistsSlugRoute: typeof ArtistsSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tours': {
+      id: '/tours'
+      path: '/tours'
+      fullPath: '/tours'
+      preLoaderRoute: typeof ToursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/roster': {
+      id: '/roster'
+      path: '/roster'
+      fullPath: '/roster'
+      preLoaderRoute: typeof RosterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/insights': {
+      id: '/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof InsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +109,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/artists/$slug': {
+      id: '/artists/$slug'
+      path: '/artists/$slug'
+      fullPath: '/artists/$slug'
+      preLoaderRoute: typeof ArtistsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  InsightsRoute: InsightsRoute,
+  RosterRoute: RosterRoute,
+  ToursRoute: ToursRoute,
+  ArtistsSlugRoute: ArtistsSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

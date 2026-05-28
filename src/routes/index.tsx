@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import {
   Play,
   MoreHorizontal,
@@ -6,9 +7,49 @@ import {
   TrendingDown,
   Sparkles,
   ArrowUpRight,
+  Download,
 } from "lucide-react";
 import { TopNav, Footer } from "@/components/TopNav";
 import { ROSTER, type Artist } from "@/lib/roster";
+
+type TabId = "top" | "viral" | "rising" | "catalogue";
+const TABS: { id: TabId; label: string }[] = [
+  { id: "top", label: "Top Roster" },
+  { id: "viral", label: "Viral" },
+  { id: "rising", label: "Rising" },
+  { id: "catalogue", label: "Catalogue" },
+];
+
+function filterArtists(tab: TabId, artists: Artist[]) {
+  switch (tab) {
+    case "viral":
+      return artists.filter((a) => a.status === "viral");
+    case "rising":
+      return artists.filter((a) => a.status === "rising");
+    case "catalogue":
+      return [...artists].sort((a, b) => a.name.localeCompare(b.name));
+    default:
+      return artists;
+  }
+}
+
+function exportCsv(artists: Artist[]) {
+  const header = ["rank", "name", "track", "genre", "country", "streams", "delta", "status"];
+  const rows = artists.map((a) =>
+    [a.rank, a.name, a.track, a.genre, a.country, a.streams, a.delta, a.status]
+      .map((v) => `"${String(v).replace(/"/g, '""')}"`)
+      .join(","),
+  );
+  const blob = new Blob([header.join(",") + "\n" + rows.join("\n")], {
+    type: "text/csv;charset=utf-8;",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `np-roster-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({

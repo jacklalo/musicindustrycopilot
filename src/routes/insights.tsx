@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Sparkles, TrendingUp, Globe, Music, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { TopNav, Footer } from "@/components/TopNav";
 import { ROSTER } from "@/lib/roster";
 
@@ -13,10 +13,7 @@ export const Route = createFileRoute("/insights")({
           "Signaux faibles et forts du roster Hashtag NP — virages géographiques, virales, opportunités catalogue.",
       },
       { property: "og:title", content: "Insights — Hashtag NP" },
-      {
-        property: "og:description",
-        content: "Recommandations data du roster #NP.",
-      },
+      { property: "og:description", content: "Recommandations data du roster #NP." },
     ],
   }),
   component: InsightsPage,
@@ -24,7 +21,6 @@ export const Route = createFileRoute("/insights")({
 
 type Insight = {
   kicker: string;
-  type: "viral" | "geo" | "catalog" | "live";
   artistSlug: string;
   title: string;
   body: string;
@@ -34,44 +30,39 @@ type Insight = {
 
 const INSIGHTS: Insight[] = [
   {
-    kicker: "Alerte virale",
-    type: "viral",
+    kicker: "Signal viral",
     artistSlug: "suzane",
     title: "‘Toï Toï’ entre dans le Top 50 Viral France",
-    body: "Détecté sur +18k UGC TikTok en 48h. Profil 18-29 dominant, ligne urbaine Paris/Lyon/Marseille. Recommandation : push paid social + activation créateurs.",
+    body: "Détecté sur +18k UGC TikTok en 48h. Profil 18-29 dominant, axe Paris–Lyon–Marseille. Recommandation : amplification créateurs + paid social ciblé.",
     metric: "+41.5%",
-    metricLabel: "streams 7j",
+    metricLabel: "streams 7 jours",
   },
   {
     kicker: "Signal géographique",
-    type: "geo",
     artistSlug: "mylene-farmer",
-    title: "Mylène Farmer accélère à Montréal (+212%)",
-    body: "Effet teaser Nevermore II détecté sur Spotify Canada. Le modèle de demande tour suggère une 2ᵉ date au Bell Centre — fenêtre de billetterie à ouvrir.",
+    title: "Mylène Farmer accélère à Montréal",
+    body: "Effet teaser Nevermore II sur Spotify Canada. Le modèle de demande tour suggère l'ouverture d'une seconde date au Bell Centre.",
     metric: "+212%",
     metricLabel: "auditeurs QC",
   },
   {
     kicker: "Catalogue",
-    type: "catalog",
     artistSlug: "julien-clerc",
     title: "Vinyle ‘Si on chantait’ — rupture stock 4×",
-    body: "Save rate élevé sur les classiques. Opportunité repress + bundle merch synchronisé avec la tournée des Zéniths.",
+    body: "Save rate élevé sur les classiques. Repress + bundle merch à arbitrer en amont de la tournée des Zéniths.",
     metric: "×4",
     metricLabel: "demande / stock",
   },
   {
     kicker: "Découverte",
-    type: "viral",
     artistSlug: "virgile-martini",
-    title: "Virgile Martini : profil emerging à pousser",
-    body: "Taux d'ajout en playlists user x3 sur 30j. Discover Weekly Spotify délivre 38% des nouveaux auditeurs. Bon moment pour un EP physique.",
+    title: "Virgile Martini — profil émergent à pousser",
+    body: "Taux d'ajout en playlists user multiplié par trois sur 30 jours. Discover Weekly délivre 38% des nouveaux auditeurs.",
     metric: "×3",
     metricLabel: "ajouts playlists",
   },
   {
     kicker: "Live",
-    type: "live",
     artistSlug: "klon",
     title: "KLON — Olympia : ouverture billetterie",
     body: "Audience 18-24 dominante, 82% des écoutes en Île-de-France. Le sold-out semble probable dans les 72h après ouverture.",
@@ -79,142 +70,112 @@ const INSIGHTS: Insight[] = [
     metricLabel: "audience IDF",
   },
   {
-    kicker: "Sync TV/Ciné",
-    type: "catalog",
+    kicker: "Sync TV / Ciné",
     artistSlug: "era",
     title: "ERA — 4 placements sync ce trimestre",
-    body: "Demande forte sur le catalogue 'The Mass'. Marché US et UK actifs — opportunité de relance dédiée auprès des superviseurs musicaux.",
+    body: "Demande forte sur 'The Mass'. Marchés US et UK actifs — opportunité de relance auprès des superviseurs musicaux.",
     metric: "+4",
     metricLabel: "syncs Q4",
   },
 ];
 
-const TYPE_ICON: Record<Insight["type"], React.ReactNode> = {
-  viral: <Sparkles className="size-3.5" strokeWidth={2.5} />,
-  geo: <Globe className="size-3.5" strokeWidth={2.5} />,
-  catalog: <Music className="size-3.5" strokeWidth={2.5} />,
-  live: <TrendingUp className="size-3.5" strokeWidth={2.5} />,
-};
-
 function InsightsPage() {
-  const featured = INSIGHTS[0];
-  const others = INSIGHTS.slice(1);
+  const [featured, ...others] = INSIGHTS;
   const fArtist = ROSTER.find((a) => a.slug === featured.artistSlug)!;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <TopNav />
 
-      <header className="border-b border-line bg-[var(--ink)] text-white">
-        <div className="mx-auto max-w-[1440px] px-6 py-16 lg:px-12 lg:py-20">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/55">
-            AI signals · mise à jour il y a 4 min
-          </p>
-          <h1 className="display-tight mt-4 text-[clamp(40px,7vw,88px)] leading-[0.95] text-balance">
-            Insights <span className="italic text-white/55">de la semaine</span>.
+      <header className="border-b border-line">
+        <div className="mx-auto max-w-[1320px] px-6 pb-14 pt-20 lg:px-12 lg:pb-20 lg:pt-28">
+          <p className="micro">Insights · mise à jour il y a 4 min</p>
+          <h1 className="mt-5 text-[clamp(56px,9vw,128px)] leading-[0.88] tracking-[-0.04em] text-balance">
+            <span className="display-serif italic text-muted-foreground">Signals of the </span>
+            <span className="display-tight">week.</span>
           </h1>
-          <p className="mt-5 max-w-[60ch] text-white/65">
-            Les signaux qui méritent une décision — tournée, marketing, catalogue —
-            triés par impact sur le roster #NP.
+          <p className="mt-6 max-w-[58ch] text-[15px] leading-relaxed text-muted-foreground">
+            Les signaux qui méritent une décision — tournée, marketing, catalogue.
+            Triés par impact, pas par volume.
           </p>
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1440px] px-6 pb-32 pt-14 lg:px-12">
+      <main className="mx-auto max-w-[1320px] px-6 pb-20 pt-16 lg:px-12">
         {/* Featured */}
-        <article
-          className="group relative grid grid-cols-1 gap-8 overflow-hidden rounded-3xl border border-line p-8 md:grid-cols-12 lg:p-12"
-          style={{ background: fArtist.accent + "08" }}
-        >
-          <div className="md:col-span-7">
-            <span
-              className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em]"
-              style={{ background: fArtist.accent + "1A", color: fArtist.accent }}
-            >
-              {TYPE_ICON[featured.type]}
-              {featured.kicker}
-            </span>
-            <h2 className="display-tight mt-5 text-[clamp(32px,4.5vw,56px)] leading-[0.98] text-balance">
-              {featured.title}
+        <article className="grid grid-cols-1 gap-12 border-b border-line pb-20 md:grid-cols-12">
+          <Link
+            to="/artists/$slug"
+            params={{ slug: fArtist.slug }}
+            className="grain-card group relative block aspect-square overflow-hidden border border-line md:col-span-5"
+          >
+            <img
+              src={fArtist.cover}
+              alt={fArtist.name}
+              className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+            />
+          </Link>
+          <div className="md:col-span-7 flex flex-col justify-end">
+            <p className="micro">{featured.kicker}</p>
+            <h2 className="mt-5 text-[clamp(40px,5vw,72px)] leading-[0.95] tracking-[-0.03em] text-balance">
+              <span className="display-serif italic text-muted-foreground/80">{featured.title.split(" ").slice(0, 1).join(" ")} </span>
+              <span className="display-tight">{featured.title.split(" ").slice(1).join(" ")}</span>
             </h2>
-            <p className="mt-5 max-w-[55ch] text-base text-foreground/75">
+            <p className="mt-6 max-w-[55ch] text-[15px] leading-relaxed text-muted-foreground">
               {featured.body}
             </p>
-            <Link
-              to="/artists/$slug"
-              params={{ slug: fArtist.slug }}
-              className="mt-7 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-[12px] font-semibold text-background hover:opacity-90"
-            >
-              Ouvrir la fiche {fArtist.name} <ArrowUpRight className="size-4" />
-            </Link>
-          </div>
-          <div className="md:col-span-5">
-            <div className="relative aspect-square overflow-hidden rounded-2xl ring-1 ring-black/5">
-              <img
-                src={fArtist.cover}
-                alt={fArtist.name}
-                className="size-full object-cover"
-              />
-              <div className="absolute inset-x-4 bottom-4 rounded-2xl bg-white/95 p-4 backdrop-blur">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  {featured.metricLabel}
-                </p>
-                <p
-                  className="tabular mt-1 text-3xl font-bold"
-                  style={{ color: fArtist.accent }}
-                >
+            <div className="mt-8 flex items-end justify-between border-t border-line pt-6">
+              <div>
+                <p className="micro">{featured.metricLabel}</p>
+                <p className="display-serif tabular mt-1 text-[42px] leading-none">
                   {featured.metric}
                 </p>
               </div>
+              <Link
+                to="/artists/$slug"
+                params={{ slug: fArtist.slug }}
+                className="inline-flex items-center gap-2 border-b border-foreground pb-0.5 text-[12px] font-medium"
+              >
+                Fiche {fArtist.name} <ArrowUpRight className="size-3.5" />
+              </Link>
             </div>
           </div>
         </article>
 
         {/* Grid */}
-        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-16 grid grid-cols-1 gap-x-10 gap-y-16 md:grid-cols-2 lg:grid-cols-3">
           {others.map((ins, i) => {
             const a = ROSTER.find((r) => r.slug === ins.artistSlug)!;
             return (
-              <article
-                key={i}
-                className="group relative flex flex-col overflow-hidden rounded-3xl border border-line bg-card p-7 transition-shadow hover:shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)]"
-              >
-                <span
-                  className="absolute left-0 top-0 h-1 w-16 origin-left transition-transform duration-500 group-hover:scale-x-[6]"
-                  style={{ background: a.accent }}
-                />
-                <span
-                  className="inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]"
-                  style={{ background: a.accent + "15", color: a.accent }}
+              <article key={i} className="group flex flex-col">
+                <Link
+                  to="/artists/$slug"
+                  params={{ slug: a.slug }}
+                  className="grain-card relative block aspect-[4/3] overflow-hidden border border-line"
                 >
-                  {TYPE_ICON[ins.type]}
-                  {ins.kicker}
-                </span>
-                <h3 className="display-tight mt-4 text-xl leading-tight text-balance">
+                  <img
+                    src={a.cover}
+                    alt=""
+                    loading="lazy"
+                    className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  />
+                </Link>
+                <p className="micro mt-5">{ins.kicker}</p>
+                <h3 className="display-serif mt-2 text-[22px] leading-[1.15] text-balance">
                   {ins.title}
                 </h3>
                 <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
                   {ins.body}
                 </p>
-
                 <div className="mt-5 flex items-end justify-between border-t border-line pt-4">
                   <Link
                     to="/artists/$slug"
                     params={{ slug: a.slug }}
-                    className="flex items-center gap-2 text-[12px] font-semibold hover:underline"
+                    className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
                   >
-                    <img
-                      src={a.cover}
-                      alt=""
-                      loading="lazy"
-                      className="size-6 rounded object-cover"
-                    />
                     {a.name}
                   </Link>
-                  <p
-                    className="tabular text-lg font-bold"
-                    style={{ color: a.accent }}
-                  >
+                  <p className="display-serif tabular text-[22px] leading-none">
                     {ins.metric}
                   </p>
                 </div>

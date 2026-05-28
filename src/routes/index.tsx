@@ -10,6 +10,7 @@ import {
   Download,
 } from "lucide-react";
 import { TopNav, Footer } from "@/components/TopNav";
+import { usePlayer } from "@/components/player/PlayerProvider";
 import { ROSTER, type Artist } from "@/lib/roster";
 
 type TabId = "top" | "viral" | "rising" | "catalogue";
@@ -98,6 +99,7 @@ function Dashboard() {
 /* -------------------- HERO -------------------- */
 
 function Hero({ featured }: { featured: Artist }) {
+  const { play } = usePlayer();
   return (
     <section className="relative overflow-hidden border-b border-line bg-[var(--ink)] text-white">
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-10 px-6 py-16 md:grid-cols-12 lg:px-12 lg:py-24">
@@ -116,7 +118,10 @@ function Hero({ featured }: { featured: Artist }) {
             sociale, chaleur live, sur l'ensemble du catalogue managé.
           </p>
           <div className="flex flex-wrap items-center gap-4 pt-2">
-            <button className="group inline-flex h-12 items-center gap-3 rounded-full bg-white pl-2 pr-5 text-sm font-semibold text-black transition-transform hover:scale-[1.02]">
+            <button
+              onClick={() => play(featured)}
+              className="group inline-flex h-12 items-center gap-3 rounded-full bg-white pl-2 pr-5 text-sm font-semibold text-black transition-all hover:scale-[1.02] hover:shadow-[0_20px_40px_-15px_rgba(255,255,255,0.5)]"
+            >
               <span className="grid size-9 place-items-center rounded-full bg-[var(--ink)] text-white transition-colors group-hover:bg-[color:var(--pop)]">
                 <Play className="size-4 fill-current" strokeWidth={0} />
               </span>
@@ -124,7 +129,7 @@ function Hero({ featured }: { featured: Artist }) {
             </button>
             <a
               href="#chart"
-              className="inline-flex h-12 items-center gap-2 rounded-full border border-white/15 px-5 text-sm font-semibold text-white/80 transition-colors hover:bg-white/5"
+              className="inline-flex h-12 items-center gap-2 rounded-full border border-white/15 px-5 text-sm font-semibold text-white/80 transition-all hover:scale-[1.02] hover:border-white/30 hover:bg-white/5"
             >
               Voir le chart <ArrowUpRight className="size-4" />
             </a>

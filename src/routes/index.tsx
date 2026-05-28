@@ -305,7 +305,7 @@ function ArtistRow({ a }: { a: Artist }) {
           goToArtist();
         }
       }}
-      className="group relative grid cursor-pointer grid-cols-12 items-center gap-4 rounded-2xl border border-transparent px-3 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-[color:var(--row-accent)]/30 hover:bg-[color:var(--surface)] hover:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.35)] focus-visible:outline-none focus-visible:border-[color:var(--row-accent)]/60 focus-visible:ring-2 focus-visible:ring-[color:var(--row-accent)]/40"
+      className="group relative grid cursor-pointer grid-cols-12 items-center gap-4 rounded-2xl border border-transparent px-3 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-foreground/10 hover:bg-foreground/[0.04] hover:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.35)] focus-visible:outline-none focus-visible:border-foreground/20 focus-visible:ring-2 focus-visible:ring-foreground/20"
       style={{ ["--row-accent" as string]: a.accent }}
     >
       <span

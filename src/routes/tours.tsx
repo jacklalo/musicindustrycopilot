@@ -113,9 +113,9 @@ function ToursPage() {
                   >
                     <span
                       aria-hidden
-                      className="pointer-events-none absolute inset-y-3 left-0 w-[3px] origin-center scale-y-0 rounded-full transition-transform duration-300 group-hover:scale-y-100"
-                      style={{ background: a.accent }}
+                      className="pointer-events-none absolute inset-y-3 left-0 w-[3px] origin-center scale-y-0 rounded-full bg-foreground/20 transition-transform duration-300 group-hover:scale-y-100"
                     />
+
                     <div className="col-span-2 sm:col-span-1">
                       <p className="tabular text-2xl font-semibold leading-none">
                         {day}

@@ -8,7 +8,16 @@ import {
   Sparkles,
   ArrowUpRight,
   Download,
+  Heart,
+  Share2,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { TopNav, Footer } from "@/components/TopNav";
 import { usePlayer } from "@/components/player/PlayerProvider";
@@ -362,6 +371,60 @@ function ArtistRow({ a }: { a: Artist }) {
         <RowActions artist={a} />
       </div>
     </li>
+  );
+}
+
+
+function RowActions({ artist }: { artist: Artist }) {
+  const { play, toggleLike, state } = usePlayer();
+  const liked = !!state.liked[artist.slug];
+  const navigate = useNavigate();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          aria-label="Actions"
+          onClick={(e) => e.stopPropagation()}
+          className="grid size-8 cursor-pointer place-items-center rounded-full text-muted-foreground opacity-0 transition-all hover:bg-secondary hover:text-foreground group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100 data-[state=open]:bg-secondary data-[state=open]:text-foreground"
+        >
+          <MoreHorizontal className="size-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        className="w-52 rounded-2xl border-line"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <DropdownMenuItem onSelect={() => play(artist)}>
+          <Play className="mr-2 size-4" /> Lire {artist.track}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() =>
+            navigate({ to: "/artists/$slug", params: { slug: artist.slug } })
+          }
+        >
+          <ArrowUpRight className="mr-2 size-4" /> Ouvrir la fiche
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => toggleLike(artist.slug)}>
+          <Heart
+            className="mr-2 size-4"
+            fill={liked ? "currentColor" : "none"}
+          />
+          {liked ? "Retirer favoris" : "Ajouter favoris"}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={() => {
+            navigator.clipboard
+              ?.writeText(`${window.location.origin}/artists/${artist.slug}`)
+              .catch(() => {});
+            toast("Lien copié");
+          }}
+        >
+          <Share2 className="mr-2 size-4" /> Copier le lien
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

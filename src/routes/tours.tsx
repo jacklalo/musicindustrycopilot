@@ -109,7 +109,7 @@ function ToursPage() {
                   <li
                     key={i}
                     style={{ ["--row-accent" as string]: a.accent }}
-                    className="group relative grid grid-cols-12 items-center gap-4 rounded-2xl border border-transparent py-5 pl-3 pr-3 transition-all duration-200 hover:-translate-y-0.5 hover:border-[color:var(--row-accent)]/25 hover:bg-[color:var(--surface)] hover:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.3)]"
+                    className="group relative grid grid-cols-12 items-center gap-4 rounded-2xl border border-transparent py-5 pl-3 pr-3 transition-all duration-200 hover:-translate-y-0.5 hover:border-foreground/10 hover:bg-foreground/[0.04] hover:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.3)]"
                   >
                     <span
                       aria-hidden
@@ -136,7 +136,7 @@ function ToursPage() {
                         className="size-11 rounded-lg object-cover transition-transform duration-300 group-hover:scale-[1.06]"
                       />
                       <div className="min-w-0">
-                        <p className="truncate text-[14px] font-semibold leading-tight transition-colors group-hover:text-[color:var(--row-accent)]">
+                        <p className="truncate text-[14px] font-semibold leading-tight transition-colors group-hover:text-foreground">
                           {a.name}
                         </p>
                         <p className="truncate text-[11px] text-muted-foreground">

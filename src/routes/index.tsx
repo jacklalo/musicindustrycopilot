@@ -359,13 +359,7 @@ function ArtistRow({ a }: { a: Artist }) {
 
       <div className="col-span-2 flex items-center justify-end gap-2">
         <DeltaBadge delta={a.delta} status={a.status} />
-        <button
-          aria-label="Actions"
-          onClick={(e) => e.stopPropagation()}
-          className="grid size-8 cursor-pointer place-items-center rounded-full text-muted-foreground opacity-0 transition-all hover:bg-secondary hover:text-foreground group-hover:opacity-100 focus-visible:opacity-100"
-        >
-          <MoreHorizontal className="size-4" />
-        </button>
+        <RowActions artist={a} />
       </div>
     </li>
   );

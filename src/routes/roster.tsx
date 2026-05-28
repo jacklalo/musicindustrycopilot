@@ -49,17 +49,20 @@ function RosterPage() {
               key={a.slug}
               to="/artists/$slug"
               params={{ slug: a.slug }}
-              className="group block"
+              className="group block transition-transform duration-300 hover:-translate-y-1"
             >
               <div
-                className="relative aspect-square overflow-hidden rounded-2xl ring-1 ring-black/5"
-                style={{ background: a.accent + "10" }}
+                className="relative aspect-square overflow-hidden rounded-2xl ring-1 ring-black/5 transition-shadow duration-300 group-hover:shadow-[0_30px_60px_-30px_var(--card-accent)]"
+                style={{
+                  background: a.accent + "10",
+                  ["--card-accent" as string]: a.accent,
+                }}
               >
                 <img
                   src={a.cover}
                   alt={a.name}
                   loading="lazy"
-                  className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                  className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                 />
                 <div
                   className="absolute inset-x-0 bottom-0 h-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -73,6 +76,9 @@ function RosterPage() {
                     style={{ background: a.accent }}
                   />
                   #{String(a.rank).padStart(2, "0")}
+                </span>
+                <span className="absolute right-3 top-3 grid size-9 translate-y-2 place-items-center rounded-full bg-white/95 text-black opacity-0 shadow-lg ring-1 ring-black/10 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  <ArrowUpRight className="size-4" strokeWidth={2.25} />
                 </span>
               </div>
               <div className="mt-4 flex items-start justify-between gap-3">

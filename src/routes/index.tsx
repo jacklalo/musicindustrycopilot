@@ -8,8 +8,19 @@ import {
   Sparkles,
   ArrowUpRight,
   Download,
+  Heart,
+  Share2,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 import { TopNav, Footer } from "@/components/TopNav";
+import { usePlayer } from "@/components/player/PlayerProvider";
 import { ROSTER, type Artist } from "@/lib/roster";
 
 type TabId = "top" | "viral" | "rising" | "catalogue";
@@ -49,6 +60,9 @@ function exportCsv(artists: Artist[]) {
   a.download = `np-roster-${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
+  toast(`Export prêt — ${artists.length} artistes`, {
+    description: a.download,
+  });
 }
 
 export const Route = createFileRoute("/")({
@@ -98,6 +112,7 @@ function Dashboard() {
 /* -------------------- HERO -------------------- */
 
 function Hero({ featured }: { featured: Artist }) {
+  const { play } = usePlayer();
   return (
     <section className="relative overflow-hidden border-b border-line bg-[var(--ink)] text-white">
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-10 px-6 py-16 md:grid-cols-12 lg:px-12 lg:py-24">
@@ -116,7 +131,10 @@ function Hero({ featured }: { featured: Artist }) {
             sociale, chaleur live, sur l'ensemble du catalogue managé.
           </p>
           <div className="flex flex-wrap items-center gap-4 pt-2">
-            <button className="group inline-flex h-12 items-center gap-3 rounded-full bg-white pl-2 pr-5 text-sm font-semibold text-black transition-transform hover:scale-[1.02]">
+            <button
+              onClick={() => play(featured)}
+              className="group inline-flex h-12 items-center gap-3 rounded-full bg-white pl-2 pr-5 text-sm font-semibold text-black transition-all hover:scale-[1.02] hover:shadow-[0_20px_40px_-15px_rgba(255,255,255,0.5)]"
+            >
               <span className="grid size-9 place-items-center rounded-full bg-[var(--ink)] text-white transition-colors group-hover:bg-[color:var(--pop)]">
                 <Play className="size-4 fill-current" strokeWidth={0} />
               </span>
@@ -124,7 +142,7 @@ function Hero({ featured }: { featured: Artist }) {
             </button>
             <a
               href="#chart"
-              className="inline-flex h-12 items-center gap-2 rounded-full border border-white/15 px-5 text-sm font-semibold text-white/80 transition-colors hover:bg-white/5"
+              className="inline-flex h-12 items-center gap-2 rounded-full border border-white/15 px-5 text-sm font-semibold text-white/80 transition-all hover:scale-[1.02] hover:border-white/30 hover:bg-white/5"
             >
               Voir le chart <ArrowUpRight className="size-4" />
             </a>
@@ -273,6 +291,7 @@ function Leaderboard({ artists }: { artists: Artist[] }) {
 
 function ArtistRow({ a }: { a: Artist }) {
   const navigate = useNavigate();
+  const { play } = usePlayer();
   const rankDelta = a.prev - a.rank;
   const goToArtist = () => navigate({ to: "/artists/$slug", params: { slug: a.slug } });
   return (
@@ -311,9 +330,16 @@ function ArtistRow({ a }: { a: Artist }) {
             height={56}
             className="size-14 rounded-lg object-cover ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-[1.06] group-hover:shadow-[0_10px_24px_-12px_var(--row-accent)]"
           />
-          <span className="absolute inset-0 m-auto grid size-8 translate-y-1 place-items-center rounded-full bg-white/95 opacity-0 shadow-lg ring-1 ring-black/10 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          <button
+            aria-label={`Lire ${a.track}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              play(a);
+            }}
+            className="absolute inset-0 m-auto grid size-8 translate-y-1 place-items-center rounded-full bg-white/95 opacity-0 shadow-lg ring-1 ring-black/10 transition-all duration-300 hover:scale-110 group-hover:translate-y-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--row-accent)]"
+          >
             <Play className="size-3.5 fill-black" strokeWidth={0} />
-          </span>
+          </button>
         </span>
         <div className="min-w-0">
           <p className="truncate text-[15px] font-semibold leading-tight transition-colors group-hover:text-[color:var(--row-accent)]">
@@ -342,15 +368,63 @@ function ArtistRow({ a }: { a: Artist }) {
 
       <div className="col-span-2 flex items-center justify-end gap-2">
         <DeltaBadge delta={a.delta} status={a.status} />
+        <RowActions artist={a} />
+      </div>
+    </li>
+  );
+}
+
+
+function RowActions({ artist }: { artist: Artist }) {
+  const { play, toggleLike, state } = usePlayer();
+  const liked = !!state.liked[artist.slug];
+  const navigate = useNavigate();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <button
           aria-label="Actions"
           onClick={(e) => e.stopPropagation()}
-          className="grid size-8 cursor-pointer place-items-center rounded-full text-muted-foreground opacity-0 transition-all hover:bg-secondary hover:text-foreground group-hover:opacity-100 focus-visible:opacity-100"
+          className="grid size-8 cursor-pointer place-items-center rounded-full text-muted-foreground opacity-0 transition-all hover:bg-secondary hover:text-foreground group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100 data-[state=open]:bg-secondary data-[state=open]:text-foreground"
         >
           <MoreHorizontal className="size-4" />
         </button>
-      </div>
-    </li>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        className="w-52 rounded-2xl border-line"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <DropdownMenuItem onSelect={() => play(artist)}>
+          <Play className="mr-2 size-4" /> Lire {artist.track}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() =>
+            navigate({ to: "/artists/$slug", params: { slug: artist.slug } })
+          }
+        >
+          <ArrowUpRight className="mr-2 size-4" /> Ouvrir la fiche
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => toggleLike(artist.slug)}>
+          <Heart
+            className="mr-2 size-4"
+            fill={liked ? "currentColor" : "none"}
+          />
+          {liked ? "Retirer favoris" : "Ajouter favoris"}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={() => {
+            navigator.clipboard
+              ?.writeText(`${window.location.origin}/artists/${artist.slug}`)
+              .catch(() => {});
+            toast("Lien copié");
+          }}
+        >
+          <Share2 className="mr-2 size-4" /> Copier le lien
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -447,10 +521,22 @@ function Sparkline({
 /* -------------------- FEATURED PANEL -------------------- */
 
 function FeaturedPanel({ artist }: { artist: Artist }) {
+  const { play } = usePlayer();
   return (
-    <div className="sticky top-24 overflow-hidden rounded-3xl border border-line bg-card">
-      <div className="relative aspect-[4/5] w-full overflow-hidden">
-        <img src={artist.cover} alt="" className="size-full object-cover" />
+    <div className="sticky top-24 overflow-hidden rounded-3xl border border-line bg-card transition-shadow hover:shadow-[0_30px_70px_-40px_rgba(0,0,0,0.4)]">
+      <div className="group relative aspect-[4/5] w-full overflow-hidden">
+        <img
+          src={artist.cover}
+          alt=""
+          className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+        />
+        <button
+          onClick={() => play(artist)}
+          aria-label={`Lire ${artist.track}`}
+          className="absolute right-4 top-4 grid size-12 place-items-center rounded-full bg-white/95 text-black opacity-0 shadow-xl ring-1 ring-black/10 transition-all duration-300 hover:scale-110 group-hover:opacity-100"
+        >
+          <Play className="size-5 fill-current" strokeWidth={0} />
+        </button>
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-6 text-white">
           <span
             className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]"

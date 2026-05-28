@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
   Download,
 } from "lucide-react";
+import { toast } from "sonner";
 import { TopNav, Footer } from "@/components/TopNav";
 import { usePlayer } from "@/components/player/PlayerProvider";
 import { ROSTER, type Artist } from "@/lib/roster";
@@ -34,7 +35,6 @@ function filterArtists(tab: TabId, artists: Artist[]) {
   }
 }
 
-import { toast } from "sonner";
 function exportCsv(artists: Artist[]) {
   const header = ["rank", "name", "track", "genre", "country", "streams", "delta", "status"];
   const rows = artists.map((a) =>

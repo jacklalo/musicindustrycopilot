@@ -185,32 +185,56 @@ function CollageCard({
 
 /* -------------------- TOOLBAR -------------------- */
 
-function Toolbar() {
-  const tabs = ["Top Roster", "Viral", "Rising", "Catalogue"];
+function Toolbar({
+  tab,
+  onTabChange,
+  onExport,
+}: {
+  tab: TabId;
+  onTabChange: (t: TabId) => void;
+  onExport: () => void;
+}) {
   return (
     <div
       id="chart"
       className="flex flex-col gap-4 pt-10 sm:flex-row sm:items-center sm:justify-between"
     >
-      <div className="flex flex-wrap items-center gap-2">
-        {tabs.map((t, i) => (
-          <button
-            key={t}
-            className={
-              i === 0
-                ? "h-9 rounded-full bg-foreground px-4 text-[12px] font-semibold text-background"
-                : "h-9 rounded-full border border-line px-4 text-[12px] font-semibold text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
-            }
-          >
-            {t}
-          </button>
-        ))}
+      <div
+        role="tablist"
+        aria-label="Filtres roster"
+        className="flex flex-wrap items-center gap-2"
+      >
+        {TABS.map((t) => {
+          const active = tab === t.id;
+          return (
+            <button
+              key={t.id}
+              role="tab"
+              aria-selected={active}
+              onClick={() => onTabChange(t.id)}
+              className={
+                "h-9 cursor-pointer rounded-full px-4 text-[12px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background " +
+                (active
+                  ? "bg-foreground text-background shadow-[0_6px_20px_-10px_rgba(0,0,0,0.4)]"
+                  : "border border-line text-muted-foreground hover:-translate-y-px hover:border-foreground/40 hover:text-foreground")
+              }
+            >
+              {t.label}
+            </button>
+          );
+        })}
       </div>
       <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-        <span>Sync il y a 4 min</span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
+          Sync il y a 4 min
+        </span>
         <span className="size-1 rounded-full bg-line" />
-        <button className="font-semibold text-foreground underline-offset-4 hover:underline">
-          Export CSV
+        <button
+          onClick={onExport}
+          className="inline-flex items-center gap-1.5 font-semibold text-foreground transition-colors hover:text-[color:var(--pop)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          <Download className="size-3.5" /> Export CSV
         </button>
       </div>
     </div>

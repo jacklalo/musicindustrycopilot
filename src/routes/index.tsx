@@ -278,6 +278,7 @@ function Leaderboard({ artists }: { artists: Artist[] }) {
 
 function ArtistRow({ a }: { a: Artist }) {
   const navigate = useNavigate();
+  const { play } = usePlayer();
   const rankDelta = a.prev - a.rank;
   const goToArtist = () => navigate({ to: "/artists/$slug", params: { slug: a.slug } });
   return (
@@ -316,9 +317,16 @@ function ArtistRow({ a }: { a: Artist }) {
             height={56}
             className="size-14 rounded-lg object-cover ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-[1.06] group-hover:shadow-[0_10px_24px_-12px_var(--row-accent)]"
           />
-          <span className="absolute inset-0 m-auto grid size-8 translate-y-1 place-items-center rounded-full bg-white/95 opacity-0 shadow-lg ring-1 ring-black/10 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          <button
+            aria-label={`Lire ${a.track}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              play(a);
+            }}
+            className="absolute inset-0 m-auto grid size-8 translate-y-1 place-items-center rounded-full bg-white/95 opacity-0 shadow-lg ring-1 ring-black/10 transition-all duration-300 hover:scale-110 group-hover:translate-y-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--row-accent)]"
+          >
             <Play className="size-3.5 fill-black" strokeWidth={0} />
-          </span>
+          </button>
         </span>
         <div className="min-w-0">
           <p className="truncate text-[15px] font-semibold leading-tight transition-colors group-hover:text-[color:var(--row-accent)]">

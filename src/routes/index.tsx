@@ -335,20 +335,53 @@ function DeltaBadge({
 }
 
 function Sparkline({ values, color }: { values: number[]; color: string }) {
-  const max = Math.max(...values);
+  // 5 niveaux: -2 forte baisse, -1 baisse, 0 stable, +1 hausse, +2 forte hausse
+  const first = values[0];
+  const last = values[values.length - 1];
+  const pct = ((last - first) / Math.max(first, 1)) * 100;
+  let level: -2 | -1 | 0 | 1 | 2 = 0;
+  if (pct >= 40) level = 2;
+  else if (pct >= 10) level = 1;
+  else if (pct <= -25) level = -2;
+  else if (pct <= -5) level = -1;
+
+  const angle = { [-2]: 90, [-1]: 45, 0: 0, 1: -45, 2: -90 }[level];
+  const tone =
+    level >= 2
+      ? "text-emerald-600"
+      : level === 1
+        ? "text-emerald-500"
+        : level === 0
+          ? "text-muted-foreground"
+          : level === -1
+            ? "text-rose-500"
+            : "text-rose-600";
+  const label =
+    level === 2
+      ? "Forte croissance"
+      : level === 1
+        ? "Croissance"
+        : level === 0
+          ? "Stable"
+          : level === -1
+            ? "Baisse"
+            : "Forte baisse";
+
   return (
-    <div className="flex h-9 items-end gap-1">
-      {values.map((v, i) => (
-        <span
-          key={i}
-          className="w-1 rounded-sm"
-          style={{
-            height: `${(v / max) * 100}%`,
-            background: color,
-            opacity: 0.25 + (i / values.length) * 0.75,
-          }}
-        />
-      ))}
+    <div className="flex h-9 items-center" aria-label={label} title={label}>
+      <svg
+        viewBox="0 0 24 24"
+        className={`size-6 ${tone}`}
+        style={{ transform: `rotate(${angle}deg)`, color: level === 0 ? undefined : color }}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={3}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <line x1="5" y1="12" x2="19" y2="12" />
+        <polyline points="13,6 19,12 13,18" />
+      </svg>
     </div>
   );
 }

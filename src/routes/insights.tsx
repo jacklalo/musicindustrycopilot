@@ -180,10 +180,6 @@ function InsightsPage() {
                 className="group relative flex flex-col overflow-hidden rounded-3xl border border-line bg-card p-7 transition-shadow hover:shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)]"
               >
                 <span
-                  className="absolute left-0 top-0 h-1 w-16 origin-left transition-transform duration-500 group-hover:scale-x-[6]"
-                  style={{ background: a.accent }}
-                />
-                <span
                   className="inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]"
                   style={{ background: a.accent + "15", color: a.accent }}
                 >

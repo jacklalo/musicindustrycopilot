@@ -90,13 +90,20 @@ export const Route = createFileRoute("/")({
 function Dashboard() {
   const featured = ROSTER[0];
   const [tab, setTab] = useState<TabId>("top");
-  const filtered = useMemo(() => filterArtists(tab, ROSTER), [tab]);
+  const [label, setLabel] = useState<LabelFilter>("all");
+  const filtered = useMemo(() => filterArtists(tab, label, ROSTER), [tab, label]);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <TopNav />
       <Hero featured={featured} />
       <main className="mx-auto max-w-[1440px] px-6 pb-32 lg:px-12">
-        <Toolbar tab={tab} onTabChange={setTab} onExport={() => exportCsv(filtered)} />
+        <Toolbar
+          tab={tab}
+          onTabChange={setTab}
+          label={label}
+          onLabelChange={setLabel}
+          onExport={() => exportCsv(filtered)}
+        />
         <div className="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-12">
           <section className="lg:col-span-8">
             <Leaderboard artists={filtered} />

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Search,
   Bell,
@@ -12,6 +12,8 @@ import {
   UserCircle2,
   Check,
   Music,
+  Menu,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -37,6 +39,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { ROSTER } from "@/lib/roster";
 import { usePlayer } from "@/components/player/PlayerProvider";
 
@@ -47,6 +56,89 @@ const NAV = [
   { to: "/insights", label: "Insights" },
   { to: "/ask", label: "Ask" },
 ] as const;
+
+function MobileNav() {
+  const [open, setOpen] = useState(false);
+  const currentPath = useRouterState({
+    select: (router) => router.location.pathname,
+  });
+
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <button
+          aria-label="Menu"
+          className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground md:hidden"
+        >
+          <Menu className="size-5" strokeWidth={2.25} />
+        </button>
+      </SheetTrigger>
+      <SheetContent
+        side="right"
+        className="w-full gap-0 border-l border-line bg-background p-0 sm:w-80 [&>button]:hidden"
+      >
+        <SheetTitle className="sr-only">Menu navigation</SheetTitle>
+        <div className="flex items-center justify-between border-b border-line px-5 py-4">
+          <Link
+            to="/"
+            onClick={() => setOpen(false)}
+            className="flex items-baseline gap-1.5"
+          >
+            <span className="display-tight text-xl">#NP</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+              Intelligence
+            </span>
+          </Link>
+          <SheetClose asChild>
+            <button
+              aria-label="Fermer"
+              className="grid size-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              <X className="size-5" strokeWidth={2.25} />
+            </button>
+          </SheetClose>
+        </div>
+        <nav className="flex flex-col py-2">
+          {NAV.map((item) => {
+            const active = currentPath === item.to;
+            return (
+              <SheetClose asChild key={item.to}>
+                <Link
+                  to={item.to}
+                  className={`flex items-center justify-between px-5 py-3.5 text-[15px] font-medium transition-colors ${
+                    active
+                      ? "bg-secondary text-foreground"
+                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  }`}
+                >
+                  {item.label}
+                  {active && (
+                    <span className="size-1.5 rounded-full bg-[color:var(--pop)]" />
+                  )}
+                </Link>
+              </SheetClose>
+            );
+          })}
+        </nav>
+        <div className="border-t border-line px-5 py-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Rechercher
+          </p>
+          <button
+            onClick={() => setOpen(false)}
+            className="mt-3 flex h-10 w-full items-center gap-2 rounded-xl border border-line bg-card px-3 text-[13px] text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
+          >
+            <Search className="size-4" strokeWidth={2.25} />
+            <span className="flex-1 text-left">Chercher un artiste…</span>
+            <kbd className="rounded border border-line bg-background px-1.5 py-px text-[10px] font-mono text-muted-foreground">
+              ⌘K
+            </kbd>
+          </button>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
 
 export function TopNav() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -120,9 +212,13 @@ export function TopNav() {
             <Search className="size-4" strokeWidth={2.25} />
           </button>
 
-          <AlertsPopover />
+          <div className="hidden sm:block">
+            <AlertsPopover />
+          </div>
 
           <ProfileMenu />
+
+          <MobileNav />
         </div>
       </div>
 

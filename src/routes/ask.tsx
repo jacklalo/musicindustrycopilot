@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Sparkles, ArrowUp, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { toast } from "sonner";
 import { TopNav, Footer } from "@/components/TopNav";

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Sparkles, ArrowUp, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { toast } from "sonner";
 import { TopNav, Footer } from "@/components/TopNav";
@@ -130,18 +130,16 @@ function ArtistResultCard({ card }: { card: ArtistCard }) {
         />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <div className="truncate text-sm font-semibold text-foreground">
-            {artist.name}
-          </div>
-          <div
-            className={`inline-flex items-center gap-1 text-[11px] font-semibold ${trendClass(
-              card.trend,
-            )}`}
-          >
-            <TrendIcon trend={card.trend} />
-            {card.metric}
-          </div>
+        <div className="truncate text-sm font-semibold text-foreground">
+          {artist.name}
+        </div>
+        <div
+          className={`mt-0.5 inline-flex items-center gap-1 text-[11px] font-semibold ${trendClass(
+            card.trend,
+          )}`}
+        >
+          <TrendIcon trend={card.trend} />
+          <span className="truncate">{card.metric}</span>
         </div>
         <div className="truncate text-[11px] text-foreground/50">
           {card.detail} · {artist.genre}
@@ -156,11 +154,16 @@ function AskPage() {
   const [answer, setAnswer] = useState<QA | null>(null);
   const [typed, setTyped] = useState("");
   const [loading, setLoading] = useState(false);
+  const answerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!answer) return;
     setTyped("");
     setLoading(true);
+    // Scroll the answer into view (crucial on mobile where it lands below the fold)
+    requestAnimationFrame(() => {
+      answerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
     let i = 0;
     const full = answer.a;
     const id = window.setInterval(() => {
@@ -255,9 +258,10 @@ function AskPage() {
           {answer && (
             <div
               key={answer.q}
-              className="mt-4 w-full animate-in fade-in slide-in-from-top-2 duration-500"
+              ref={answerRef}
+              className="mt-4 w-full scroll-mt-24 animate-in fade-in slide-in-from-top-2 duration-500"
             >
-              <div className="flex items-start gap-4 rounded-2xl border border-line bg-foreground/[0.02] p-5 text-left">
+              <div className="flex flex-col gap-4 rounded-2xl border border-line bg-foreground/[0.02] p-4 text-left sm:flex-row sm:items-start sm:gap-4 sm:p-5">
                 <div className="mt-0.5 grid size-8 flex-shrink-0 place-items-center rounded-lg bg-[var(--ink)] text-[10px] font-bold tracking-wider text-white">
                   NP
                 </div>

@@ -96,8 +96,10 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <TopNav />
+      <AskIntro />
       <Hero featured={featured} />
       <main className="mx-auto max-w-[1440px] px-6 pb-32 lg:px-12">
+
         <Toolbar
           tab={tab}
           onTabChange={setTab}

@@ -1,9 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Sparkles, MapPin, Calendar, Users, Play, Heart, Share2 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, Sparkles, MapPin, Calendar, Users, Play, Heart, Share2, Radio, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { TopNav, Footer } from "@/components/TopNav";
 import { usePlayer } from "@/components/player/PlayerProvider";
 import { getArtist, ROSTER, type Artist } from "@/lib/roster";
+import { getDeezerLive } from "@/lib/deezer.functions";
 
 export const Route = createFileRoute("/artists/$slug")({
   loader: ({ params }) => {

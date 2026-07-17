@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Play,
   MoreHorizontal,
@@ -7,7 +7,7 @@ import {
   TrendingDown,
   Sparkles,
   ArrowUpRight,
-  ArrowUp,
+  
   Download,
   Heart,
   Share2,

@@ -206,7 +206,77 @@ function ArtistPage() {
               </p>
             </div>
           </div>
+
+          {/* Live data — Deezer (source réelle) */}
+          <div className="mt-6 rounded-3xl border border-line bg-card p-7">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <span className="grid size-8 place-items-center rounded-full bg-foreground text-background">
+                  <Radio className="size-3.5" strokeWidth={2.5} />
+                </span>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                    Source live · Deezer public API
+                  </p>
+                  <p className="text-[13px] font-semibold text-foreground">
+                    Snapshot temps réel — {artist.deezerQuery ?? artist.name}
+                  </p>
+                </div>
+              </div>
+              {live.data?.link && (
+                <a
+                  href={live.data.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground hover:text-foreground"
+                >
+                  Ouvrir <ExternalLink className="size-3" />
+                </a>
+              )}
+            </div>
+
+            {live.isLoading && (
+              <p className="mt-5 text-[12px] text-muted-foreground">Récupération de la donnée live…</p>
+            )}
+            {live.isError && (
+              <p className="mt-5 text-[12px] text-muted-foreground">Source live indisponible pour le moment.</p>
+            )}
+            {live.data && !live.data.found && !live.isLoading && (
+              <p className="mt-5 text-[12px] text-muted-foreground">
+                Aucune correspondance Deezer trouvée — un fallback Believe / Spotify sera branché en V1.
+              </p>
+            )}
+
+            {live.data?.found && (
+              <>
+                <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  <MiniStat label="Fans Deezer" value={fmtNumber(live.data.nbFan)} />
+                  <MiniStat label="Albums" value={String(live.data.nbAlbum ?? "—")} />
+                  <MiniStat label="Top tracks" value={String(live.data.topTracks?.length ?? 0)} />
+                </div>
+                {live.data.topTracks && live.data.topTracks.length > 0 && (
+                  <ul className="mt-5 divide-y divide-line rounded-2xl border border-line">
+                    {live.data.topTracks.map((t, i) => (
+                      <li key={t.id} className="flex items-center gap-4 px-4 py-3">
+                        <span className="tabular w-6 text-[12px] font-semibold text-muted-foreground">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-[13px] font-semibold">{t.title}</p>
+                          <p className="truncate text-[11px] text-muted-foreground">{t.album}</p>
+                        </div>
+                        <span className="tabular text-[11px] text-muted-foreground">
+                          rank {fmtNumber(t.rank)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            )}
+          </div>
         </section>
+
 
         {/* Side meta */}
         <aside className="space-y-6 lg:col-span-4">

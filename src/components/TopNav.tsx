@@ -212,9 +212,13 @@ export function TopNav() {
             <Search className="size-4" strokeWidth={2.25} />
           </button>
 
-          <AlertsPopover />
+          <div className="hidden sm:block">
+            <AlertsPopover />
+          </div>
 
           <ProfileMenu />
+
+          <MobileNav />
         </div>
       </div>
 

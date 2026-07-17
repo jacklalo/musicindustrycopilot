@@ -377,6 +377,24 @@ function Meta({ icon, label }: { icon: React.ReactNode; label: string }) {
   );
 }
 
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-line px-4 py-3">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-1 tabular text-lg font-semibold">{value}</p>
+    </div>
+  );
+}
+
+function fmtNumber(n: number | undefined): string {
+  if (n == null) return "—";
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}k`;
+  return String(n);
+}
+
 function BigChart({ values, color }: { values: Artist["momentum"]; color: string }) {
   const w = 640;
   const h = 200;

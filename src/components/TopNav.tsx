@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Search,
   Bell,
@@ -12,6 +12,8 @@ import {
   UserCircle2,
   Check,
   Music,
+  Menu,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -37,6 +39,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { ROSTER } from "@/lib/roster";
 import { usePlayer } from "@/components/player/PlayerProvider";
 

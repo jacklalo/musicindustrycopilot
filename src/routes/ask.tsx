@@ -154,11 +154,16 @@ function AskPage() {
   const [answer, setAnswer] = useState<QA | null>(null);
   const [typed, setTyped] = useState("");
   const [loading, setLoading] = useState(false);
+  const answerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!answer) return;
     setTyped("");
     setLoading(true);
+    // Scroll the answer into view (crucial on mobile where it lands below the fold)
+    requestAnimationFrame(() => {
+      answerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
     let i = 0;
     const full = answer.a;
     const id = window.setInterval(() => {

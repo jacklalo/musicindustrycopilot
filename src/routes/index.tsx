@@ -122,9 +122,82 @@ function Dashboard() {
   );
 }
 
+/* -------------------- ASK INTRO -------------------- */
+
+const QUICK_PROMPTS = [
+  "Quel artiste accélère cette semaine ?",
+  "Compare Zazie et Jérémy Frerot sur 30 jours",
+  "Où booker Skip the Use en tournée ?",
+  "Alertes streaming des 7 derniers jours",
+  "Résume la performance du label 6&7",
+];
+
+function AskIntro() {
+  const [value, setValue] = useState("");
+  const submit = (q: string) => {
+    const query = q.trim();
+    if (!query) return;
+    toast("Question envoyée à #NP Intelligence", {
+      description: query,
+    });
+    setValue("");
+  };
+  return (
+    <section className="relative border-b border-line bg-background">
+      <div className="mx-auto max-w-[900px] px-6 py-20 lg:py-28">
+        <div className="flex flex-col items-center gap-8 text-center">
+          <div className="inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-foreground/50">
+            <Sparkles className="size-3" />
+            #NP Intelligence
+          </div>
+          <h2 className="display-tight text-[clamp(32px,5vw,56px)] leading-[1.02] text-balance">
+            Demandez n'importe quoi<br />sur votre roster.
+          </h2>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              submit(value);
+            }}
+            className="w-full"
+          >
+            <div className="group relative flex items-center rounded-2xl border border-line bg-card px-2 py-2 shadow-[0_1px_0_rgba(0,0,0,0.02)] transition-all focus-within:border-foreground/40 focus-within:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.15)]">
+              <input
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder="Posez une question à #NP Intelligence…"
+                className="flex-1 bg-transparent px-4 py-3 text-base text-foreground placeholder:text-foreground/40 focus:outline-none"
+              />
+              <button
+                type="submit"
+                disabled={!value.trim()}
+                className="grid size-10 place-items-center rounded-xl bg-[var(--ink)] text-white transition-all hover:scale-105 disabled:opacity-30 disabled:hover:scale-100"
+                aria-label="Envoyer"
+              >
+                <ArrowUp className="size-4" strokeWidth={2.5} />
+              </button>
+            </div>
+          </form>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {QUICK_PROMPTS.map((q) => (
+              <button
+                key={q}
+                onClick={() => submit(q)}
+                className="rounded-full border border-line bg-card px-4 py-2 text-xs font-medium text-foreground/70 transition-all hover:border-foreground/30 hover:bg-foreground/[0.03] hover:text-foreground"
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* -------------------- HERO -------------------- */
 
 function Hero({ featured }: { featured: Artist }) {
+
   const { play } = usePlayer();
   return (
     <section className="relative overflow-hidden border-b border-line bg-[var(--ink)] text-white">

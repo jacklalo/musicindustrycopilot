@@ -666,20 +666,20 @@ function InsightsRow() {
       <InsightCard
         kicker="Alerte virale"
         accent="#ED2362"
-        title="Suzane entre dans le Top 50 Viral France"
-        body="‘Toï Toï’ détecté sur +18k UGC en 48h. Recommandation : booster paid social IDF + Lyon."
+        title="Hina ‘Fantaisie’ entre dans le Top 50 Viral France"
+        body="+240k UGC TikTok en 14j. Recommandation : booster paid social IDF + Lyon."
       />
       <InsightCard
         kicker="Signal géographique"
         accent="#1E5BFF"
-        title="Mylène Farmer accélère à Montréal (+212%)"
-        body="Effet teaser Nevermore II. Le modèle de demande tour suggère une 2ᵉ date Bell Centre."
+        title="Zazie accélère à Bruxelles (+82%)"
+        body="Effet single « Peu Importe ». Le modèle tour suggère une date Forest National."
       />
       <InsightCard
-        kicker="Catalogue"
-        accent="#E07B2D"
-        title="Julien Clerc : vinyle ‘Si on chantait’ rupture 4×"
-        body="Save rate élevé sur les classiques. Repress + bundle merch à ouvrir avant la tournée."
+        kicker="Streaming"
+        accent="#5A8DB8"
+        title="Jérémy Frerot — entrée playlist >100k followers"
+        body="Alerte seuil dépassé. Save rate en hausse sur ‘Un homme’, opportunité radio Q2."
       />
     </section>
   );

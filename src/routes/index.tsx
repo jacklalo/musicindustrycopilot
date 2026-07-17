@@ -21,7 +21,7 @@ import {
 import { toast } from "sonner";
 import { TopNav, Footer } from "@/components/TopNav";
 import { usePlayer } from "@/components/player/PlayerProvider";
-import { ROSTER, type Artist } from "@/lib/roster";
+import { ROSTER, LABELS, type Artist, type LabelId } from "@/lib/roster";
 
 type TabId = "top" | "viral" | "rising" | "catalogue";
 const TABS: { id: TabId; label: string }[] = [
@@ -31,16 +31,19 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "catalogue", label: "Catalogue" },
 ];
 
-function filterArtists(tab: TabId, artists: Artist[]) {
+type LabelFilter = "all" | LabelId;
+
+function filterArtists(tab: TabId, label: LabelFilter, artists: Artist[]) {
+  const scoped = label === "all" ? artists : artists.filter((a) => a.label === label);
   switch (tab) {
     case "viral":
-      return artists.filter((a) => a.status === "viral");
+      return scoped.filter((a) => a.status === "viral");
     case "rising":
-      return artists.filter((a) => a.status === "rising");
+      return scoped.filter((a) => a.status === "rising");
     case "catalogue":
-      return [...artists].sort((a, b) => a.name.localeCompare(b.name));
+      return [...scoped].sort((a, b) => a.name.localeCompare(b.name));
     default:
-      return artists;
+      return scoped;
   }
 }
 

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ToursRouteImport } from './routes/tours'
 import { Route as RosterRouteImport } from './routes/roster'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as AskRouteImport } from './routes/ask'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ArtistsSlugRouteImport } from './routes/artists.$slug'
 
@@ -30,6 +31,11 @@ const InsightsRoute = InsightsRouteImport.update({
   path: '/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AskRoute = AskRouteImport.update({
+  id: '/ask',
+  path: '/ask',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,6 +49,7 @@ const ArtistsSlugRoute = ArtistsSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ask': typeof AskRoute
   '/insights': typeof InsightsRoute
   '/roster': typeof RosterRoute
   '/tours': typeof ToursRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ask': typeof AskRoute
   '/insights': typeof InsightsRoute
   '/roster': typeof RosterRoute
   '/tours': typeof ToursRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ask': typeof AskRoute
   '/insights': typeof InsightsRoute
   '/roster': typeof RosterRoute
   '/tours': typeof ToursRoute
@@ -65,14 +74,28 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/insights' | '/roster' | '/tours' | '/artists/$slug'
+  fullPaths:
+    | '/'
+    | '/ask'
+    | '/insights'
+    | '/roster'
+    | '/tours'
+    | '/artists/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/insights' | '/roster' | '/tours' | '/artists/$slug'
-  id: '__root__' | '/' | '/insights' | '/roster' | '/tours' | '/artists/$slug'
+  to: '/' | '/ask' | '/insights' | '/roster' | '/tours' | '/artists/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/ask'
+    | '/insights'
+    | '/roster'
+    | '/tours'
+    | '/artists/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AskRoute: typeof AskRoute
   InsightsRoute: typeof InsightsRoute
   RosterRoute: typeof RosterRoute
   ToursRoute: typeof ToursRoute
@@ -102,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ask': {
+      id: '/ask'
+      path: '/ask'
+      fullPath: '/ask'
+      preLoaderRoute: typeof AskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -121,6 +151,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AskRoute: AskRoute,
   InsightsRoute: InsightsRoute,
   RosterRoute: RosterRoute,
   ToursRoute: ToursRoute,

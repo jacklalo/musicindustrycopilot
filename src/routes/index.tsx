@@ -216,54 +216,87 @@ function CollageCard({
 function Toolbar({
   tab,
   onTabChange,
+  label,
+  onLabelChange,
   onExport,
 }: {
   tab: TabId;
   onTabChange: (t: TabId) => void;
+  label: LabelFilter;
+  onLabelChange: (l: LabelFilter) => void;
   onExport: () => void;
 }) {
+  const LABEL_CHIPS: { id: LabelFilter; label: string }[] = [
+    { id: "all", label: "Tous les labels" },
+    ...LABELS.map((l) => ({ id: l.id as LabelFilter, label: l.short })),
+  ];
   return (
     <div
       id="chart"
-      className="flex flex-col gap-4 pt-10 sm:flex-row sm:items-center sm:justify-between"
+      className="flex flex-col gap-4 pt-10"
     >
-      <div
-        role="tablist"
-        aria-label="Filtres roster"
-        className="flex flex-wrap items-center gap-2"
-      >
-        {TABS.map((t) => {
-          const active = tab === t.id;
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div
+          role="tablist"
+          aria-label="Filtres roster"
+          className="flex flex-wrap items-center gap-2"
+        >
+          {TABS.map((t) => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                role="tab"
+                aria-selected={active}
+                onClick={() => onTabChange(t.id)}
+                className={
+                  "h-9 cursor-pointer rounded-full px-4 text-[12px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background " +
+                  (active
+                    ? "bg-foreground text-background shadow-[0_6px_20px_-10px_rgba(0,0,0,0.4)]"
+                    : "border border-line text-muted-foreground hover:-translate-y-px hover:border-foreground/40 hover:text-foreground")
+                }
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+        <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
+            Sync il y a 4 min
+          </span>
+          <span className="size-1 rounded-full bg-line" />
+          <button
+            onClick={onExport}
+            className="inline-flex items-center gap-1.5 font-semibold text-foreground transition-colors hover:text-[color:var(--pop)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            <Download className="size-3.5" /> Export CSV
+          </button>
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center gap-2 border-t border-line pt-4">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          Label
+        </span>
+        {LABEL_CHIPS.map((l) => {
+          const active = label === l.id;
           return (
             <button
-              key={t.id}
-              role="tab"
-              aria-selected={active}
-              onClick={() => onTabChange(t.id)}
+              key={l.id}
+              onClick={() => onLabelChange(l.id)}
+              aria-pressed={active}
               className={
-                "h-9 cursor-pointer rounded-full px-4 text-[12px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background " +
+                "h-8 cursor-pointer rounded-full px-3.5 text-[11px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 " +
                 (active
-                  ? "bg-foreground text-background shadow-[0_6px_20px_-10px_rgba(0,0,0,0.4)]"
-                  : "border border-line text-muted-foreground hover:-translate-y-px hover:border-foreground/40 hover:text-foreground")
+                  ? "bg-foreground text-background"
+                  : "border border-line text-muted-foreground hover:border-foreground/40 hover:text-foreground")
               }
             >
-              {t.label}
+              {l.label}
             </button>
           );
         })}
-      </div>
-      <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
-          Sync il y a 4 min
-        </span>
-        <span className="size-1 rounded-full bg-line" />
-        <button
-          onClick={onExport}
-          className="inline-flex items-center gap-1.5 font-semibold text-foreground transition-colors hover:text-[color:var(--pop)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          <Download className="size-3.5" /> Export CSV
-        </button>
       </div>
     </div>
   );

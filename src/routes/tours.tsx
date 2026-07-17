@@ -213,7 +213,7 @@ function ToursPage() {
                   Festival d'été — recommandation
                 </h3>
                 <p className="mt-2 text-[13px] text-white/65">
-                  La demande tour-model suggère d'ajouter <strong>Suzane</strong>{" "}
+                  La demande tour-model suggère d'ajouter <strong>Hina</strong>{" "}
                   sur les festivals OFF d'Avignon + Vieilles Charrues — fenêtre
                   optimale juin / juillet.
                 </p>

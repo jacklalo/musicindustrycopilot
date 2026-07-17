@@ -7,6 +7,7 @@ import {
   TrendingDown,
   Sparkles,
   ArrowUpRight,
+  ArrowUp,
   Download,
   Heart,
   Share2,

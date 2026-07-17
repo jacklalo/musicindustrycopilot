@@ -258,9 +258,10 @@ function AskPage() {
           {answer && (
             <div
               key={answer.q}
-              className="mt-4 w-full animate-in fade-in slide-in-from-top-2 duration-500"
+              ref={answerRef}
+              className="mt-4 w-full scroll-mt-24 animate-in fade-in slide-in-from-top-2 duration-500"
             >
-              <div className="flex items-start gap-4 rounded-2xl border border-line bg-foreground/[0.02] p-5 text-left">
+              <div className="flex flex-col gap-4 rounded-2xl border border-line bg-foreground/[0.02] p-4 text-left sm:flex-row sm:items-start sm:gap-4 sm:p-5">
                 <div className="mt-0.5 grid size-8 flex-shrink-0 place-items-center rounded-lg bg-[var(--ink)] text-[10px] font-bold tracking-wider text-white">
                   NP
                 </div>

@@ -21,7 +21,7 @@ import {
 import { toast } from "sonner";
 import { TopNav, Footer } from "@/components/TopNav";
 import { usePlayer } from "@/components/player/PlayerProvider";
-import { ROSTER, type Artist } from "@/lib/roster";
+import { ROSTER, LABELS, type Artist, type LabelId } from "@/lib/roster";
 
 type TabId = "top" | "viral" | "rising" | "catalogue";
 const TABS: { id: TabId; label: string }[] = [
@@ -31,16 +31,19 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "catalogue", label: "Catalogue" },
 ];
 
-function filterArtists(tab: TabId, artists: Artist[]) {
+type LabelFilter = "all" | LabelId;
+
+function filterArtists(tab: TabId, label: LabelFilter, artists: Artist[]) {
+  const scoped = label === "all" ? artists : artists.filter((a) => a.label === label);
   switch (tab) {
     case "viral":
-      return artists.filter((a) => a.status === "viral");
+      return scoped.filter((a) => a.status === "viral");
     case "rising":
-      return artists.filter((a) => a.status === "rising");
+      return scoped.filter((a) => a.status === "rising");
     case "catalogue":
-      return [...artists].sort((a, b) => a.name.localeCompare(b.name));
+      return [...scoped].sort((a, b) => a.name.localeCompare(b.name));
     default:
-      return artists;
+      return scoped;
   }
 }
 
@@ -87,13 +90,20 @@ export const Route = createFileRoute("/")({
 function Dashboard() {
   const featured = ROSTER[0];
   const [tab, setTab] = useState<TabId>("top");
-  const filtered = useMemo(() => filterArtists(tab, ROSTER), [tab]);
+  const [label, setLabel] = useState<LabelFilter>("all");
+  const filtered = useMemo(() => filterArtists(tab, label, ROSTER), [tab, label]);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <TopNav />
       <Hero featured={featured} />
       <main className="mx-auto max-w-[1440px] px-6 pb-32 lg:px-12">
-        <Toolbar tab={tab} onTabChange={setTab} onExport={() => exportCsv(filtered)} />
+        <Toolbar
+          tab={tab}
+          onTabChange={setTab}
+          label={label}
+          onLabelChange={setLabel}
+          onExport={() => exportCsv(filtered)}
+        />
         <div className="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-12">
           <section className="lg:col-span-8">
             <Leaderboard artists={filtered} />
@@ -206,54 +216,87 @@ function CollageCard({
 function Toolbar({
   tab,
   onTabChange,
+  label,
+  onLabelChange,
   onExport,
 }: {
   tab: TabId;
   onTabChange: (t: TabId) => void;
+  label: LabelFilter;
+  onLabelChange: (l: LabelFilter) => void;
   onExport: () => void;
 }) {
+  const LABEL_CHIPS: { id: LabelFilter; label: string }[] = [
+    { id: "all", label: "Tous les labels" },
+    ...LABELS.map((l) => ({ id: l.id as LabelFilter, label: l.short })),
+  ];
   return (
     <div
       id="chart"
-      className="flex flex-col gap-4 pt-10 sm:flex-row sm:items-center sm:justify-between"
+      className="flex flex-col gap-4 pt-10"
     >
-      <div
-        role="tablist"
-        aria-label="Filtres roster"
-        className="flex flex-wrap items-center gap-2"
-      >
-        {TABS.map((t) => {
-          const active = tab === t.id;
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div
+          role="tablist"
+          aria-label="Filtres roster"
+          className="flex flex-wrap items-center gap-2"
+        >
+          {TABS.map((t) => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                role="tab"
+                aria-selected={active}
+                onClick={() => onTabChange(t.id)}
+                className={
+                  "h-9 cursor-pointer rounded-full px-4 text-[12px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background " +
+                  (active
+                    ? "bg-foreground text-background shadow-[0_6px_20px_-10px_rgba(0,0,0,0.4)]"
+                    : "border border-line text-muted-foreground hover:-translate-y-px hover:border-foreground/40 hover:text-foreground")
+                }
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+        <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
+            Sync il y a 4 min
+          </span>
+          <span className="size-1 rounded-full bg-line" />
+          <button
+            onClick={onExport}
+            className="inline-flex items-center gap-1.5 font-semibold text-foreground transition-colors hover:text-[color:var(--pop)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            <Download className="size-3.5" /> Export CSV
+          </button>
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center gap-2 border-t border-line pt-4">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          Label
+        </span>
+        {LABEL_CHIPS.map((l) => {
+          const active = label === l.id;
           return (
             <button
-              key={t.id}
-              role="tab"
-              aria-selected={active}
-              onClick={() => onTabChange(t.id)}
+              key={l.id}
+              onClick={() => onLabelChange(l.id)}
+              aria-pressed={active}
               className={
-                "h-9 cursor-pointer rounded-full px-4 text-[12px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background " +
+                "h-8 cursor-pointer rounded-full px-3.5 text-[11px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 " +
                 (active
-                  ? "bg-foreground text-background shadow-[0_6px_20px_-10px_rgba(0,0,0,0.4)]"
-                  : "border border-line text-muted-foreground hover:-translate-y-px hover:border-foreground/40 hover:text-foreground")
+                  ? "bg-foreground text-background"
+                  : "border border-line text-muted-foreground hover:border-foreground/40 hover:text-foreground")
               }
             >
-              {t.label}
+              {l.label}
             </button>
           );
         })}
-      </div>
-      <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
-          Sync il y a 4 min
-        </span>
-        <span className="size-1 rounded-full bg-line" />
-        <button
-          onClick={onExport}
-          className="inline-flex items-center gap-1.5 font-semibold text-foreground transition-colors hover:text-[color:var(--pop)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          <Download className="size-3.5" /> Export CSV
-        </button>
       </div>
     </div>
   );
@@ -666,20 +709,20 @@ function InsightsRow() {
       <InsightCard
         kicker="Alerte virale"
         accent="#ED2362"
-        title="Suzane entre dans le Top 50 Viral France"
-        body="‘Toï Toï’ détecté sur +18k UGC en 48h. Recommandation : booster paid social IDF + Lyon."
+        title="Hina ‘Fantaisie’ entre dans le Top 50 Viral France"
+        body="+240k UGC TikTok en 14j. Recommandation : booster paid social IDF + Lyon."
       />
       <InsightCard
         kicker="Signal géographique"
         accent="#1E5BFF"
-        title="Mylène Farmer accélère à Montréal (+212%)"
-        body="Effet teaser Nevermore II. Le modèle de demande tour suggère une 2ᵉ date Bell Centre."
+        title="Zazie accélère à Bruxelles (+82%)"
+        body="Effet single « Peu Importe ». Le modèle tour suggère une date Forest National."
       />
       <InsightCard
-        kicker="Catalogue"
-        accent="#E07B2D"
-        title="Julien Clerc : vinyle ‘Si on chantait’ rupture 4×"
-        body="Save rate élevé sur les classiques. Repress + bundle merch à ouvrir avant la tournée."
+        kicker="Streaming"
+        accent="#5A8DB8"
+        title="Jérémy Frerot — entrée playlist >100k followers"
+        body="Alerte seuil dépassé. Save rate en hausse sur ‘Un homme’, opportunité radio Q2."
       />
     </section>
   );

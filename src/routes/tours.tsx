@@ -32,22 +32,22 @@ type Show = {
 };
 
 const SHOWS: Show[] = [
-  { artistSlug: "mylene-farmer", city: "Paris", venue: "La Défense Arena", date: "2026-06-12", status: "complet" },
-  { artistSlug: "mylene-farmer", city: "Lyon", venue: "Groupama Stadium", date: "2026-06-21", status: "complet" },
-  { artistSlug: "mylene-farmer", city: "Montréal", venue: "Bell Centre", date: "2026-09-04", status: "limité" },
-  { artistSlug: "julien-clerc", city: "Bordeaux", venue: "Arkéa Arena", date: "2026-06-08", status: "limité" },
-  { artistSlug: "julien-clerc", city: "Nantes", venue: "Zénith Métropole", date: "2026-06-15", status: "ouverture" },
-  { artistSlug: "matthieu-chedid", city: "Paris", venue: "Accor Arena", date: "2026-07-02", status: "limité" },
-  { artistSlug: "matthieu-chedid", city: "Bruxelles", venue: "Forest National", date: "2026-07-09", status: "ouverture" },
+  { artistSlug: "zazie", city: "Paris", venue: "Accor Arena", date: "2026-06-12", status: "complet" },
+  { artistSlug: "zazie", city: "Lyon", venue: "Halle Tony Garnier", date: "2026-06-21", status: "limité" },
+  { artistSlug: "zazie", city: "Bruxelles", venue: "Forest National", date: "2026-09-04", status: "ouverture" },
   { artistSlug: "jeremy-frerot", city: "Bordeaux", venue: "Arkéa Arena", date: "2026-06-27", status: "complet" },
   { artistSlug: "jeremy-frerot", city: "Toulouse", venue: "Zénith", date: "2026-07-05", status: "limité" },
-  { artistSlug: "suzane", city: "Paris", venue: "Olympia", date: "2026-06-18", status: "complet" },
-  { artistSlug: "suzane", city: "Avignon", venue: "Festival OFF", date: "2026-07-12", status: "limité" },
-  { artistSlug: "klon", city: "Paris", venue: "L'Olympia", date: "2026-09-11", status: "ouverture" },
+  { artistSlug: "jeremy-frerot", city: "Nantes", venue: "Zénith Métropole", date: "2026-06-15", status: "ouverture" },
+  { artistSlug: "skip-the-use", city: "Lille", venue: "Zénith Arena", date: "2026-07-02", status: "limité" },
+  { artistSlug: "skip-the-use", city: "Paris", venue: "L'Olympia", date: "2026-07-09", status: "ouverture" },
+  { artistSlug: "hina", city: "Paris", venue: "La Cigale", date: "2026-06-18", status: "complet" },
+  { artistSlug: "hina", city: "Avignon", venue: "Festival OFF", date: "2026-07-12", status: "limité" },
+  { artistSlug: "virgile-martini", city: "Paris", venue: "Le Pop-Up!", date: "2026-09-11", status: "ouverture" },
   { artistSlug: "nabil-harlow", city: "Paris", venue: "Le Trianon", date: "2026-06-25", status: "limité" },
   { artistSlug: "lancelot", city: "Lyon", venue: "Le Transbordeur", date: "2026-06-14", status: "limité" },
   { artistSlug: "lancelot", city: "Paris", venue: "La Cigale", date: "2026-09-22", status: "ouverture" },
-  { artistSlug: "waxx-c-cole", city: "Paris", venue: "New Morning", date: "2026-07-03", status: "ouverture" },
+  { artistSlug: "kimberose", city: "Paris", venue: "Le Bataclan", date: "2026-07-03", status: "ouverture" },
+  { artistSlug: "lubiana", city: "Paris", venue: "Le Café de la Danse", date: "2026-06-10", status: "limité" },
 ];
 
 const STATUS_STYLE: Record<Show["status"], string> = {
@@ -213,7 +213,7 @@ function ToursPage() {
                   Festival d'été — recommandation
                 </h3>
                 <p className="mt-2 text-[13px] text-white/65">
-                  La demande tour-model suggère d'ajouter <strong>Suzane</strong>{" "}
+                  La demande tour-model suggère d'ajouter <strong>Hina</strong>{" "}
                   sur les festivals OFF d'Avignon + Vieilles Charrues — fenêtre
                   optimale juin / juillet.
                 </p>

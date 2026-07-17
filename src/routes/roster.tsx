@@ -10,7 +10,7 @@ export const Route = createFileRoute("/roster")({
       {
         name: "description",
         content:
-          "Les artistes signés Hashtag NP : Mylène Farmer, Julien Clerc, -M-, Jérémy Frerot, Suzane, KLON, Lancelot et plus.",
+          "Les artistes 6&7 managés par Hashtag NP : Zazie, Jérémy Frerot, Skip the Use, Hina, Krisy, Lubiana, Lancelot, Kimberose, Virgile Martini et le back catalogue.",
       },
       { property: "og:title", content: "Roster — Hashtag NP" },
       {

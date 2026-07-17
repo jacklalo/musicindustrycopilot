@@ -130,18 +130,16 @@ function ArtistResultCard({ card }: { card: ArtistCard }) {
         />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <div className="truncate text-sm font-semibold text-foreground">
-            {artist.name}
-          </div>
-          <div
-            className={`inline-flex items-center gap-1 text-[11px] font-semibold ${trendClass(
-              card.trend,
-            )}`}
-          >
-            <TrendIcon trend={card.trend} />
-            {card.metric}
-          </div>
+        <div className="truncate text-sm font-semibold text-foreground">
+          {artist.name}
+        </div>
+        <div
+          className={`mt-0.5 inline-flex items-center gap-1 text-[11px] font-semibold ${trendClass(
+            card.trend,
+          )}`}
+        >
+          <TrendIcon trend={card.trend} />
+          <span className="truncate">{card.metric}</span>
         </div>
         <div className="truncate text-[11px] text-foreground/50">
           {card.detail} · {artist.genre}

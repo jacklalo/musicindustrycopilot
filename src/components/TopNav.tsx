@@ -75,7 +75,7 @@ function MobileNav() {
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="w-full border-l border-line bg-background px-0 sm:w-80"
+        className="w-full gap-0 border-l border-line bg-background p-0 sm:w-80 [&>button]:hidden"
       >
         <SheetTitle className="sr-only">Menu navigation</SheetTitle>
         <div className="flex items-center justify-between border-b border-line px-5 py-4">

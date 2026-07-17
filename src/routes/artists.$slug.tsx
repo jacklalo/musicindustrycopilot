@@ -55,6 +55,13 @@ function ArtistPage() {
   const liked = !!state.liked[artist.slug];
   const others = ROSTER.filter((a) => a.slug !== artist.slug).slice(0, 4);
 
+  const fetchDeezer = useServerFn(getDeezerLive);
+  const live = useQuery({
+    queryKey: ["deezer", artist.slug],
+    queryFn: () => fetchDeezer({ data: { q: artist.deezerQuery ?? artist.name } }),
+    staleTime: 5 * 60_000,
+  });
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <TopNav />

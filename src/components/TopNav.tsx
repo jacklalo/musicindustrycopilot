@@ -345,7 +345,7 @@ function ProfileMenu() {
           aria-label="Profil"
           className="grid size-9 place-items-center rounded-full bg-foreground text-[11px] font-bold text-background ring-2 ring-transparent transition-all hover:ring-[color:var(--pop)]/30 focus-visible:outline-none focus-visible:ring-[color:var(--pop)]/50"
         >
-          PN
+          MC
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -355,10 +355,10 @@ function ProfileMenu() {
       >
         <div className="flex items-center gap-3 px-2 py-3">
           <div className="grid size-10 place-items-center rounded-full bg-foreground text-[12px] font-bold text-background">
-            PN
+            MC
           </div>
           <div className="min-w-0">
-            <p className="truncate text-[13px] font-semibold">Pauline N.</p>
+            <p className="truncate text-[13px] font-semibold">Margot Charrié</p>
             <p className="truncate text-[11px] text-muted-foreground">
               A&R · Hashtag NP
             </p>

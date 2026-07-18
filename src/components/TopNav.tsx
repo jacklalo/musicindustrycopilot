@@ -376,7 +376,7 @@ function AlertsPopover() {
             Tout marquer lu
           </button>
         </div>
-        <div className="max-h-[360px] overflow-y-auto border-t border-line">
+        <div className="max-h-[360px] overflow-y-auto border-t border-line p-2">
           {remaining.length === 0 ? (
             <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
               <Check className="size-5 text-emerald-600" />
@@ -393,7 +393,7 @@ function AlertsPopover() {
                   setOpen(false);
                   toast(`Alerte ouverte · ${a.kicker}`);
                 }}
-                className="group flex w-full items-start gap-3 border-b border-line px-4 py-3 text-left transition-colors hover:bg-[color:var(--surface)] last:border-0"
+                className="group flex w-full items-start gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-[color:var(--surface)]"
               >
                 <span
                   className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full"

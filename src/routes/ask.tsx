@@ -117,7 +117,7 @@ function ArtistResultCard({ card }: { card: ArtistCard }) {
     <Link
       to="/artists/$slug"
       params={{ slug: artist.slug }}
-      className="group flex items-center gap-3 rounded-xl border border-line bg-background p-2 pr-3 transition-all hover:border-foreground/30 hover:shadow-[0_6px_24px_-12px_rgba(0,0,0,0.15)]"
+      className="group flex min-w-0 items-center gap-3 rounded-xl border border-line bg-background p-2 pr-3 transition-all hover:border-foreground/30 hover:shadow-[0_6px_24px_-12px_rgba(0,0,0,0.15)]"
     >
       <div
         className="relative size-12 flex-shrink-0 overflow-hidden rounded-lg"
@@ -134,7 +134,7 @@ function ArtistResultCard({ card }: { card: ArtistCard }) {
           {artist.name}
         </div>
         <div
-          className={`mt-0.5 inline-flex items-center gap-1 text-[11px] font-semibold ${trendClass(
+          className={`mt-0.5 flex min-w-0 items-center gap-1 text-[11px] font-semibold ${trendClass(
             card.trend,
           )}`}
         >

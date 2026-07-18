@@ -117,7 +117,7 @@ function ArtistResultCard({ card }: { card: ArtistCard }) {
     <Link
       to="/artists/$slug"
       params={{ slug: artist.slug }}
-      className="group flex items-center gap-3 rounded-xl border border-line bg-background p-2 pr-3 transition-all hover:border-foreground/30 hover:shadow-[0_6px_24px_-12px_rgba(0,0,0,0.15)]"
+      className="group flex min-w-0 items-center gap-3 rounded-xl border border-line bg-background p-2 pr-3 transition-all hover:border-foreground/30 hover:shadow-[0_6px_24px_-12px_rgba(0,0,0,0.15)]"
     >
       <div
         className="relative size-12 flex-shrink-0 overflow-hidden rounded-lg"
@@ -134,7 +134,7 @@ function ArtistResultCard({ card }: { card: ArtistCard }) {
           {artist.name}
         </div>
         <div
-          className={`mt-0.5 inline-flex items-center gap-1 text-[11px] font-semibold ${trendClass(
+          className={`mt-0.5 flex min-w-0 items-center gap-1 text-[11px] font-semibold ${trendClass(
             card.trend,
           )}`}
         >
@@ -261,15 +261,15 @@ function AskPage() {
               ref={answerRef}
               className="mt-4 w-full scroll-mt-24 animate-in fade-in slide-in-from-top-2 duration-500"
             >
-              <div className="flex flex-col gap-4 rounded-2xl border border-line bg-foreground/[0.02] p-4 text-left sm:flex-row sm:items-start sm:gap-4 sm:p-5">
+              <div className="flex flex-col gap-4 overflow-hidden rounded-2xl border border-line bg-foreground/[0.02] p-4 text-left sm:flex-row sm:items-start sm:gap-4 sm:p-5">
                 <div className="mt-0.5 grid size-8 flex-shrink-0 place-items-center rounded-lg bg-[var(--ink)] text-[10px] font-bold tracking-wider text-white">
                   NP
                 </div>
-                <div className="flex-1 space-y-4">
+                <div className="min-w-0 flex-1 space-y-4">
                   <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-foreground/40">
                     Réponse · {answer.q}
                   </div>
-                  <p className="text-[15px] leading-relaxed text-foreground">
+                  <p className="break-words text-[15px] leading-relaxed text-foreground">
                     {typed}
                     {loading && (
                       <span className="ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 animate-pulse bg-foreground/60 align-middle" />
@@ -277,12 +277,12 @@ function AskPage() {
                   </p>
 
                   {!loading && answer.cards && answer.cards.length > 0 && (
-                    <div className="grid gap-2 border-t border-line pt-4 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-2 border-t border-line pt-4 sm:grid-cols-2">
                       {answer.cards.map((c, i) => (
                         <div
                           key={`${c.slug}-${i}`}
                           style={{ animationDelay: `${i * 80}ms` }}
-                          className="animate-in fade-in slide-in-from-bottom-1 fill-mode-both"
+                          className="min-w-0 animate-in fade-in slide-in-from-bottom-1 fill-mode-both"
                         >
                           <ArtistResultCard card={c} />
                         </div>

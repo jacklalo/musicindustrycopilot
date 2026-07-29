@@ -9,7 +9,6 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import { PlayerProvider } from "@/components/player/PlayerProvider";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -74,15 +73,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
+      { title: "#NP Pilotage — Dashboard Artiste" },
       { name: "description", content: "Artist Pulse Terminal centralizes artist performance data into a premium, cinematic dashboard." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
+      { property: "og:title", content: "#NP Pilotage" },
       { property: "og:description", content: "Artist Pulse Terminal centralizes artist performance data into a premium, cinematic dashboard." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
+      { name: "twitter:title", content: "#NP Pilotage" },
       { name: "twitter:description", content: "Artist Pulse Terminal centralizes artist performance data into a premium, cinematic dashboard." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3e814043-76c4-46af-87e2-9e30588f4ac4/id-preview-75cd8887--43e7b37f-46f7-4d2a-8450-ff9f540e3c85.lovable.app-1780152285500.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3e814043-76c4-46af-87e2-9e30588f4ac4/id-preview-75cd8887--43e7b37f-46f7-4d2a-8450-ff9f540e3c85.lovable.app-1780152285500.png" },
@@ -119,11 +118,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PlayerProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
         <Toaster position="top-center" />
-      </PlayerProvider>
     </QueryClientProvider>
   );
 }

@@ -312,10 +312,10 @@ function Toolbar({
 
 function Leaderboard({ artists }: { artists: Artist[] }) {
   return (
-    <div className="mt-2">
+    <div className="mt-2 overflow-hidden">
       <div className="grid grid-cols-12 gap-4 border-b border-line pb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
         <div className="col-span-1">#</div>
-        <div className="col-span-5">Artiste / Titre</div>
+        <div className="col-span-7 md:col-span-5">Artiste / Titre</div>
         <div className="col-span-2 hidden md:block">Momentum</div>
         <div className="col-span-2 text-right">Streams</div>
         <div className="col-span-2 text-right">Δ 7j</div>
@@ -369,7 +369,7 @@ function ArtistRow({ a }: { a: Artist }) {
         <RankArrow delta={rankDelta} />
       </div>
 
-      <div className="col-span-5 flex items-center gap-4">
+      <div className="col-span-7 flex min-w-0 items-center gap-4 md:col-span-5">
         <span className="relative shrink-0">
           <img
             src={a.cover}
@@ -404,7 +404,7 @@ function ArtistRow({ a }: { a: Artist }) {
         </div>
       </div>
 
-      <div className="col-span-2 hidden md:block">
+      <div className="col-span-2 hidden min-w-0 md:block">
         <Sparkline status={a.status} delta={a.delta} />
       </div>
 
@@ -415,7 +415,7 @@ function ArtistRow({ a }: { a: Artist }) {
         </p>
       </div>
 
-      <div className="col-span-2 flex items-center justify-end gap-2">
+      <div className="col-span-2 flex min-w-0 items-center justify-end gap-2">
         <DeltaBadge delta={a.delta} status={a.status} />
         <RowActions artist={a} />
       </div>

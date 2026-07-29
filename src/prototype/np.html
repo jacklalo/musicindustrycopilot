@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#NP Pilotage — MVP V1 · Dashboard Artiste</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --background:#FEFDFC; --surface:#FAFAF9; --card:#FFFFFF;
+    --foreground:#0D0D0D; --ink:#060606; --ink-soft:#1B1B1B;
+    --muted:#F2F2EF; --muted-foreground:#646360;
+    --line:#E5E4E2; --ring:#8FA0B8;
+    --pop:#F51D31; --hero-dark:#0B0B0B; --footer:#050505;
+    --up:#16A34A; --rising:#2563EB; --stable:#9CA3AF; --down:#EA580C;
+    --amber:#B45309; --emerald:#047857;
+    --accent:#C8102E;
+    --radius:16px; --radius-card:26px;
+    --font:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+    --shadow-hover:0 24px 70px -28px rgba(0,0,0,.28);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font);background:var(--background);color:var(--foreground);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+
+  /* ---------- Animations ---------- */
+  @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  .rv{opacity:0}
+  .rv.in{animation:rise .6s cubic-bezier(.2,.7,.2,1) both}
+  @media (prefers-reduced-motion: reduce){.rv{opacity:1}.rv.in{animation:none}}
+
+  /* ---------- Header ---------- */
+  header.site{position:sticky;top:0;z-index:60;height:64px;background:rgba(254,253,252,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  header.site .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .brand{display:flex;align-items:baseline;gap:7px;cursor:pointer;text-decoration:none}
+  .brand .np{font-weight:800;font-style:italic;font-size:19px;letter-spacing:-.04em}
+  .brand .sub{font-size:10px;font-weight:600;letter-spacing:.24em;color:var(--muted-foreground)}
+  nav.main{display:flex;gap:26px;align-items:center}
+  nav.main a{font-size:13.5px;font-weight:600;color:var(--muted-foreground);text-decoration:none;padding:20px 0 18px;border-bottom:2px solid transparent;display:flex;align-items:center;gap:7px;transition:color .2s}
+  nav.main a:hover{color:var(--ink)}
+  nav.main a.active{color:var(--ink);border-bottom-color:var(--pop)}
+  nav.main .count{background:var(--pop);color:#fff;font-size:10px;font-weight:700;border-radius:9999px;padding:1px 6px}
+  nav.main .p2{font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--muted-foreground);border:1px solid var(--line);border-radius:9999px;padding:2px 7px}
+  .hdr-actions{display:flex;align-items:center;gap:12px}
+  .search-pill{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9999px;padding:8px 14px;font-size:13px;color:#A9A7A3;background:var(--card);cursor:pointer;min-width:190px;transition:border-color .2s, box-shadow .2s}
+  .search-pill:hover{border-color:#cfcecb;box-shadow:0 6px 20px -12px rgba(0,0,0,.2)}
+  .search-pill kbd{margin-left:auto;font-family:var(--font);font-size:10px;border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--muted-foreground)}
+  .avatar-mc{width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+  /* ---------- Photos duotone ---------- */
+  .ph{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--acc,var(--accent)) 0%,#0B0B0B 80%)}
+  .ph img{width:100%;height:100%;object-fit:cover;display:block;mix-blend-mode:luminosity;opacity:.88;filter:contrast(1.05);transition:transform .7s cubic-bezier(.2,.7,.2,1), opacity .4s}
+  .ph:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.42) 100%);pointer-events:none}
+  .ph .chip-on{position:absolute;z-index:2}
+
+  /* ---------- Générique ---------- */
+  .kicker{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--muted-foreground);display:flex;align-items:center;gap:8px}
+  .kicker .dot{width:6px;height:6px;border-radius:50%;background:var(--pop);display:inline-block;flex:none}
+  .display{font-weight:800;letter-spacing:-.045em;line-height:.94}
+  .display em{font-style:italic;color:#B9B7B3;font-weight:800}
+  .h-sect{font-size:clamp(26px,3vw,34px);font-weight:800;letter-spacing:-.03em;margin:0 0 4px;display:flex;align-items:baseline;gap:12px}
+  .h-sect small{font-size:12px;font-weight:600;color:var(--muted-foreground);letter-spacing:0}
+  .h-sub{font-size:13.5px;color:var(--muted-foreground);margin-bottom:20px;max-width:640px}
+  section.band{padding:52px 0}
+  .band.dark{background:#000;color:#fff}
+  .band.dark .kicker{color:rgba(255,255,255,.55)}
+  .band.dark p.lead{color:rgba(255,255,255,.65)}
+  p.lead{color:var(--muted-foreground);max-width:600px;font-size:15.5px;line-height:1.6}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-card);padding:28px;transition:box-shadow .3s, transform .3s}
+  .card.hov:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px)}
+  .card .kicker{margin-bottom:4px}
+  .grid{display:grid;gap:18px}
+  .g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+  .g-main{grid-template-columns:1.9fr 1fr;align-items:start}
+  @media(max-width:960px){.g2,.g3,.g4,.g-main{grid-template-columns:1fr}}
+  .num-xl{font-size:38px;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .num-lg{font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1}
+
+  /* Boutons */
+  .btn{display:inline-flex;align-items:center;gap:9px;border-radius:9999px;font-size:14px;font-weight:600;height:46px;padding:0 22px;border:0;cursor:pointer;font-family:var(--font);text-decoration:none;transition:transform .2s, box-shadow .2s, background .2s}
+  .btn .ar{display:inline-block;transition:transform .25s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -14px rgba(0,0,0,.35)}
+  .btn:hover .ar{transform:translate(3px,-3px)}
+  .btn-dark{background:var(--ink);color:#FCFCFC}
+  .btn-light{background:#fff;color:#000}
+  .btn-outline{background:transparent;color:var(--foreground);border:1px solid var(--line)}
+  .btn-outline:hover{border-color:var(--ink)}
+  .btn-outline-w{background:transparent;color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.2)}
+  .btn-outline-w:hover{border-color:#fff;color:#fff}
+  .btn-sm{height:36px;font-size:12.5px;padding:0 16px}
+  .chip{height:38px;padding:0 18px;border-radius:9999px;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--muted-foreground);cursor:pointer;font-family:var(--font);transition:all .25s}
+  .chip:hover{color:var(--ink);border-color:#bfbebb;transform:translateY(-1px)}
+  .chip.active{background:var(--ink);color:#FCFCFC;border-color:var(--ink)}
+  .chip-sm{height:32px;padding:0 14px;font-size:11.5px}
+  .group-label{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-foreground)}
+  .badge{display:inline-flex;align-items:center;gap:5px;border-radius:9999px;padding:5px 11px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+  .b-up{background:rgba(22,163,74,.09);color:var(--up)}
+  .b-rising{background:rgba(37,99,235,.09);color:var(--rising)}
+  .b-stable{background:rgba(156,163,175,.13);color:#6B7280}
+  .b-down{background:rgba(234,88,12,.09);color:var(--down)}
+  .b-manual{background:var(--muted);color:var(--muted-foreground);border:1px solid var(--line)}
+  .b-accent{background:color-mix(in srgb, var(--accent) 9%, transparent);color:var(--accent)}
+  .b-outline-green{background:#ECFDF5;color:var(--emerald);border:1px solid #A7F3D0}
+  .delta{font-weight:700;font-size:14px}
+  .delta.pos{color:var(--up)}.delta.neg{color:var(--down)}.delta.flat{color:var(--stable)}
+
+  /* KPI band — gros chiffres bold */
+  .kpi-band{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line);background:var(--card)}
+  .kpi{padding:30px 40px;border-left:1px solid var(--line);transition:background .25s}
+  .kpi:hover{background:var(--surface)}
+  .kpi:first-child{border-left:none}
+  .kpi .lab{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:10px}
+  .kpi .val{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .kpi .cmp{font-size:12.5px;font-weight:600}
+  @media(max-width:960px){.kpi-band{grid-template-columns:1fr 1fr}.kpi{padding:20px 24px}.kpi .val{font-size:26px}}
+
+  /* Sous-navigation sticky (dashboard artiste) */
+  .subnav{position:sticky;top:64px;z-index:50;background:rgba(254,253,252,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .subnav .wrap{display:flex;gap:6px;align-items:center;padding:10px 32px;overflow-x:auto;scrollbar-width:none}
+  .subnav .wrap::-webkit-scrollbar{display:none}
+  .subnav a{font-size:12.5px;font-weight:600;color:var(--muted-foreground);text-decoration:none;padding:8px 14px;border-radius:9999px;white-space:nowrap;transition:all .2s}
+  .subnav a:hover{color:var(--ink);background:var(--muted)}
+  .subnav a.on{background:var(--ink);color:#fff}
+  .subnav .right{margin-left:auto;display:flex;gap:10px;align-items:center;flex:none}
+  .sync{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-foreground);display:flex;align-items:center;gap:7px;white-space:nowrap}
+  .sync .ok{width:6px;height:6px;border-radius:50%;background:var(--up)}
+  .sync .warn{width:6px;height:6px;border-radius:50%;background:var(--amber)}
+
+  /* Filtres */
+  .filters{border-bottom:1px solid var(--line);background:var(--background)}
+  .filters .wrap{display:flex;align-items:center;gap:10px;padding:14px 32px;flex-wrap:wrap}
+  .filters .sep{width:1px;height:22px;background:var(--line);margin:0 6px}
+  .filters .right{margin-left:auto;display:flex;align-items:center;gap:12px}
+
+  /* Tables */
+  table.data{width:100%;border-collapse:collapse;font-size:14px}
+  table.data th{text-align:left;font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-foreground);padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+  table.data td{padding:15px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+  table.data tr:last-child td{border-bottom:none}
+  table.data td.num, table.data th.num{text-align:right;font-variant-numeric:tabular-nums}
+  tr.click{cursor:pointer;transition:background .2s}
+  tr.click td:first-child{position:relative}
+  tr.click td:first-child:before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:3px;background:var(--accent);opacity:0;transition:opacity .2s}
+  tr.click:hover{background:var(--surface)}
+  tr.click:hover td:first-child:before{opacity:1}
+  .cell-title b{font-size:15.5px;font-weight:700;display:block;letter-spacing:-.01em}
+  .cell-title span{font-size:11.5px;color:var(--muted-foreground)}
+  .row-flex{display:flex;align-items:center;gap:14px}
+  .cover-ph{width:48px;height:48px;border-radius:11px;flex:none;position:relative;overflow:hidden}
+  .cover-ph img{transition:transform .5s}
+  tr.click:hover .cover-ph img{transform:scale(1.12)}
+
+  /* Tuiles stat — chiffres bold */
+  .tile{border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;background:var(--card);transition:box-shadow .25s, transform .25s}
+  .tile:hover{box-shadow:0 14px 40px -20px rgba(0,0,0,.22);transform:translateY(-2px)}
+  .tile .lab{font-size:9.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:8px}
+  .tile .val{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .tile .cmp{font-size:12px;margin-top:6px}
+
+  /* Barres */
+  .track{height:7px;border-radius:9999px;background:#F0EFED;overflow:hidden}
+  .fill{display:block;height:100%;border-radius:9999px;background:var(--accent);transition:width .8s cubic-bezier(.2,.7,.2,1)}
+  .brow{margin-bottom:13px}
+  .btop{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+  .btop b{font-weight:600}
+  .btop span{color:var(--muted-foreground);font-variant-numeric:tabular-nums}
+
+  /* Hero artiste avec photo */
+  .a-hero{color:#fff;background:linear-gradient(135deg,var(--accent) 0%,#0B0B0B 72%)}
+  .a-hero .wrap{padding:46px 32px 50px;display:grid;grid-template-columns:1.2fr .8fr;gap:44px;align-items:center}
+  @media(max-width:960px){.a-hero .wrap{grid-template-columns:1fr}}
+  .a-hero .back{font-size:10px;font-weight:600;letter-spacing:.22em;color:rgba(255,255,255,.6);text-decoration:none;transition:color .2s}
+  .a-hero .back:hover{color:#fff}
+  .a-hero .meta{font-size:10px;font-weight:600;letter-spacing:.22em;color:rgba(255,255,255,.55);margin:20px 0 10px;text-transform:uppercase}
+  .a-hero h1{font-size:clamp(48px,7vw,92px);font-weight:800;letter-spacing:-.045em;line-height:.92}
+  .a-hero p{color:rgba(255,255,255,.72);font-size:15px;max-width:460px;margin-top:14px}
+  .a-hero .actions{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+  .a-hero .ph{border-radius:var(--radius-card);aspect-ratio:1/1;max-height:400px;width:100%;box-shadow:0 40px 90px -30px rgba(0,0,0,.6)}
+  .a-hero .ph:hover img{transform:scale(1.045)}
+  .track-chip{position:absolute;left:14px;bottom:14px;z-index:2;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);color:#fff;border-radius:9999px;padding:7px 14px;font-size:10.5px;font-weight:700;letter-spacing:.14em;display:flex;align-items:center;gap:7px}
+  .track-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--pop)}
+
+  /* Cards artistes (accueil) */
+  .artist-card{border:1px solid var(--line);border-radius:var(--radius-card);background:var(--card);overflow:hidden;cursor:pointer;transition:box-shadow .35s, transform .35s;text-decoration:none;display:block}
+  .artist-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-5px)}
+  .artist-card .ph{height:230px}
+  .artist-card:hover .ph img{transform:scale(1.07)}
+  .artist-card .lbl{position:absolute;top:14px;left:14px;z-index:2;background:rgba(0,0,0,.5);color:#fff;font-size:9px;font-weight:700;letter-spacing:.15em;border-radius:9999px;padding:5px 11px;backdrop-filter:blur(6px)}
+  .artist-card .nm{position:absolute;left:18px;right:18px;bottom:14px;z-index:2;color:#fff;font-size:24px;font-weight:800;letter-spacing:-.025em;display:flex;justify-content:space-between;align-items:center}
+  .artist-card .nm .ar{transition:transform .3s;font-size:16px;opacity:.8}
+  .artist-card:hover .nm .ar{transform:translate(4px,-4px);opacity:1}
+  .artist-card .body{padding:16px 20px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .artist-card .meta{font-size:12.5px;color:var(--muted-foreground)}
+  .artist-card .st{text-align:right}
+  .artist-card .st b{font-size:20px;font-weight:800;letter-spacing:-.02em;display:block;line-height:1.1}
+  .artist-card .st span{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-foreground)}
+
+  /* Hero accueil — stack photos inclinées */
+  .stack{position:relative;height:420px}
+  .stack .ph{position:absolute;border-radius:22px;box-shadow:0 40px 80px -20px rgba(0,0,0,.55);transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+  .stack .s1{width:62%;aspect-ratio:.9;right:6%;top:0;transform:rotate(4deg);z-index:2}
+  .stack .s2{width:48%;aspect-ratio:.9;left:2%;bottom:0;transform:rotate(-7deg);z-index:1;opacity:.9}
+  .stack:hover .s1{transform:rotate(2deg) translateY(-8px)}
+  .stack:hover .s2{transform:rotate(-9deg) translateY(6px)}
+  @media(max-width:960px){.stack{display:none}}
+
+  /* Alertes */
+  .alert-item{display:flex;gap:16px;padding:20px 24px;border:1px solid var(--line);border-radius:20px;background:var(--card);align-items:center;transition:box-shadow .25s, transform .25s}
+  .alert-item:hover{box-shadow:0 16px 45px -22px rgba(0,0,0,.22);transform:translateX(4px)}
+  .a-ic{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;font-size:16px;font-weight:700}
+  .alert-item .cat-lab{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:4px}
+  .alert-item p{font-size:15px;font-weight:700;letter-spacing:-.01em;line-height:1.35}
+  .alert-item .rule{font-size:11px;color:var(--muted-foreground);margin-top:4px;font-family:var(--mono)}
+  .alert-item time{font-size:11.5px;color:var(--muted-foreground);margin-left:auto;flex:none}
+
+  /* Formulaires */
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:7px}
+  .field input,.field select{width:100%;font-family:var(--font);font-size:14px;color:var(--foreground);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 15px;outline:none;transition:border-color .2s, box-shadow .2s}
+  .field input:focus,.field select:focus{border-color:var(--ring);box-shadow:0 0 0 3px rgba(143,160,184,.15)}
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+  @media(max-width:700px){.fgrid{grid-template-columns:1fr}}
+
+  svg text{font-family:var(--font)}
+  .spark-label{font-size:10.5px;fill:var(--muted-foreground)}
+
+  /* Toast / modal */
+  #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;font-size:13.5px;font-weight:500;border-radius:9999px;padding:13px 24px;opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.2,.7,.2,1);z-index:100;display:flex;gap:10px;align-items:center;box-shadow:0 20px 50px -15px rgba(0,0,0,.4)}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:90;display:none;align-items:flex-start;justify-content:center;padding-top:12vh}
+  #overlay.show{display:flex}
+  .modal{width:460px;max-width:92vw;background:var(--card);border-radius:18px;overflow:hidden;box-shadow:0 40px 120px -20px rgba(0,0,0,.5);animation:rise .35s cubic-bezier(.2,.7,.2,1)}
+  .modal .m-head{padding:18px 24px;border-bottom:1px solid var(--line)}
+  .modal .m-head .lab{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:3px}
+  .modal .m-head b{font-size:16px;letter-spacing:-.01em}
+  .modal .m-body{padding:20px 24px}
+  .modal .opt{display:flex;gap:14px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:15px 17px;cursor:pointer;margin-bottom:10px;transition:border-color .2s, transform .2s}
+  .modal .opt:hover{border-color:var(--ink);transform:translateX(3px)}
+  .modal .opt .ic{width:38px;height:38px;border-radius:11px;background:var(--muted);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+  .modal .opt b{font-size:14px;display:block}
+  .modal .opt span{font-size:12px;color:var(--muted-foreground)}
+  .modal input.srch{width:100%;border:0;outline:0;font-family:var(--font);font-size:15px;padding:17px 22px;border-bottom:1px solid var(--line)}
+  .modal .grp{font-size:11px;font-weight:600;color:var(--muted-foreground);padding:12px 22px 4px}
+  .modal .srow{display:flex;gap:13px;align-items:center;padding:10px 22px;cursor:pointer;transition:background .15s}
+  .modal .srow:hover{background:var(--surface)}
+  .modal .srow b{font-size:14px;display:block}
+  .modal .srow span{font-size:12px;color:var(--muted-foreground)}
+  .srow .cover-ph{width:38px;height:38px;border-radius:9px}
+
+  /* ---------- Leaderboards ---------- */
+  .lb{border:1px solid var(--line);border-radius:var(--radius-card);background:var(--card);overflow:hidden}
+  .lb-row{display:grid;align-items:center;gap:18px;padding:18px 26px;cursor:pointer;transition:background .2s;position:relative;text-decoration:none;color:inherit}
+  .lb-row + .lb-row{border-top:1px solid var(--line)}
+  .lb-row:before{content:'';position:absolute;left:0;top:16%;bottom:16%;width:4px;border-radius:0 4px 4px 0;background:var(--acc,var(--accent));opacity:0;transition:opacity .2s}
+  .lb-row:hover{background:var(--surface)}
+  .lb-row:hover:before{opacity:1}
+  .lb-row .go{color:var(--muted-foreground);font-size:15px;transition:transform .25s;justify-self:end}
+  .lb-row:hover .go{transform:translate(3px,-3px);color:var(--ink)}
+  .lb-rank{font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+  .lb-rank small{display:block;font-size:10px;font-weight:700;letter-spacing:.06em;margin-top:4px}
+  .rk-up{color:var(--up)}.rk-dn{color:var(--down)}.rk-eq{color:var(--stable)}
+  .lb-ph{width:62px;height:62px;border-radius:15px;overflow:hidden;flex:none}
+  .lb-row:hover .lb-ph img{transform:scale(1.1)}
+  .lb-name{min-width:0}
+  .lb-name b{display:block;font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lb-name span{display:block;font-size:12px;color:var(--muted-foreground);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lb-name .mono{font-family:var(--mono);font-size:10.5px}
+  .lb-gauge{min-width:0}
+  .lb-gauge .track{height:8px;display:block}
+  .lb-gauge .glab{display:flex;justify-content:space-between;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:7px}
+  .lb-val{text-align:right}
+  .lb-val b{font-size:27px;font-weight:800;letter-spacing:-.02em;display:block;line-height:1;font-variant-numeric:tabular-nums}
+  .lb-val span{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-foreground);display:block;margin-top:5px}
+  .lb-a{grid-template-columns:52px 62px minmax(140px,1.5fr) 145px 122px 16px}
+  .lb-t{grid-template-columns:56px 62px minmax(150px,1.6fr) 118px 100px 130px 18px}
+  .lb-r{grid-template-columns:46px 1fr 1.1fr 96px}
+  .lb-p{grid-template-columns:76px 1.3fr 110px 150px 80px}
+  .lb-foot{padding:13px 28px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted-foreground);background:var(--surface)}
+  @media(max-width:960px){.lb-a{grid-template-columns:44px 52px 1fr 110px}.lb-t{grid-template-columns:44px 52px 1fr 110px}.lb-p{grid-template-columns:60px 1fr 110px}.hm{display:none!important}.lb-rank{font-size:24px}.lb-val b{font-size:22px}}
+
+  /* Spotlight sticky */
+  .spot{position:sticky;top:84px;border:1px solid var(--line);border-radius:var(--radius-card);overflow:hidden;background:var(--card);transition:box-shadow .3s}
+  .spot:hover{box-shadow:var(--shadow-hover)}
+  .spot .ph{height:280px}
+  .spot:hover .ph img{transform:scale(1.05)}
+  .spot .body{padding:20px 24px 24px}
+  .spot .body h3{font-size:26px;font-weight:800;letter-spacing:-.025em;line-height:1}
+  .spot .body .meta{font-size:12px;color:var(--muted-foreground);margin-top:4px}
+  .spot .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0;margin:16px 0}
+  .spot .stats .lab{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:6px}
+  .spot .stats b{font-size:22px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+
+  footer.site{background:var(--footer);color:rgba(255,255,255,.7);margin-top:80px}
+  footer.site .wrap{padding:32px;display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:.2em;font-weight:600;flex-wrap:wrap;gap:12px}
+  footer.site .np{font-weight:800;font-style:italic;font-size:15px;letter-spacing:-.04em;color:#fff}
+
+  .note-line{font-size:11.5px;color:var(--muted-foreground);display:flex;gap:8px;align-items:flex-start;margin-top:14px}
+  .empty{padding:40px;text-align:center;color:var(--muted-foreground);font-size:13.5px}
+  .placeholder-box{border:1px dashed #cfcecb;border-radius:var(--radius-card);padding:46px 34px;text-align:center;color:var(--muted-foreground);transition:border-color .25s, transform .25s}
+  .placeholder-box:hover{border-color:var(--ink);transform:translateY(-3px)}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="#/artistes"><span class="np">#NP</span><span class="sub">PILOTAGE</span></a>
+    <nav class="main" id="nav">
+      <a href="#/artistes" data-r="artistes">Artistes</a>
+      <a href="#/alertes" data-r="alertes">Alertes <span class="count" id="nav-alert-count"></span></a>
+      <a href="#/saisie" data-r="saisie">Saisie</a>
+      <a href="#/label" data-r="label">Label <span class="p2">PHASE 2</span></a>
+    </nav>
+    <div class="hdr-actions">
+      <div class="search-pill" onclick="openSearch()">🔍 Rechercher <kbd>⌘K</kbd></div>
+      <div class="avatar-mc">MC</div>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer class="site">
+  <div class="wrap">
+    <span><span class="np">#NP</span>&nbsp;&nbsp;PILOTAGE · MVP V1 · PROTOTYPE</span>
+    <span>6&7 · SYNDICATE RECORDS — HASHTAG · 2026</span>
+  </div>
+</footer>
+
+<div id="toast"></div>
+<div id="overlay" onclick="if(event.target===this)closeOverlay()"><div class="modal" id="modal"></div></div>
+
+<script>
+const SEMAINE = { num: 31, du: 'ven 24/07', au: 'ven 31/07/2026' };
+const SEUILS = { streaming: 20, shazam: 300, score: 50 }; // §8.3 — fixes V1
+
+const ARTISTS = [
+  { id:'zazie', nom:'Zazie', label:'6&7', genre:'Pop · Chanson', ville:'Paris, FR', accent:'#C8102E',
+    bio:"Autrice-compositrice icône de la pop francophone, retour attendu avec un single épuré.",
+    streams:2900000, delta:12.4, listeners:3100000, listenersDelta:4.1, score:62, scorePrev:57,
+    social:{ig:1600000,igD:1.8,tt:420000,ttD:6.2,posts:14,ugc:241000,ugcD:38},
+    demo:{f:58,age:'25-44 (61%)',pays:[['France',72],['Belgique',9],['Suisse',6],['Canada',5]],shift:'Progression Bruxelles (+82% streams) & Lyon — audience stable en âge.'},
+    physique:{mep:12500,d2c:1840,magasins:6200},
+    radio:{rang:4, rangPrev:7, diffusions:[['NRJ',48],['RTL2',41],['France Inter',22],['Europe 2',19],['Chérie FM',17]]},
+    actus:[['Interview','Quotidien — TMC','04/08/2026'],['Sortie single','« Peu Importe » (radio edit)','21/08/2026'],['Campagne','Meta + TikTok Ads — 15 k€','25/08/2026']],
+    titres:[
+      { isrc:'FR-Z03-26-00101', upc:'3700187679101', titre:'Peu Importe', projet:'Single', sortie:'2026',
+        streamsHebdo:412000, delta:24.1, shazamJour:186, playlists:[['Hits France','Spotify','Entrée · S31',3,'#12'],['Nouveautés Pop','Deezer','S29',14,'#8'],['A-List Pop','Apple Music','S30',8,'#21']],
+        cadence:[212,228,241,255,268,290,332,412], dsp:{Spotify:58,Apple:17,Deezer:16,Amazon:9}, sources:{actives:64,passives:36} },
+      { isrc:'FR-Z03-24-00072', upc:'3700187679095', titre:'Comment on fait', projet:'Album « Zest of »', sortie:'2024',
+        streamsHebdo:96000, delta:3.2, shazamJour:31, playlists:[['Chanson française','Spotify','S12',134,'#44']],
+        cadence:[89,91,90,94,92,95,93,96], dsp:{Spotify:52,Apple:15,Deezer:24,Amazon:9}, sources:{actives:31,passives:69} },
+      { isrc:'FR-Z03-23-00051', upc:'3700187679081', titre:'À ma place', projet:'Album « Personne n\'est parfait »', sortie:'2023',
+        streamsHebdo:41000, delta:-2.8, shazamJour:12, playlists:[],
+        cadence:[46,45,44,44,43,42,42,41], dsp:{Spotify:49,Apple:14,Deezer:28,Amazon:9}, sources:{actives:18,passives:82} },
+    ]},
+  { id:'jeremy-frerot', nom:'Jérémy Frerot', label:'6&7', genre:'Pop', ville:'Bordeaux, FR', accent:'#5A8DB8',
+    bio:"Solo après Fréro Delavega, pop atlantique et écriture intime. Album « Frerot » disponible.",
+    streams:3400000, delta:22.8, listeners:2800000, listenersDelta:6.3, score:58, scorePrev:54,
+    social:{ig:980000,igD:2.4,tt:310000,ttD:4.8,posts:9,ugc:88000,ugcD:12},
+    demo:{f:64,age:'25-34 (44%)',pays:[['France',81],['Belgique',7],['Suisse',5],['Canada',3]],shift:'Percée Toulouse & Nantes. Légère féminisation de l\'audience.'},
+    physique:{mep:8200,d2c:960,magasins:4100},
+    radio:{rang:2, rangPrev:3, diffusions:[['RTL2',52],['NRJ',44],['Europe 2',31],['Virgin Radio',26],['Chérie FM',21]]},
+    actus:[['Interview','France Inter — matinale','06/08/2026'],['Sortie','EP acoustique','11/09/2026']],
+    titres:[
+      { isrc:'FR-6V8-26-00214', upc:'3700187679210', titre:'Un homme', projet:'Album « Frerot »', sortie:'2026',
+        streamsHebdo:520000, delta:22.8, shazamJour:97, playlists:[['Playlist >100K user','Spotify','S31 (hors MVP — à arbitrer)',1,'—'],['Hits France','Spotify','S28',22,'#28']],
+        cadence:[298,310,325,352,371,398,424,520], dsp:{Spotify:61,Apple:14,Deezer:17,Amazon:8}, sources:{actives:58,passives:42} },
+      { isrc:'FR-6V8-25-00187', upc:'3700187679198', titre:'Un homme ça pleure pas', projet:'Album « Frerot »', sortie:'2025',
+        streamsHebdo:130000, delta:8.1, shazamJour:44, playlists:[['Pop FR','Deezer','S22',63,'#15']],
+        cadence:[102,105,109,112,116,119,120,130], dsp:{Spotify:55,Apple:16,Deezer:20,Amazon:9}, sources:{actives:39,passives:61} },
+    ]},
+  { id:'skip-the-use', nom:'Skip the Use', label:'Syndicate Records', genre:'Rock · Electro', ville:'Lille, FR', accent:'#2DE07A',
+    bio:"Machine rock-electro lilloise, retour scénique explosif attendu sur « Silence ».",
+    streams:1800000, delta:8.6, listeners:1500000, listenersDelta:2.2, score:51, scorePrev:52,
+    social:{ig:410000,igD:0.9,tt:150000,ttD:2.1,posts:6,ugc:34000,ugcD:5},
+    demo:{f:41,age:'25-34 (39%)',pays:[['France',77],['Belgique',10],['Allemagne',4],['Suisse',4]],shift:'Audience stable, cœur 25-34. Frémissement Belgique.'},
+    physique:{mep:5400,d2c:2210,magasins:2600},
+    radio:{rang:9, rangPrev:8, diffusions:[['OÜI FM',33],['Virgin Radio',24],['RTL2',18],['Mouv\'',9],['France Inter',7]]},
+    actus:[['Live','L\'Olympia — ouverture billetterie','09/07/2026'],['Sync','Piste pub TV — à confirmer','—']],
+    titres:[
+      { isrc:'FR-SYN-26-00092', upc:'3700187679302', titre:'Silence', projet:'Single', sortie:'2026',
+        streamsHebdo:240000, delta:8.6, shazamJour:58, playlists:[['Rock FR','Deezer','Sortie · S31',0,'—'],['New Rock','Spotify','S27',29,'#34']],
+        cadence:[198,204,210,215,221,225,232,240], dsp:{Spotify:54,Apple:12,Deezer:23,Amazon:11}, sources:{actives:47,passives:53} },
+    ]},
+  { id:'hina', nom:'Hina', label:'6&7', genre:'Pop', ville:'Paris, FR', accent:'#ED2362',
+    bio:"Nouvelle scène pop française — « Fantaisie » explose sur TikTok.",
+    streams:820000, delta:34.2, listeners:640000, listenersDelta:11.8, score:44, scorePrev:38,
+    social:{ig:220000,igD:9.4,tt:480000,ttD:21.5,posts:22,ugc:240000,ugcD:96},
+    demo:{f:71,age:'18-29 (67%)',pays:[['France',69],['Belgique',11],['Maroc',6],['Suisse',4]],shift:'Explosion 18-24 · ligne urbaine Paris/Lyon/Marseille. Nouvelles villes : Lille, Bruxelles.'},
+    physique:{mep:900,d2c:340,magasins:410},
+    radio:{rang:18, rangPrev:26, diffusions:[['NRJ',12],['Fun Radio',9],['Skyrock',7],['Europe 2',4],['Virgin Radio',3]]},
+    actus:[['Sortie','EP « Fantaisie » — 4 titres','18/09/2026'],['Campagne','Activation créateurs TikTok — 8 k€','05/08/2026']],
+    titres:[
+      { isrc:'FR-6V8-26-00301', upc:'3700187679455', titre:'Fantaisie', projet:'Single', sortie:'2026',
+        streamsHebdo:310000, delta:34.2, shazamJour:412, playlists:[['Viral France','Spotify','Entrée · S30',9,'#4'],['Nouveautés Pop','Deezer','S30',10,'#6']],
+        cadence:[88,96,110,132,158,189,231,310], dsp:{Spotify:63,Apple:11,Deezer:15,Amazon:11}, sources:{actives:78,passives:22} },
+    ]},
+  { id:'virgile-martini', nom:'Virgile Martini', label:'Syndicate Records', genre:'Pop alternative', ville:'Paris, FR', accent:'#1E5BFF',
+    bio:"Profil emerging — taux d'ajout en playlists en forte hausse.",
+    streams:610000, delta:33.7, listeners:520000, listenersDelta:9.2, score:38, scorePrev:33,
+    social:{ig:88000,igD:5.1,tt:130000,ttD:14.2,posts:11,ugc:52000,ugcD:41},
+    demo:{f:54,age:'18-29 (58%)',pays:[['France',74],['Belgique',8],['Suisse',6],['Québec',5]],shift:'Découverte forte via playlists édito. Audience jeune en construction.'},
+    physique:{mep:0,d2c:180,magasins:0},
+    radio:{rang:31, rangPrev:34, diffusions:[['Mouv\'',6],['OÜI FM',4],['Fun Radio',3],['NRJ',2],['Virgin Radio',2]]},
+    actus:[['Sortie','Single « Un homme ça pleure pas » (feat.)','28/08/2026']],
+    titres:[
+      { isrc:'FR-SYN-26-00118', upc:'3700187679520', titre:'Nuit blanche', projet:'EP « Discover »', sortie:'2026',
+        streamsHebdo:145000, delta:33.7, shazamJour:74, playlists:[['Découvertes de la semaine','Spotify','Entrée · S31',2,'#9'],['New Pop','Apple Music','S30',11,'#18']],
+        cadence:[52,58,64,71,80,92,108,145], dsp:{Spotify:66,Apple:13,Deezer:12,Amazon:9}, sources:{actives:81,passives:19} },
+    ]},
+  { id:'krisy', nom:'Krisy', label:'Syndicate Records', genre:'Rap', ville:'Paris, FR', accent:'#4B2D7A',
+    bio:"Plume rap mélodique — catalogue solide, cycle entre deux projets.",
+    streams:1500000, delta:-21.3, listeners:1200000, listenersDelta:-3.4, score:47, scorePrev:49,
+    social:{ig:350000,igD:0.4,tt:210000,ttD:-1.2,posts:3,ugc:18000,ugcD:-8},
+    demo:{f:38,age:'18-29 (62%)',pays:[['France',80],['Belgique',9],['Suisse',4],['Maroc',3]],shift:'Vieillissement léger du cœur d\'audience — repli post-projet classique.'},
+    physique:{mep:2100,d2c:520,magasins:900},
+    radio:{rang:22, rangPrev:19, diffusions:[['Skyrock',21],['Mouv\'',14],['Générations',11],['Fun Radio',3],['NRJ',2]]},
+    actus:[['Sortie','Mixtape — date à caler','Q4 2026']],
+    titres:[
+      { isrc:'FR-SYN-25-00076', upc:'3700187679610', titre:'Rituel', projet:'Album « Rituel »', sortie:'2025',
+        streamsHebdo:190000, delta:-21.3, shazamJour:22, playlists:[['Rap FR','Spotify','Sortie · S31',0,'—']],
+        cadence:[310,298,285,271,262,254,241,190], dsp:{Spotify:59,Apple:10,Deezer:21,Amazon:10}, sources:{actives:24,passives:76} },
+    ]},
+  { id:'laura-ferre', nom:'Laura Ferré', label:'6&7', genre:'Chanson · Pop', ville:'Paris, FR', accent:'#B08D2F',
+    bio:"Co-exploitation avec PlayTwo — données récupérées via accès Believe Backstage individuel.",
+    special:'Accès Believe individuel · co-exploitation PlayTwo',
+    streams:310000, delta:5.4, listeners:280000, listenersDelta:1.9, score:36, scorePrev:35,
+    social:{ig:96000,igD:1.1,tt:41000,ttD:2.8,posts:7,ugc:9000,ugcD:3},
+    demo:{f:66,age:'35-54 (48%)',pays:[['France',88],['Belgique',5],['Suisse',4]],shift:'Audience fidèle, plus âgée que la moyenne roster.'},
+    physique:{mep:1600,d2c:240,magasins:1100},
+    radio:{rang:15, rangPrev:15, diffusions:[['France Bleu',18],['RTL',12],['Europe 1',8],['Chérie FM',6],['Nostalgie',5]]},
+    actus:[['Média','France 3 — émission régionale','12/08/2026']],
+    titres:[
+      { isrc:'FR-PT2-26-00033', upc:'3700187679705', titre:'Soleil bleu', projet:'Album « Vanille »', sortie:'2026',
+        streamsHebdo:52000, delta:5.4, shazamJour:9, playlists:[['Chanson douce','Deezer','S26',38,'#27']],
+        cadence:[44,45,46,47,47,48,49,52], dsp:{Spotify:41,Apple:12,Deezer:36,Amazon:11}, sources:{actives:21,passives:79} },
+    ]},
+];
+
+/* Alertes générées par le moteur de règles (§8.3 — seuils fixes) */
+const ALERTES = [
+  { cat:'STREAMING', color:'#16A34A', ic:'↑', niveau:'titre', artiste:'jeremy-frerot',
+    txt:'Jérémy Frerot · « Un homme » : +22.8% de streams (S31 vs S30)',
+    rule:'Règle : évolution > +20% semaine N vs N-1', time:'il y a 2 h' },
+  { cat:'STREAMING', color:'#16A34A', ic:'↑', niveau:'titre', artiste:'hina',
+    txt:'Hina · « Fantaisie » : +34.2% de streams (S31 vs S30)',
+    rule:'Règle : évolution > +20% semaine N vs N-1', time:'il y a 2 h' },
+  { cat:'STREAMING', color:'#EA580C', ic:'↓', niveau:'titre', artiste:'krisy',
+    txt:'Krisy · « Rituel » : −21.3% de streams (S31 vs S30)',
+    rule:'Règle : évolution < −20% semaine N vs N-1', time:'il y a 2 h' },
+  { cat:'SHAZAM', color:'#ED2362', ic:'✳', niveau:'titre', artiste:'hina',
+    txt:'Hina · « Fantaisie » : 412 Shazams/jour',
+    rule:'Règle : > 300/jour (seuil à confirmer : 500 évoqué — Q2 client)', time:'hier' },
+  { cat:'PLAYLIST ÉDITO', color:'#1E5BFF', ic:'▸', niveau:'titre', artiste:'zazie',
+    txt:'Zazie · « Peu Importe » : entrée playlist « Hits France » (Spotify, #12)',
+    rule:'Règle : entrée de playlist éditoriale', time:'il y a 4 h' },
+  { cat:'PLAYLIST ÉDITO', color:'#EA580C', ic:'◂', niveau:'titre', artiste:'skip-the-use',
+    txt:'Skip the Use · « Silence » : sortie playlist « Rock FR » (Deezer)',
+    rule:'Règle : sortie de playlist éditoriale', time:'hier' },
+  { cat:'SCORE SPOTIFY', color:'#4B2D7A', ic:'★', niveau:'artiste', artiste:'zazie',
+    txt:'Zazie : Score Spotify 62/100 — au-dessus du seuil',
+    rule:'Règle : popularity > 50', time:'ven. dernier' },
+  { cat:'SCORE SPOTIFY', color:'#4B2D7A', ic:'★', niveau:'artiste', artiste:'jeremy-frerot',
+    txt:'Jérémy Frerot : Score Spotify 58/100 — au-dessus du seuil',
+    rule:'Règle : popularity > 50', time:'ven. dernier' },
+];
+
+/* Saisies manuelles (historisées comme les données auto — §7.5) */
+let SAISIES = [
+  { type:'Physique — Mise en place', artiste:'Zazie', ref:'Album « Zest of » (UPC 3700187679095)', val:'12 500 unités', date:'25/07/2026', par:'MC' },
+  { type:'Physique — Magasins', artiste:'Jérémy Frerot', ref:'FNAC (national)', val:'2 300 unités', date:'25/07/2026', par:'MC' },
+  { type:'Physique — D2C', artiste:'Skip the Use', ref:'Shop officiel (merch + vinyle)', val:'2 210 unités', date:'24/07/2026', par:'AL' },
+  { type:'Actu — Date média', artiste:'Zazie', ref:'Quotidien (TMC) — interview', val:'04/08/2026', date:'22/07/2026', par:'MC' },
+  { type:'Actu — Lancement pub', artiste:'Hina', ref:'Activation créateurs TikTok', val:'8 000 € — 05/08/2026', date:'21/07/2026', par:'AL' },
+  { type:'Actu — Sortie prévue', artiste:'Hina', ref:'EP « Fantaisie » — 4 titres', val:'18/09/2026', date:'18/07/2026', par:'MC' },
+];
+
+/* ================================================================
+   IMAGES — Unsplash (duotone via blend avec l'accent artiste)
+================================================================ */
+const U = id => `https://images.unsplash.com/${id}?q=80&w=900&auto=format&fit=crop`;
+const IMGS = {
+  'zazie':          U('photo-1516450360452-9312f5e86fc7'),
+  'jeremy-frerot':  U('photo-1507525428034-b723cf961d3e'),
+  'skip-the-use':   U('photo-1470225620780-dba8ba36b745'),
+  'hina':           U('photo-1514525253161-7a46d19cd819'),
+  'virgile-martini':U('photo-1493225457124-a3eb161ffa5f'),
+  'krisy':          U('photo-1571330735066-03aaa9429d89'),
+  'laura-ferre':    U('photo-1511671782779-c97d3d27a1d4'),
+};
+const TIMGS = {
+  'FR-Z03-26-00101':'photo-1516450360452-9312f5e86fc7',
+  'FR-Z03-24-00072':'photo-1494354145959-25cb82edf23d',
+  'FR-Z03-23-00051':'photo-1520523839897-bd0b52f945a0',
+  'FR-6V8-26-00214':'photo-1507525428034-b723cf961d3e',
+  'FR-6V8-25-00187':'photo-1483412033650-1015ddeb83d1',
+  'FR-SYN-26-00092':'photo-1470225620780-dba8ba36b745',
+  'FR-6V8-26-00301':'photo-1514525253161-7a46d19cd819',
+  'FR-SYN-26-00118':'photo-1493225457124-a3eb161ffa5f',
+  'FR-SYN-25-00076':'photo-1571330735066-03aaa9429d89',
+  'FR-PT2-26-00033':'photo-1511671782779-c97d3d27a1d4',
+};
+/* Engagements & posts les plus forts (onglet 0 — Artiste/Post) */
+const TOPPOSTS = {
+  'zazie':          { plat:'Instagram', type:'Reel', txt:'Teaser « Peu Importe » — extrait studio', eng:184000, engD:41 },
+  'jeremy-frerot':  { plat:'Instagram', type:'Post', txt:'Annonce Zénith Métropole — Nantes', eng:96000, engD:18 },
+  'skip-the-use':   { plat:'Instagram', type:'Reel', txt:'Répétitions Olympia — backstage', eng:44000, engD:9 },
+  'hina':           { plat:'TikTok', type:'Vidéo', txt:'Trend « Fantaisie » — duo créateurs', eng:412000, engD:96 },
+  'virgile-martini':{ plat:'TikTok', type:'Vidéo', txt:'Session live « Nuit blanche »', eng:78000, engD:52 },
+  'krisy':          { plat:'Instagram', type:'Story', txt:'Teasing mixtape — extrait 20s', eng:31000, engD:-6 },
+  'laura-ferre':    { plat:'Instagram', type:'Post', txt:'Coulisses France 3 — annonce', eng:12000, engD:4 },
+};
+
+const ph = (src, acc, cls='', inner='') =>
+  `<div class="ph ${cls}" style="--acc:${acc}"><img src="${src}" loading="lazy" alt="" onerror="this.remove()">${inner}</div>`;
+const coverPh = (a, isrc) => `<span class="ph cover-ph" style="--acc:${a.accent}"><img src="${U(TIMGS[isrc] || '')}" loading="lazy" alt="" onerror="this.remove()"></span>`;
+
+/* ================================================================
+   HELPERS
+================================================================ */
+const $ = s => document.querySelector(s);
+const fmt = n => n >= 1000000 ? (n/1000000).toFixed(1).replace('.0','') + 'M' : n >= 1000 ? Math.round(n/1000) + 'K' : n.toLocaleString('fr-FR');
+const deltaHtml = (d, suffix='%') => {
+  if (d === 0) return `<span class="delta flat">→ 0${suffix}</span>`;
+  return `<span class="delta ${d > 0 ? 'pos' : 'neg'}">${d > 0 ? '↑' : '↓'} ${d > 0 ? '+' : ''}${d}${suffix}</span>`;
+};
+const momBadge = d => {
+  if (d >= SEUILS.streaming) return `<span class="badge b-up">+${d}% · seuil dépassé</span>`;
+  if (d <= -SEUILS.streaming) return `<span class="badge b-down">${d}% · seuil dépassé</span>`;
+  if (d >= 8) return `<span class="badge b-rising">+${d}%</span>`;
+  if (d <= -8) return `<span class="badge b-down">${d}%</span>`;
+  return `<span class="badge b-stable">${d > 0 ? '+' : ''}${d}%</span>`;
+};
+const momBadgeTxt = d => `<span style="color:${d >= SEUILS.streaming ? 'var(--up)' : d <= -SEUILS.streaming ? 'var(--down)' : d > 0 ? 'var(--up)' : d < 0 ? 'var(--down)' : 'var(--stable)'};font-weight:700">${d > 0 ? '+' : ''}${d}%</span>`;
+const artist = id => ARTISTS.find(a => a.id === id);
+const findTitre = isrc => { for (const a of ARTISTS) { const t = a.titres.find(t => t.isrc === isrc); if (t) return {a, t}; } return null; };
+
+function sparkline(data, color, w=520, h=150){
+  const min = Math.min(...data)*0.9, max = Math.max(...data)*1.05;
+  const pts = data.map((v,i) => [22 + i*(w-44)/(data.length-1), h-16 - (v-min)/(max-min)*(h-38)]);
+  const line = pts.map((p,i) => (i?'L':'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  const gid = 'g' + Math.abs(data.reduce((s,v)=>s+v,0));
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="display:block">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity=".25"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+    <g stroke="#E5E4E2" stroke-dasharray="2 4"><line x1="14" y1="${h*0.28}" x2="${w-14}" y2="${h*0.28}"/><line x1="14" y1="${h*0.6}" x2="${w-14}" y2="${h*0.6}"/></g>
+    <path d="${line} L ${pts[pts.length-1][0]},${h-8} L ${pts[0][0]},${h-8} Z" fill="url(#${gid})"/>
+    <path d="${line}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+    ${pts.map((p,i) => `<circle cx="${p[0]}" cy="${p[1]}" r="${i === pts.length-1 ? 5 : 2.8}" fill="${color}"/>`).join('')}
+  </svg>`;
+}
+function barsWeekly(data, color, w=520, h=150){
+  const max = Math.max(...data)*1.08;
+  const bw = (w-36)/data.length - 10;
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="display:block">
+    ${data.map((v,i) => { const bh = v/max*(h-34); const x = 20 + i*((w-36)/data.length);
+      return `<rect x="${x}" y="${h-20-bh}" width="${bw}" height="${bh}" rx="5" fill="${i === data.length-1 ? color : color+'44'}"/>
+      <text x="${x+bw/2}" y="${h-5}" text-anchor="middle" class="spark-label">S${SEMAINE.num-data.length+1+i}</text>`; }).join('')}
+  </svg>`;
+}
+
+function sparkMini(data, color, w=110, h=38){
+  const min = Math.min(...data)*0.92, max = Math.max(...data)*1.04;
+  const pts = data.map((v,i) => [3 + i*(w-6)/(data.length-1), h-4 - (v-min)/(max-min)*(h-9)]);
+  const line = pts.map((p,i) => (i?'L':'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" style="display:block">
+    <path d="${line}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="3.4" fill="${color}"/>
+  </svg>`;
+}
+
+/* ================================================================
+   TOAST / MODALES / RECHERCHE
+================================================================ */
+function toast(msg){ const t = $('#toast'); t.innerHTML = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2600); }
+function closeOverlay(){ $('#overlay').classList.remove('show'); }
+function openExport(ctx){
+  $('#modal').innerHTML = `
+    <div class="m-head"><div class="lab">EXPORT</div><b>Partager « ${ctx} »</b></div>
+    <div class="m-body">
+      <div class="opt" onclick="closeOverlay();toast('📄&nbsp; PDF de synthèse généré — <b>${ctx}</b> (S${SEMAINE.num})')"><span class="ic">📄</span><div><b>PDF de synthèse</b><span>Format uniforme — management, partenaires, artistes</span></div></div>
+      <div class="opt" onclick="closeOverlay();toast('🖼&nbsp; Capture image enregistrée — <b>${ctx}</b>')"><span class="ic">🖼</span><div><b>Capture image de la vue</b><span>Screenshot partageable de l'écran courant</span></div></div>
+      <div style="font-size:11px;color:var(--muted-foreground);margin-top:4px">PPT éditable & CSV : hors V1 (après ateliers).</div>
+    </div>`;
+  $('#overlay').classList.add('show');
+}
+function openSearch(){
+  $('#modal').innerHTML = `
+    <input class="srch" id="srch-inp" placeholder="Chercher un artiste, un titre, un ISRC..." oninput="filterSearch(this.value)">
+    <div id="srch-res" style="padding-bottom:10px"></div>`;
+  $('#overlay').classList.add('show');
+  filterSearch('');
+  setTimeout(() => $('#srch-inp').focus(), 50);
+}
+function filterSearch(q){
+  q = (q || '').toLowerCase();
+  const as = ARTISTS.filter(a => a.nom.toLowerCase().includes(q)).slice(0,5);
+  const ts = ARTISTS.flatMap(a => a.titres.filter(t => t.titre.toLowerCase().includes(q) || t.isrc.toLowerCase().includes(q)).map(t => ({a,t}))).slice(0,4);
+  $('#srch-res').innerHTML =
+    (as.length ? `<div class="grp">Artistes</div>` + as.map(a => `<div class="srow" onclick="closeOverlay();location.hash='#/artiste/${a.id}'">${coverPh(a, a.titres[0].isrc)}<div><b>${a.nom}</b><span>${a.label} · ${a.genre}</span></div></div>`).join('') : '') +
+    (ts.length ? `<div class="grp">Titres</div>` + ts.map(({a,t}) => `<div class="srow" onclick="closeOverlay();location.hash='#/titre/${t.isrc}'">${coverPh(a, t.isrc)}<div><b>${t.titre}</b><span>${a.nom} · ${t.isrc}</span></div></div>`).join('') : '') +
+    (!as.length && !ts.length ? `<div class="empty">Aucun résultat dans le périmètre V1.</div>` : '');
+}
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+  if (e.key === 'Escape') closeOverlay();
+});
+
+const syncHtml = `<span class="sync"><span class="ok"></span>S${SEMAINE.num} · VEN→VEN</span><span class="sync" title="Délai de reporting Believe 48–72h (§8.2)"><span class="warn"></span>BELIEVE J-3</span>`;
+
+function filtersBar(ctx, slim=false, titres=null){
+  return `<div class="filters"><div class="wrap">
+    <span class="group-label">Période</span>
+    ${['7 j','28 j','12 sem'].map((p,i) => `<button class="chip chip-sm ${i===0?'active':''}" onclick="fakeFilter(this,'période ${p}')">${p}</button>`).join('')}
+    <span class="sep"></span>
+    <span class="group-label">DSP</span>
+    ${['Tous','Spotify','Apple','Deezer','Amazon'].map((p,i) => `<button class="chip chip-sm ${i===0?'active':''}" onclick="fakeFilter(this,'DSP ${p}')">${p}</button>`).join('')}
+    <span class="sep"></span>
+    <span class="group-label">Pays</span>
+    ${['Monde','FR','BE','CH'].map((p,i) => `<button class="chip chip-sm ${i===0?'active':''}" onclick="fakeFilter(this,'pays ${p}')">${p}</button>`).join('')}
+    ${titres ? `<span class="sep"></span>
+    <span class="group-label">Titre / Projet</span>
+    ${['Tous', ...titres].map((p,i) => `<button class="chip chip-sm ${i===0?'active':''}" onclick="fakeFilter(this,'titre ${p.replace(/'/g,"\\'")}')">${p}</button>`).join('')}` : ''}
+    ${slim ? '' : `<div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('${ctx}')">Exporter <span class="ar">↗</span></button></div>`}
+  </div></div>`;
+}
+function fakeFilter(btn, label){
+  let sib = btn.previousElementSibling;
+  const grp = [btn];
+  while (sib && sib.classList.contains('chip')) { grp.push(sib); sib = sib.previousElementSibling; }
+  sib = btn.nextElementSibling;
+  while (sib && sib.classList.contains('chip')) { grp.push(sib); sib = sib.nextElementSibling; }
+  grp.forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  toast(`Filtre : <b>${label}</b> — simulation prototype`);
+}
+
+/* ================================================================
+   VUE — ACCUEIL / ARTISTES
+================================================================ */
+let labelFilter = 'Tous', rosterQuery = '';
+const ranked = () => [...ARTISTS].sort((x,y) => y.streams - x.streams);
+function vArtistes(){
+  const top = ranked()[0];
+  return `
+  <section class="band dark" style="padding:56px 0 52px">
+    <div class="wrap" style="display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center">
+      <div>
+        <div class="kicker"><span class="dot"></span>LABELS 6&7 + SYNDICATE RECORDS · ${ARTISTS.length} ARTISTES · S${SEMAINE.num}</div>
+        <h1 class="display rv in" style="font-size:clamp(50px,7vw,98px);margin:20px 0 20px">Top <em>roster</em>.</h1>
+        <p class="lead">Le classement streaming de la semaine, du premier coup d'œil au détail : un rang, un chiffre, une tendance — puis la vue 360° de chaque artiste.</p>
+        <div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap">
+          <a class="btn btn-light" href="#/alertes">⚑ ${ALERTES.length} alertes cette semaine</a>
+          <a class="btn btn-outline-w" href="#/saisie">Saisie manuelle <span class="ar">↗</span></a>
+        </div>
+      </div>
+      <div class="stack">
+        ${ph(IMGS[top.id], top.accent, 's1', `<span class="track-chip"><span class="dot"></span>#1 · ${top.nom.toUpperCase()}</span>`)}
+        ${ph(IMGS[ranked()[3].id], ranked()[3].accent, 's2')}
+      </div>
+    </div>
+  </section>
+  <div class="filters"><div class="wrap">
+    <span class="group-label">Label</span>
+    ${['Tous','6&7','Syndicate Records'].map(l => `<button class="chip ${labelFilter===l?'active':''}" onclick="labelFilter='${l.replace(/'/g,"\\'")}';render()">${l === 'Tous' ? 'Tous les labels' : l}</button>`).join('')}
+    <div class="right">
+      <input placeholder="Filtrer le roster..." value="${rosterQuery}" oninput="rosterQuery=this.value;renderRosterOnly()" style="font-family:var(--font);font-size:13px;border:1px solid var(--line);border-radius:9999px;padding:9px 17px;outline:none;background:var(--card);width:210px">
+      ${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Leaderboard roster S${SEMAINE.num}')">Exporter <span class="ar">↗</span></button>
+    </div>
+  </div></div>
+  <section class="band"><div class="wrap">
+    <h2 class="h-sect rv">Leaderboard<span style="color:var(--pop)">.</span> <small>streams hebdo · S${SEMAINE.num} vs S${SEMAINE.num-1}</small></h2>
+    <p class="h-sub">La jauge compare chaque artiste au n°1 de la semaine. Cliquer une ligne ouvre le dashboard artiste.</p>
+    <div class="grid g-main" style="align-items:start">
+      <div class="lb rv" id="roster-grid">${rosterRows()}</div>
+      ${spotlight(top)}
+    </div>
+    <div class="note-line">ⓘ Liste artistes figée pour le cadrage V1 · ⚑ Laura Ferré : accès Believe individuel (co-exploitation PlayTwo).</div>
+  </div></section>`;
+}
+function rosterRows(){
+  const all = ranked();
+  const max = all[0].streams;
+  const list = all.filter(a => (labelFilter === 'Tous' || a.label === labelFilter) && a.nom.toLowerCase().includes(rosterQuery.toLowerCase()));
+  return list.map(a => {
+    const rank = all.indexOf(a) + 1;
+    return `<a class="lb-row lb-a" style="--acc:${a.accent}" href="#/artiste/${a.id}">
+      <span class="lb-rank">${String(rank).padStart(2,'0')}<small class="${a.delta >= SEUILS.streaming ? 'rk-up' : a.delta <= -SEUILS.streaming ? 'rk-dn' : a.delta > 0 ? 'rk-up' : a.delta < 0 ? 'rk-dn' : 'rk-eq'}">${a.delta > 0 ? '↑' : a.delta < 0 ? '↓' : '—'} ${Math.abs(a.delta)}%</small></span>
+      <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${IMGS[a.id]}" loading="lazy" alt="" onerror="this.remove()"></span>
+      <span class="lb-name"><b>${a.nom}</b><span>${a.label} · ${a.genre}${a.special ? ' · ⚑' : ''}</span></span>
+      <span class="lb-gauge hm"><span class="glab"><span>vs n°1</span><span>${Math.round(a.streams/max*100)}%</span></span><span class="track"><span class="fill" style="width:${Math.round(a.streams/max*100)}%;background:${a.accent}"></span></span></span>
+      <span class="lb-val"><b>${fmt(a.streams)}</b><span>streams · 7 j</span></span>
+      <span class="go hm">↗</span>
+    </a>`;
+  }).join('') || '<div class="empty">Aucun artiste ne correspond.</div>';
+}
+function spotlight(a){
+  const t0 = a.titres[0];
+  const nA = ALERTES.filter(al => al.artiste === a.id).length;
+  return `<div class="spot rv">
+    ${ph(IMGS[a.id], a.accent, '', `<span class="track-chip"><span class="dot"></span>#1 CETTE SEMAINE</span>`)}
+    <div class="body">
+      <h3>${a.nom}</h3>
+      <div class="meta">${a.label} · ${a.genre} · ${a.ville}</div>
+      <div class="stats">
+        <div><div class="lab">Streams 7j</div><b>${fmt(a.streams)}</b></div>
+        <div><div class="lab">Δ 7j</div><b style="color:${a.accent}">${a.delta > 0 ? '+' : ''}${a.delta}%</b></div>
+        <div><div class="lab">Listeners</div><b>${fmt(a.listeners)}</b></div>
+      </div>
+      <div class="kicker" style="letter-spacing:.18em;margin-bottom:6px">VÉLOCITÉ · ${t0.titre.toUpperCase()} · 8 SEM</div>
+      ${sparkline(t0.cadence, a.accent, 400, 110)}
+      ${nA ? `<div style="font-size:12.5px;font-weight:600;color:var(--muted-foreground);margin:10px 0 2px">⚑ ${nA} alerte${nA>1?'s':''} active${nA>1?'s':''} sur cet artiste</div>` : ''}
+      <a class="btn btn-dark" style="width:100%;justify-content:center;margin-top:14px" href="#/artiste/${a.id}">Ouvrir la fiche artiste <span class="ar">↗</span></a>
+    </div>
+  </div>`;
+}
+function renderRosterOnly(){ $('#roster-grid').innerHTML = rosterRows(); }
+
+/* ================================================================
+   VUE — DASHBOARD ARTISTE (§7.1)
+================================================================ */
+const SECTIONS = [['synthese','Synthèse'],['streaming','Streaming'],['titres','Titres'],['social','Social'],['demo','Démographie'],['physique','Physique'],['radio','Radios'],['actus','Actus']];
+function vArtiste(id){
+  const a = artist(id);
+  if (!a) return `<div class="empty" style="padding:100px">Artiste hors périmètre V1.</div>`;
+  document.documentElement.style.setProperty('--accent', a.accent);
+  const alertsA = ALERTES.filter(al => al.artiste === id);
+  const t0 = a.titres[0];
+  const scoreOk = a.score > SEUILS.score;
+  const summary = (() => {
+    const p = [];
+    p.push(`${a.delta >= 0 ? 'Progression' : 'Repli'} hebdo de <b>${a.delta > 0 ? '+' : ''}${a.delta}%</b> des streams`);
+    if (Math.abs(t0.delta) >= SEUILS.streaming) p.push(`« ${t0.titre} » ${t0.delta > 0 ? 'dépasse le seuil d\'alerte' : 'sous le seuil'} (${t0.delta > 0 ? '+' : ''}${t0.delta}%)`);
+    if (t0.shazamJour > SEUILS.shazam) p.push(`Shazam au-dessus du seuil (${t0.shazamJour}/j)`);
+    if (scoreOk) p.push(`Score Spotify <b>${a.score}</b> > 50`);
+    return p.join(' · ') + '.';
+  })();
+
+  return `
+  <section class="a-hero"><div class="wrap">
+    <div>
+      <a class="back" href="#/artistes">← ARTISTES</a>
+      <div class="meta">${a.label} · ${a.genre} · ${a.ville}${a.special ? ' · ⚑ ' + a.special : ''}</div>
+      <h1 class="rv in">${a.nom}</h1>
+      <p>${a.bio}</p>
+      <div class="actions">
+        <button class="btn btn-light" onclick="openExport('Dashboard ${a.nom}')">Exporter la synthèse <span class="ar">↗</span></button>
+        <a class="btn btn-outline-w" href="#/alertes">${alertsA.length} alerte${alertsA.length>1?'s':''}</a>
+      </div>
+    </div>
+    ${ph(IMGS[a.id], a.accent, '', `<span class="track-chip"><span class="dot"></span>${t0.titre.toUpperCase()}</span>`)}
+  </div></section>
+
+  <div class="kpi-band">
+    <div class="kpi rv"><div class="lab">Streams hebdo</div><div class="val">${fmt(a.streams)} <span class="cmp">${deltaHtml(a.delta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Auditeurs mensuels</div><div class="val">${fmt(a.listeners)} <span class="cmp">${deltaHtml(a.listenersDelta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Score Spotify /100</div><div class="val" style="${scoreOk ? 'color:var(--accent)' : ''}">${a.score} <span class="cmp" style="color:var(--muted-foreground)">${scoreOk ? '> seuil 50' : 'S' + (SEMAINE.num-1) + ' : ' + a.scorePrev}</span></div></div>
+    <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(a.social.ig + a.social.tt)} <span class="cmp">${deltaHtml(a.social.igD)}</span></div></div>
+  </div>
+
+  <div class="subnav"><div class="wrap">
+    ${SECTIONS.map(([id2,l],i) => `<a href="#s-${id2}" onclick="event.preventDefault();document.getElementById('s-${id2}').scrollIntoView({behavior:'smooth',block:'start'})" ${i===0?'class="on"':''}>${l}</a>`).join('')}
+    <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Dashboard ${a.nom}')">Exporter <span class="ar">↗</span></button></div>
+  </div></div>
+
+  ${filtersBar('Dashboard ' + a.nom, true, a.titres.map(t => t.titre))}
+
+  <section class="band"><div class="wrap">
+
+    <div id="s-synthese" style="scroll-margin-top:130px">
+      <div class="card rv" style="background:color-mix(in srgb, var(--accent) 4%, var(--card))">
+        <div class="kicker"><span class="dot" style="background:var(--accent)"></span>EXECUTIVE SUMMARY · S${SEMAINE.num} (${SEMAINE.du} → ${SEMAINE.au})</div>
+        <p style="margin-top:12px;font-size:17px;line-height:1.55;font-weight:500">${summary}</p>
+      </div>
+      ${alertsA.length ? `<div class="grid" style="gap:10px;margin-top:14px">${alertsA.map(alertItem).join('')}</div>` : ''}
+    </div>
+
+    <div id="s-streaming" style="scroll-margin-top:130px;margin-top:56px">
+      <h2 class="h-sect rv">Streaming<span style="color:var(--accent)">.</span> <small>streams globaux · sources · seuil ± 20%</small></h2>
+      <p class="h-sub">Comparaison semaine N vs N-1 · Spotify, Apple, Deezer, Amazon.</p>
+      <div class="grid g-main">
+        <div class="card hov rv">
+          <div class="kicker">MOMENTUM · 8 SEMAINES · ${t0.titre.toUpperCase()}</div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 4px">
+            <span class="num-xl">${fmt(t0.streamsHebdo)}</span>
+            ${momBadge(t0.delta)}
+          </div>
+          ${sparkline(t0.cadence, a.accent)}
+        </div>
+        <div style="display:grid;gap:16px">
+          <div class="card hov rv">
+            <div class="kicker">STREAMS PAR DSP</div>
+            <div style="margin-top:14px">
+              ${Object.entries(t0.dsp).map(([d,p]) => `<div class="brow"><div class="btop"><b>${d}</b><span>${p}%</span></div><div class="track"><span class="fill" style="width:${p}%"></span></div></div>`).join('')}
+            </div>
+          </div>
+          <div class="card hov rv">
+            <div class="kicker">SOURCES ACTIVES VS PASSIVES</div>
+            <div style="display:flex;align-items:baseline;gap:10px;margin:10px 0 8px"><span class="num-lg" style="color:var(--accent)">${t0.sources.actives}%</span><span style="font-size:13px;color:var(--muted-foreground)">actives</span></div>
+            <div style="display:flex;height:12px;border-radius:9999px;overflow:hidden">
+              <span style="width:${t0.sources.actives}%;background:var(--accent)"></span>
+              <span style="width:${t0.sources.passives}%;background:#E5E4E2"></span>
+            </div>
+            <div style="font-size:12px;color:var(--muted-foreground);margin-top:8px">${t0.sources.passives}% passives (playlists, algo, radio)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="s-titres" style="scroll-margin-top:130px;margin-top:56px">
+      <h2 class="h-sect rv">Titres<span style="color:var(--accent)">.</span> <small>classés par streams · cliquer pour le drill-down ISRC/UPC</small></h2>
+      <div class="lb rv">
+        ${[...a.titres].sort((x,y) => y.streamsHebdo - x.streamsHebdo).map((t,i,arr) => `
+        <a class="lb-row lb-t" style="--acc:${a.accent}" href="#/titre/${t.isrc}">
+          <span class="lb-rank">${String(i+1).padStart(2,'0')}<small class="${t.delta > 0 ? 'rk-up' : t.delta < 0 ? 'rk-dn' : 'rk-eq'}">${t.delta > 0 ? '↑' : t.delta < 0 ? '↓' : '—'} ${Math.abs(t.delta)}%</small></span>
+          <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${U(TIMGS[t.isrc] || '')}" loading="lazy" alt="" onerror="this.remove()"></span>
+          <span class="lb-name"><b>${t.titre}</b><span>${t.projet} · <span class="mono">${t.isrc}</span></span></span>
+          <span class="hm">${sparkMini(t.cadence, a.accent)}</span>
+          <span class="lb-val hm"><b style="${t.shazamJour > SEUILS.shazam ? 'color:var(--pop)' : ''}">${t.shazamJour}${t.shazamJour > SEUILS.shazam ? ' ⚑' : ''}</b><span>Shazam /j</span></span>
+          <span class="lb-val"><b>${fmt(t.streamsHebdo)}</b><span>streams · ${momBadgeTxt(t.delta)}</span></span>
+          <span class="go hm">↗</span>
+        </a>`).join('')}
+        <div class="lb-foot">Un artiste porte 1 à N titres — le périmètre évolue avec les sorties. Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j.</div>
+      </div>
+    </div>
+
+    <div id="s-social" style="scroll-margin-top:130px;margin-top:56px">
+      <h2 class="h-sect rv">Social<span style="color:var(--accent)">.</span> <small>following · prises de parole · UGC</small></h2>
+      <div class="grid g4">
+        <div class="tile rv"><div class="lab">Followers Instagram</div><div class="val">${fmt(a.social.ig)}</div><div class="cmp">${deltaHtml(a.social.igD)}</div></div>
+        <div class="tile rv"><div class="lab">Followers TikTok</div><div class="val">${fmt(a.social.tt)}</div><div class="cmp">${deltaHtml(a.social.ttD)}</div></div>
+        <div class="tile rv"><div class="lab">Prises de parole · 30 j</div><div class="val">${a.social.posts}</div><div class="cmp" style="color:var(--muted-foreground)">posts · stories · lives</div></div>
+        <div class="tile rv"><div class="lab">Vidéos UGC sticker son</div><div class="val">${fmt(a.social.ugc)}</div><div class="cmp">${deltaHtml(a.social.ugcD)}</div></div>
+      </div>
+      ${(() => { const tp = TOPPOSTS[a.id]; return tp ? `
+      <div class="card hov rv" style="margin-top:14px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+        <div style="flex:1;min-width:220px">
+          <div class="kicker">POST LE PLUS FORT · ENGAGEMENTS · S${SEMAINE.num}</div>
+          <div style="font-size:19px;font-weight:800;letter-spacing:-.02em;margin-top:8px">${tp.txt}</div>
+          <div style="font-size:12.5px;color:var(--muted-foreground);margin-top:4px">${tp.plat} · ${tp.type}</div>
+        </div>
+        <div class="lb-val" style="text-align:right"><b style="font-size:32px">${fmt(tp.eng)}</b><span>engagements · ${momBadgeTxt(tp.engD)}</span></div>
+      </div>` : ''; })()}
+      <div class="note-line">Social listening qualitatif (sentiment, feats) : NLP — V2.</div>
+    </div>
+
+    <div id="s-demo" style="scroll-margin-top:130px;margin-top:56px">
+      <h2 class="h-sect rv">Démographie<span style="color:var(--accent)">.</span> <small>âge · genre · géographie · shifting</small></h2>
+      <div class="grid g3">
+        <div class="card hov rv">
+          <div class="kicker">ÂGE / GENRE</div>
+          <div class="num-lg" style="margin:10px 0 14px">${a.demo.age}</div>
+          <div class="brow"><div class="btop"><b>Femmes</b><span>${a.demo.f}%</span></div><div class="track"><span class="fill" style="width:${a.demo.f}%"></span></div></div>
+          <div class="brow"><div class="btop"><b>Hommes</b><span>${100-a.demo.f}%</span></div><div class="track"><span class="fill" style="width:${100-a.demo.f}%;background:#B9B7B3"></span></div></div>
+        </div>
+        <div class="card hov rv">
+          <div class="kicker">GÉOGRAPHIE DES FANS</div>
+          <div style="margin-top:14px">
+            ${a.demo.pays.map(([p,v],i) => `<div class="brow"><div class="btop"><b>${p}</b><span>${v}%</span></div><div class="track"><span class="fill" style="width:${v}%;background:${['#ED2362','#1E5BFF','#5A8DB8','#2DE07A'][i] || '#B9B7B3'}"></span></div></div>`).join('')}
+          </div>
+        </div>
+        <div class="card hov rv">
+          <div class="kicker">SHIFTING</div>
+          <p style="margin-top:12px;font-size:14.5px;line-height:1.6;font-weight:500">${a.demo.shift}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:56px">
+      <div id="s-physique" style="scroll-margin-top:130px">
+        <h2 class="h-sect rv">Physique<span style="color:var(--accent)">.</span> <small><span class="badge b-manual">SAISIE MANUELLE</span></small></h2>
+        <div class="grid g3" style="gap:13px">
+          <div class="tile rv"><div class="lab">Mise en place</div><div class="val">${a.physique.mep ? fmt(a.physique.mep) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">unités</div></div>
+          <div class="tile rv"><div class="lab">dont D2C</div><div class="val">${a.physique.d2c ? fmt(a.physique.d2c) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">Shopify</div></div>
+          <div class="tile rv"><div class="lab">dont magasins</div><div class="val">${a.physique.magasins ? fmt(a.physique.magasins) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">FNAC, Cultura…</div></div>
+        </div>
+        <div class="note-line"><a href="#/saisie" style="font-weight:700">Ouvrir la saisie ↗</a>&nbsp; Données historisées comme les données automatisées.</div>
+      </div>
+      <div id="s-radio" style="scroll-margin-top:130px">
+        <h2 class="h-sect rv">Radios<span style="color:var(--accent)">.</span> <small>airplay · top 5 stations</small></h2>
+        <div class="lb rv">
+          <div style="display:flex;align-items:baseline;gap:14px;padding:20px 28px;border-bottom:1px solid var(--line)">
+            <span class="num-xl">#${a.radio.rang}</span>
+            <span style="font-size:13px;color:var(--muted-foreground)">classement airplay FR</span>
+            ${deltaHtml(a.radio.rangPrev - a.radio.rang, ' pl.')}
+          </div>
+          ${a.radio.diffusions.map(([s,n],i) => `<div class="lb-row lb-r" style="--acc:${a.accent};cursor:default;padding:13px 28px">
+            <span class="lb-rank" style="font-size:20px">${String(i+1).padStart(2,'0')}</span>
+            <span class="lb-name"><b style="font-size:16px">${s}</b></span>
+            <span class="lb-gauge"><span class="track"><span class="fill" style="width:${n/a.radio.diffusions[0][1]*100}%"></span></span></span>
+            <span class="lb-val"><b style="font-size:22px">${n}</b><span>diff. / 7j</span></span>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div id="s-actus" style="scroll-margin-top:130px;margin-top:56px">
+      <h2 class="h-sect rv">Actus à venir<span style="color:var(--accent)">.</span> <small><span class="badge b-manual">SAISIE CONTINUE</span></small></h2>
+      <div class="card rv" style="padding:12px 24px">
+        <table class="data">
+          ${a.actus.map(([t,d,dt]) => `<tr><td style="width:170px"><span class="badge b-accent">${t}</span></td><td style="font-weight:600">${d}</td><td class="num" style="font-variant-numeric:tabular-nums;color:var(--muted-foreground)">${dt}</td></tr>`).join('')}
+        </table>
+      </div>
+    </div>
+  </div></section>`;
+}
+
+function alertItem(al){
+  const a = artist(al.artiste);
+  return `<div class="alert-item rv">
+    <span class="a-ic" style="background:${al.color}14;color:${al.color}">${al.ic}</span>
+    <div style="flex:1">
+      <div class="cat-lab" style="color:${al.color}">${al.cat} · ${al.niveau.toUpperCase()}</div>
+      <p>${al.txt}</p>
+      <div class="rule">${al.rule}</div>
+    </div>
+    <time>${al.time}</time>
+    <a class="btn btn-outline btn-sm" style="flex:none" href="#/artiste/${al.artiste}" onclick="event.stopPropagation()">Ouvrir <span class="ar">↗</span></a>
+  </div>`;
+}
+
+/* ================================================================
+   VUE — TITRE (§7.2)
+================================================================ */
+function vTitre(isrc){
+  const found = findTitre(isrc);
+  if (!found) return `<div class="empty" style="padding:100px">Titre hors périmètre V1.</div>`;
+  const {a, t} = found;
+  document.documentElement.style.setProperty('--accent', a.accent);
+  const alerte = Math.abs(t.delta) >= SEUILS.streaming;
+  const shazAlert = t.shazamJour > SEUILS.shazam;
+  return `
+  <section class="a-hero"><div class="wrap" style="padding-top:40px;padding-bottom:44px">
+    <div>
+      <a class="back" href="#/artiste/${a.id}">← ${a.nom.toUpperCase()}</a>
+      <div class="meta">VUE TITRE · ${t.projet} · ${t.sortie}</div>
+      <h1 class="rv in" style="font-size:clamp(40px,5.5vw,72px)">${t.titre}</h1>
+      <p style="font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.65);margin-top:12px">ISRC ${t.isrc} · UPC ${t.upc}</p>
+      <div class="actions">
+        <button class="btn btn-light" onclick="openExport('${t.titre} — ${a.nom}')">Exporter <span class="ar">↗</span></button>
+        ${alerte ? `<span class="btn btn-outline-w" style="cursor:default">⚑ Alerte ± 20% déclenchée</span>` : ''}
+      </div>
+    </div>
+    ${ph(U(TIMGS[t.isrc] || ''), a.accent, '', `<span class="track-chip"><span class="dot"></span>${a.nom.toUpperCase()}</span>`)}
+  </div></section>
+
+  <div class="kpi-band">
+    <div class="kpi rv"><div class="lab">Streams S${SEMAINE.num}</div><div class="val">${fmt(t.streamsHebdo)} <span class="cmp">${deltaHtml(t.delta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Shazam / jour</div><div class="val" style="${shazAlert ? 'color:var(--accent)' : ''}">${t.shazamJour} <span class="cmp" style="color:var(--muted-foreground)">seuil ${SEUILS.shazam}${shazAlert ? ' ⚑' : ''}</span></div></div>
+    <div class="kpi rv"><div class="lab">Playlists édito</div><div class="val">${t.playlists.length}</div></div>
+    <div class="kpi rv"><div class="lab">Sources actives</div><div class="val">${t.sources.actives}%</div></div>
+  </div>
+
+  ${filtersBar(t.titre + ' — ' + a.nom)}
+
+  <section class="band"><div class="wrap">
+    <div class="grid g-main">
+      <div style="display:grid;gap:18px">
+        <div class="card hov rv">
+          <div class="kicker">CADENCE HEBDO · 8 SEMAINES (VEN → VEN) · MILLIERS DE STREAMS</div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 4px">
+            <span class="num-xl">${fmt(t.streamsHebdo)}</span>
+            ${momBadge(t.delta)}
+          </div>
+          ${barsWeekly(t.cadence, a.accent)}
+        </div>
+        <div class="lb rv">
+          <div class="kicker" style="padding:20px 28px 14px">PLAYLISTS ÉDITORIALES · ENTRÉES / SORTIES · RANKING</div>
+          ${t.playlists.length ? t.playlists.map(([p,dsp,st,j,r]) => `<div class="lb-row lb-p" style="--acc:${a.accent};cursor:default">
+              <span class="lb-rank" style="font-size:24px;color:${(r+'').startsWith('#') ? 'var(--foreground)' : 'var(--muted-foreground)'}">${r}</span>
+              <span class="lb-name"><b style="font-size:17px">${p}</b><span>${dsp}</span></span>
+              <span>${(st+'').includes('Entrée') ? `<span class="badge b-outline-green">${st}</span>` : (st+'').includes('Sortie') ? `<span class="badge b-down">${st}</span>` : (st+'').includes('hors MVP') ? `<span class="badge b-manual">à arbitrer</span>` : `<span class="badge b-stable">depuis ${st}</span>`}</span>
+              <span class="lb-gauge hm"><span class="track"><span class="fill" style="width:${j ? Math.min(100, j/140*100) : 3}%"></span></span></span>
+              <span class="lb-val"><b style="font-size:22px">${j || '—'}</b><span>jours</span></span>
+            </div>`).join('') : `<div class="empty">Aucune playlist active — la sortie a déclenché une alerte.</div>`}
+          <div class="lb-foot">Règle §8.3 : chaque entrée ou sortie de playlist éditoriale déclenche une alerte.</div>
+        </div>
+      </div>
+      <div style="display:grid;gap:16px">
+        <div class="card hov rv">
+          <div class="kicker">STREAMS PAR DSP</div>
+          <div style="margin-top:14px">
+            ${Object.entries(t.dsp).map(([d,p]) => `<div class="brow"><div class="btop"><b>${d}</b><span>${p}% · ${fmt(Math.round(t.streamsHebdo*p/100))}</span></div><div class="track"><span class="fill" style="width:${p}%"></span></div></div>`).join('')}
+          </div>
+        </div>
+        <div class="card hov rv">
+          <div class="kicker">SHAZAM FOCUS · GÉO</div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin:12px 0 6px">
+            <span class="num-xl" style="${shazAlert ? 'color:var(--accent)' : ''}">${t.shazamJour}</span>
+            <span style="font-size:13px;color:var(--muted-foreground)">/ jour</span>
+          </div>
+          <div class="track" style="margin:10px 0 6px"><span class="fill" style="width:${Math.min(100, t.shazamJour/(SEUILS.shazam*1.6)*100)}%"></span></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted-foreground)"><span>0</span><span>seuil ${SEUILS.shazam}/j *</span></div>
+          <div class="note-line">* 300 ou 500/j : à confirmer avec le client.</div>
+        </div>
+      </div>
+    </div>
+  </div></section>`;
+}
+
+/* ================================================================
+   VUE — CENTRE D'ALERTES (§7.3)
+================================================================ */
+let alertFilter = 'Toutes';
+function vAlertes(){
+  const cats = ['Toutes','STREAMING','SHAZAM','PLAYLIST ÉDITO','SCORE SPOTIFY'];
+  const list = ALERTES.filter(al => alertFilter === 'Toutes' || al.cat === alertFilter);
+  document.documentElement.style.setProperty('--accent', '#C8102E');
+  return `
+  <section class="band dark" style="padding:60px 0"><div class="wrap">
+    <div class="kicker"><span class="dot"></span>MOTEUR DE RÈGLES · SEUILS FIXES V1</div>
+    <h1 class="display rv in" style="font-size:clamp(46px,6.5vw,92px);margin:18px 0 18px">Alertes<em>.</em></h1>
+    <p class="lead">Signaux détectés automatiquement, niveau artiste et global. Aucune IA : des règles simples, lisibles, vérifiables.</p>
+    <div style="display:flex;gap:34px;margin-top:30px;flex-wrap:wrap">
+      ${[['± 20 %','streaming hebdo'],['> ' + SEUILS.shazam + '/j','Shazam *'],['E / S','playlist édito'],['> ' + SEUILS.score,'score Spotify']].map(([v,l]) => `<div class="rv"><div style="font-size:34px;font-weight:800;letter-spacing:-.02em">${v}</div><div class="kicker" style="margin-top:6px;color:rgba(255,255,255,.5)">${l.toUpperCase()}</div></div>`).join('')}
+    </div>
+  </div></section>
+  <div class="filters"><div class="wrap">
+    <span class="group-label">Règle</span>
+    ${cats.map(c => `<button class="chip ${alertFilter===c?'active':''}" onclick="alertFilter='${c.replace(/'/g,"\\'")}';render()">${c === 'Toutes' ? 'Toutes (' + ALERTES.length + ')' : c === 'SCORE SPOTIFY' ? 'Score Spotify' : c.charAt(0) + c.slice(1).toLowerCase()}</button>`).join('')}
+    <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Centre d\\'alertes S${SEMAINE.num}')">Exporter <span class="ar">↗</span></button></div>
+  </div></div>
+  <section class="band"><div class="wrap">
+    <div class="grid" style="gap:12px">${list.map(alertItem).join('') || '<div class="empty">Aucune alerte pour cette règle.</div>'}</div>
+    <div class="note-line">ⓘ Seuils adaptatifs (historique artiste) : V2+ · Alerte playlist utilisateur > 100K : hors MVP, à arbitrer. * Seuil Shazam 300 vs 500/j à trancher.</div>
+  </div></section>`;
+}
+
+/* ================================================================
+   VUE — SAISIE MANUELLE (§7.5)
+================================================================ */
+let saisieTab = 'physique';
+function vSaisie(){
+  document.documentElement.style.setProperty('--accent', '#C8102E');
+  const typesPhysique = ['Mise en place (unités distribuées)','D2C — vente directe artiste','Ventes magasins (FNAC, Cultura…)'];
+  const typesActus = ['Date média (interview, article)','Lancement publicitaire (date + budget)','Sortie prévue (single, album, feature)'];
+  const types = saisieTab === 'physique' ? typesPhysique : typesActus;
+  return `
+  <section class="band dark" style="padding:60px 0"><div class="wrap">
+    <div class="kicker"><span class="dot"></span>DONNÉES NON-API · HISTORISÉES COMME LES DONNÉES AUTOMATISÉES</div>
+    <h1 class="display rv in" style="font-size:clamp(46px,6.5vw,92px);margin:18px 0 18px">Saisie <em>manuelle</em>.</h1>
+    <p class="lead">Ventes physiques (hebdo) et actus à venir (continu), rattachées à l'artiste ou au titre concerné.</p>
+  </div></section>
+  <div class="filters"><div class="wrap">
+    <button class="chip ${saisieTab==='physique'?'active':''}" onclick="saisieTab='physique';render()">Ventes physiques · hebdo</button>
+    <button class="chip ${saisieTab==='actus'?'active':''}" onclick="saisieTab='actus';render()">Actus à venir · continu</button>
+    <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Historique des saisies')">Exporter <span class="ar">↗</span></button></div>
+  </div></div>
+  <section class="band"><div class="wrap">
+    <div class="grid g-main">
+      <div class="card rv" style="padding:12px 24px">
+        <div class="kicker" style="padding:12px 0 6px">HISTORIQUE DES SAISIES</div>
+        <table class="data">
+          <tr><th>Type</th><th>Artiste</th><th>Rattachement</th><th>Valeur</th><th>Saisi le</th><th></th></tr>
+          ${SAISIES.filter(s => saisieTab === 'physique' ? s.type.startsWith('Physique') : s.type.startsWith('Actu')).map(s => `<tr>
+            <td><span class="badge b-manual">${s.type.split('— ')[1] || s.type}</span></td>
+            <td style="font-weight:700">${s.artiste}</td>
+            <td style="font-size:12.5px;color:var(--muted-foreground)">${s.ref}</td>
+            <td style="font-weight:800;font-variant-numeric:tabular-nums">${s.val}</td>
+            <td style="font-variant-numeric:tabular-nums;color:var(--muted-foreground)">${s.date}</td>
+            <td><span style="font-size:11px;font-weight:700;background:var(--muted);border-radius:9999px;padding:4px 9px">${s.par}</span></td>
+          </tr>`).join('')}
+        </table>
+      </div>
+      <div class="card rv">
+        <div class="kicker">NOUVELLE SAISIE — ${saisieTab === 'physique' ? 'PHYSIQUE' : 'ACTU'}</div>
+        <div style="margin-top:18px">
+          <div class="field"><label>Type</label><select id="f-type">${types.map(t => `<option>${t}</option>`).join('')}</select></div>
+          <div class="field"><label>Artiste</label><select id="f-artiste">${ARTISTS.map(a => `<option>${a.nom}</option>`).join('')}</select></div>
+          <div class="fgrid">
+            <div class="field"><label>Rattachement</label><input id="f-ref" placeholder="${saisieTab === 'physique' ? 'Album, enseigne…' : 'Média, campagne…'}"></div>
+            <div class="field"><label>${saisieTab === 'physique' ? 'Unités / valeur' : 'Date / budget'}</label><input id="f-val" placeholder="${saisieTab === 'physique' ? 'ex : 1 200 unités' : 'ex : 12/09/2026'}"></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:6px">
+            <button class="btn btn-dark btn-sm" onclick="addSaisie()">Enregistrer</button>
+            <button class="btn btn-outline btn-sm" onclick="toast('📥&nbsp; Import CSV — simulation')">Importer CSV</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></section>`;
+}
+function addSaisie(){
+  const type = (saisieTab === 'physique' ? 'Physique — ' : 'Actu — ') + $('#f-type').value.split(' (')[0];
+  SAISIES.unshift({ type, artiste:$('#f-artiste').value, ref:$('#f-ref').value || '—', val:$('#f-val').value || '—', date:'31/07/2026', par:'MC' });
+  toast(`✓&nbsp; Saisie enregistrée — <b>${$('#f-artiste').value}</b>`);
+  render();
+}
+
+/* ================================================================
+   VUE — LABEL / MANAGEMENT (placeholder Phase 2)
+================================================================ */
+function vLabel(){
+  document.documentElement.style.setProperty('--accent', '#C8102E');
+  return `
+  <section class="band dark" style="padding:60px 0"><div class="wrap">
+    <div class="kicker"><span class="dot"></span>ESPACE RÉSERVÉ · PHASE 2</div>
+    <h1 class="display rv in" style="font-size:clamp(46px,6.5vw,92px);margin:18px 0 18px">Label / <em>Management</em>.</h1>
+    <p class="lead">Prévu dans la navigation dès la V1 pour accueillir sans refonte la vision consolidée.</p>
+  </div></section>
+  <section class="band"><div class="wrap">
+    <div class="grid g3">
+      <div class="placeholder-box rv"><div class="kicker" style="justify-content:center;margin-bottom:12px">PHASE 2</div><b style="font-size:19px;color:var(--foreground)">Dashboard Label</b><p style="font-size:13.5px;margin-top:8px">KPI globaux, agrégation artiste → titre, comparaison inter-artistes.</p></div>
+      <div class="placeholder-box rv"><div class="kicker" style="justify-content:center;margin-bottom:12px">PHASE 2</div><b style="font-size:19px;color:var(--foreground)">Dashboard Management</b><p style="font-size:13.5px;margin-top:8px">Artistes multi-distributeurs, multi-tenant.</p></div>
+      <div class="placeholder-box rv"><div class="kicker" style="justify-content:center;margin-bottom:12px">V2+</div><b style="font-size:19px;color:var(--foreground)">Couche intelligence</b><p style="font-size:13.5px;margin-top:8px">Requêtes en langage naturel, recommandations, alertes adaptatives.</p></div>
+    </div>
+  </div></section>`;
+}
+
+/* ================================================================
+   ROUTEUR + RÉVÉLATION AU SCROLL + SCROLL-SPY
+================================================================ */
+let rvObs, spyObs;
+function observeRv(){
+  if (rvObs) rvObs.disconnect();
+  rvObs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); rvObs.unobserve(e.target); } }), {threshold:.12});
+  document.querySelectorAll('.rv:not(.in)').forEach(el => rvObs.observe(el));
+}
+function observeSpy(){
+  if (spyObs) spyObs.disconnect();
+  const links = [...document.querySelectorAll('.subnav a[href^="#s-"]')];
+  if (!links.length) return;
+  spyObs = new IntersectionObserver(es => {
+    es.forEach(e => { if (e.isIntersecting) {
+      links.forEach(l => l.classList.toggle('on', l.getAttribute('href') === '#' + e.target.id));
+    }});
+  }, {rootMargin:'-30% 0px -60% 0px'});
+  SECTIONS.forEach(([id2]) => { const el = document.getElementById('s-' + id2); if (el) spyObs.observe(el); });
+}
+function render(){
+  $('#nav-alert-count').textContent = ALERTES.length;
+  const h = location.hash || '#/artistes';
+  const [, route, param] = h.split('/');
+  const app = $('#app');
+  document.querySelectorAll('nav.main a').forEach(a => a.classList.toggle('active',
+    a.dataset.r === route || (a.dataset.r === 'artistes' && (route === 'artiste' || route === 'titre'))));
+  if (route === 'artiste' && param) app.innerHTML = vArtiste(param);
+  else if (route === 'titre' && param) app.innerHTML = vTitre(param);
+  else if (route === 'alertes') app.innerHTML = vAlertes();
+  else if (route === 'saisie') app.innerHTML = vSaisie();
+  else if (route === 'label') app.innerHTML = vLabel();
+  else { document.documentElement.style.setProperty('--accent', '#C8102E'); app.innerHTML = vArtistes(); }
+  window.scrollTo(0, 0);
+  observeRv();
+  observeSpy();
+}
+window.addEventListener('hashchange', render);
+render();
+</script>
+</body>
+</html>

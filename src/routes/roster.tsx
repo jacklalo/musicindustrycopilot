@@ -49,7 +49,7 @@ function RosterPage() {
               key={a.slug}
               to="/artists/$slug"
               params={{ slug: a.slug }}
-              className="group block transition-transform duration-300 hover:-translate-y-1"
+              className="group block min-w-0 transition-transform duration-300 hover:-translate-y-1"
             >
               <div
                 className="relative aspect-square overflow-hidden rounded-2xl ring-1 ring-black/5 transition-shadow duration-300 group-hover:shadow-[0_30px_60px_-30px_var(--card-accent)]"

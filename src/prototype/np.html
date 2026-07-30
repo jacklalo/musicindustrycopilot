@@ -2034,56 +2034,6 @@ function dupBanner(){
       <button class="lnk" onclick="dupResolve('annuler')">Annuler</button>
     </span></div>`;
 }
-function saiFilter(k, v){ saiFil[k] = v; render(); }
-function toggleGrp(f){ saiGrpOpen[f] = !saiGrpOpen[f]; render(); }
-function histRow(s, i){
-  const m = String(s.val).match(/^([\d\s.,\/]+€?)\s*(.*)$/);
-  const num = m ? m[1].trim() : s.val, unit = m ? m[2] : '';
-  return `<div class="hist-row">
-    <span class="src-chip">${s.src || 'FORMULAIRE'}</span>
-    <span class="badge b-manual">${s.type.split('— ')[1] || s.type}</span>
-    <span style="min-width:0"><span class="who">${s.artiste}</span><br><span class="ref">${s.ref}${s.modif ? ` · ✎ modifié ${s.modif}` : ''}</span></span>
-    <span class="v"><b>${num}</b><span>${unit || '—'}</span></span>
-    <span class="meta" style="font-weight:700;color:var(--foreground)">${s.sem}</span>
-    <span class="meta">saisi le ${s.date}</span>
-    <span style="font-size:11px;font-weight:700;background:var(--muted);border-radius:9999px;padding:4px 9px">${s.par}</span>
-    <span style="white-space:nowrap">
-      <button class="lnk" onclick="editSaisie(${i})">Modifier</button>
-      <button class="lnk" style="margin-left:6px" onclick="delSaisie(${i})">Suppr.</button>
-    </span>
-  </div>`;
-}
-function histSection(){
-  const all = SAISIES.map((s, i) => [s, i]).filter(([s]) => saisieTab === 'physique' ? s.type.startsWith('Physique') : s.type.startsWith('Actu'));
-  const rows = all.filter(([s]) =>
-    (saiFil.artiste === 'Tous' || s.artiste === saiFil.artiste) &&
-    (saiFil.type === 'Tous' || (s.type.split('— ')[1] || '') === saiFil.type) &&
-    (saiFil.sem === 'Toutes' || s.sem === saiFil.sem) &&
-    (saiFil.source === 'Toutes' || (s.src || 'FORMULAIRE') === saiFil.source));
-  const files = [...new Set(rows.filter(([s]) => s.file).map(([s]) => s.file))];
-  const solo = rows.filter(([s]) => !s.file);
-  const chip = (k, v, lab) => `<button class="chip ${saiFil[k]===v?'active':''}" onclick="saiFilter('${k}','${v}')">${lab}</button>`;
-  return `
-  <h2 style="font-size:28px;font-weight:800;letter-spacing:-.03em;margin:34px 0 14px">Historique.</h2>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-    ${chip('artiste','Tous','Artiste : tous')}${ARTISTS.slice(0,4).map(a => chip('artiste', a.nom, a.nom)).join('')}
-    ${chip('type','Tous','Type : tous')}${typesOf().map(t => chip('type', t, t)).join('')}
-    ${chip('sem','Toutes','Semaine : toutes')}${chip('sem','S'+SEMAINE.num,'S'+SEMAINE.num)}
-    ${chip('source','Toutes','Source : toutes')}${['TEXTE','CSV','FORMULAIRE','PDF'].map(s => chip('source', s, s)).join('')}
-  </div>
-  <div class="card" style="padding:6px 0 0">
-    ${rows.length ? files.map(f => {
-      const g = SAI_GROUPS[f] || { par:'MC', ok:rows.filter(([s]) => s.file === f).length, rejet:0 };
-      const kids = rows.filter(([s]) => s.file === f);
-      return `<div class="grp-row" onclick="toggleGrp('${f}')">
-          <span>${saiGrpOpen[f] ? '▾' : '▸'}</span><span>📄 ${f}</span>
-          <span style="font-weight:600;color:var(--muted-foreground);font-size:12px">importé par ${g.par} · ${g.ok} intégrée${g.ok>1?'s':''} · ${g.rejet} rejetée${g.rejet>1?'s':''}</span>
-        </div>${saiGrpOpen[f] ? kids.map(([s, i]) => histRow(s, i)).join('') : ''}`;
-    }).join('') + solo.map(([s, i]) => histRow(s, i)).join('')
-    : '<div class="empty">Aucune saisie ne correspond à ces filtres.</div>'}
-  </div>
-  <div class="note-line">ⓘ Toute modification conserve une trace (auteur + date) — l'historique reste auditable.</div>`;
-}
 function saiRail(){
   const attendu = ARTISTS.map(a => [a.nom, !!SAISIES.find(s => s.artiste === a.nom && s.sem === 'S' + SEMAINE.num && s.type.startsWith(saisieTab === 'physique' ? 'Physique' : 'Actu'))]);
   const faits = attendu.filter(([, d]) => d).length;

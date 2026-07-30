@@ -1362,8 +1362,12 @@ function vArtiste(id){
 function alertItem(al){
   const k = critOf(al), c = CRIT[k];
   const done = alertDone[al.id];
+  const a = ARTISTES.find(x => x.id === al.artiste);
+  const isrc = (al.link && al.link.indexOf('#/titre/') === 0) ? al.link.replace('#/titre/','') : (a && a.titres[0] ? a.titres[0].isrc : '');
+  const vign = a ? `<span class="a-vign">${coverPh(a, isrc)}<i style="background:${al.color}">${al.ic}</i></span>` : '';
   return `<div class="alert-item rv ${done ? 'done' : ''}">
-    <span class="a-ic" style="background:${al.color}14;color:${al.color}">${al.ic}</span>
+    ${vign || `<span class="a-ic" style="background:${al.color}14;color:${al.color}">${al.ic}</span>`}
+
     <div style="flex:1;min-width:0">
       <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
         <span class="crit" style="background:${c.c}14;color:${c.c}"><i style="background:${c.c}"></i>${c.lab}</span>

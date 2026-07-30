@@ -1068,7 +1068,7 @@ function renderRosterOnly(){ $('#roster-grid').innerHTML = rosterRows(); }
 /* ================================================================
    VUE — DASHBOARD ARTISTE (§7.1)
 ================================================================ */
-const SECTIONS = [['synthese','Synthèse'],['streaming','Streaming'],['titres','Titres'],['social','Social'],['demo','Démographie'],['physique','Physique'],['radio','Radios'],['actus','Actus']];
+const SECTIONS = [['synthese','Synthèse'],['titres','Titres'],['streaming','Streaming'],['social','Social'],['demo','Démographie'],['physique','Physique'],['radio','Radios'],['actus','Actus']];
 function vArtiste(id){
   const a = artist(id);
   if (!a) return `<div class="empty" style="padding:100px">Artiste hors périmètre V1.</div>`;
@@ -1132,6 +1132,23 @@ function vArtiste(id){
       ${alertsA.length ? `<div class="grid" style="gap:10px;margin-top:14px">${alertsA.map(alertItem).join('')}</div>` : ''}
     </div>
 
+    <div id="s-titres" style="scroll-margin-top:130px;margin-top:56px">
+      <h2 class="h-sect rv">Titres<span style="color:var(--accent)">.</span> <small>${AF.titre === 'Tous' ? 'classés par streams' : '1 titre filtré'} · cliquer pour le drill-down ISRC/UPC</small></h2>
+      <div class="lb rv">
+        ${[...tl].sort((x,y) => y.streamsHebdo - x.streamsHebdo).map((t,i,arr) => `
+        <a class="lb-row lb-t" style="--acc:${a.accent}" href="#/titre/${t.isrc}">
+          <span class="lb-rank">${String(i+1).padStart(2,'0')}<small class="${t.delta > 0 ? 'rk-up' : t.delta < 0 ? 'rk-dn' : 'rk-eq'}">${t.delta > 0 ? '↑' : t.delta < 0 ? '↓' : '—'} ${Math.abs(t.delta)}%</small></span>
+          <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${U(TIMGS[t.isrc] || '')}" loading="lazy" alt="" onerror="this.remove()"></span>
+          <span class="lb-name"><b>${t.titre}</b><span>${t.projet} · <span class="mono">${t.isrc}</span></span></span>
+          <span class="hm">${sparkMini(t.cadence, a.accent)}</span>
+          <span class="lb-val hm"><b style="${t.shazamJour > SEUILS.shazam ? 'color:var(--pop)' : ''}">${t.shazamJour}${t.shazamJour > SEUILS.shazam ? ' ⚑' : ''}</b><span>Shazam /j</span></span>
+          <span class="lb-val"><b>${fmt(sc(t.streamsHebdo, t))}</b><span>streams ${P.lab} · ${momBadgeTxt(t.delta)}</span></span>
+          <span class="go hm">↗</span>
+        </a>`).join('')}
+        <div class="lb-foot">${AF.titre === 'Tous' ? '' : `Filtre titre actif — <a href="#" onclick="event.preventDefault();setFilter('titre','Tous')" style="font-weight:700">voir tous les titres</a>. `}Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j.</div>
+      </div>
+    </div>
+
     <div id="s-streaming" style="scroll-margin-top:130px;margin-top:56px">
       <h2 class="h-sect rv">Streaming<span style="color:var(--accent)">.</span> <small>${AF.dsp === 'Tous' ? 'streams globaux' : 'streams ' + AF.dsp} · sources · seuil ± 20%</small></h2>
       <p class="h-sub">Comparaison semaine N vs N-1 · ${AF.dsp === 'Tous' ? 'Spotify, Apple, Deezer, Amazon' : AF.dsp} · ${AF.pays === 'Monde' ? 'Monde' : AF.pays} · ${P.lab}.</p>
@@ -1161,23 +1178,6 @@ function vArtiste(id){
             <div style="font-size:12px;color:var(--muted-foreground);margin-top:8px">${t0.sources.passives}% passives (playlists, algo, radio)</div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <div id="s-titres" style="scroll-margin-top:130px;margin-top:56px">
-      <h2 class="h-sect rv">Titres<span style="color:var(--accent)">.</span> <small>${AF.titre === 'Tous' ? 'classés par streams' : '1 titre filtré'} · cliquer pour le drill-down ISRC/UPC</small></h2>
-      <div class="lb rv">
-        ${[...tl].sort((x,y) => y.streamsHebdo - x.streamsHebdo).map((t,i,arr) => `
-        <a class="lb-row lb-t" style="--acc:${a.accent}" href="#/titre/${t.isrc}">
-          <span class="lb-rank">${String(i+1).padStart(2,'0')}<small class="${t.delta > 0 ? 'rk-up' : t.delta < 0 ? 'rk-dn' : 'rk-eq'}">${t.delta > 0 ? '↑' : t.delta < 0 ? '↓' : '—'} ${Math.abs(t.delta)}%</small></span>
-          <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${U(TIMGS[t.isrc] || '')}" loading="lazy" alt="" onerror="this.remove()"></span>
-          <span class="lb-name"><b>${t.titre}</b><span>${t.projet} · <span class="mono">${t.isrc}</span></span></span>
-          <span class="hm">${sparkMini(t.cadence, a.accent)}</span>
-          <span class="lb-val hm"><b style="${t.shazamJour > SEUILS.shazam ? 'color:var(--pop)' : ''}">${t.shazamJour}${t.shazamJour > SEUILS.shazam ? ' ⚑' : ''}</b><span>Shazam /j</span></span>
-          <span class="lb-val"><b>${fmt(sc(t.streamsHebdo, t))}</b><span>streams ${P.lab} · ${momBadgeTxt(t.delta)}</span></span>
-          <span class="go hm">↗</span>
-        </a>`).join('')}
-        <div class="lb-foot">${AF.titre === 'Tous' ? '' : `Filtre titre actif — <a href="#" onclick="event.preventDefault();setFilter('titre','Tous')" style="font-weight:700">voir tous les titres</a>. `}Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j.</div>
       </div>
     </div>
 

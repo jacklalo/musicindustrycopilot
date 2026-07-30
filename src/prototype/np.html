@@ -1754,12 +1754,7 @@ function vAlertes(){
   <div class="filters"><div class="wrap">
     <span class="group-label">Criticité</span>
     ${['Toutes','risk','opp','info'].map(c => `<button class="chip chip-sm ${alertCrit===c?'active':''}" onclick="alertCrit='${c}';render()">${c === 'Toutes' ? 'Toutes' : CRIT[c].lab.charAt(0) + CRIT[c].lab.slice(1).toLowerCase() + ' (' + n(c) + ')'}</button>`).join('')}
-    <span class="sep"></span>
-    <span class="group-label">Règle</span>
-    ${cats.map(c => `<button class="chip chip-sm ${alertFilter===c?'active':''}" onclick="alertFilter='${c.replace(/'/g,"\\'")}';render()">${c === 'Toutes' ? 'Toutes (' + ALERTES.length + ')' : c === 'SCORE SPOTIFY' ? 'Score Spotify' : c.charAt(0) + c.slice(1).toLowerCase()}</button>`).join('')}
-    <span class="sep"></span>
-    <button class="chip chip-sm ${alertMine?'active':''}" onclick="alertMine=!alertMine;render()">Mes artistes</button>
-    <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Digest alertes S${SEMAINE.num}')">Exporter le digest <span class="ar">↗</span></button></div>
+    <div class="right" style="margin-left:auto">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Digest alertes S${SEMAINE.num}')">Exporter le digest <span class="ar">↗</span></button></div>
   </div></div>
   <section class="band"><div class="wrap">
     <div class="digest rv">

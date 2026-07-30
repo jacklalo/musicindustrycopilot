@@ -136,6 +136,14 @@
   .filters .wrap{display:flex;align-items:center;gap:10px;padding:14px 32px;flex-wrap:wrap}
   .filters .sep{width:1px;height:22px;background:var(--line);margin:0 6px}
   .filters .right{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .filters .chip.active{box-shadow:0 1px 0 rgba(0,0,0,.06)}
+  .af-reset{border-style:dashed}
+  .af-scope{border-bottom:1px solid var(--line);background:color-mix(in srgb, var(--accent) 5%, var(--background))}
+  .af-scope .wrap{display:flex;align-items:center;gap:8px;padding:10px 32px;font-size:12px;color:var(--muted-foreground);flex-wrap:wrap}
+  .af-scope b{color:var(--foreground);font-weight:700}
+  .af-scope .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block}
+  .af-scope .af-note{margin-left:auto;font-size:11.5px;opacity:.85}
+  @media(max-width:760px){ .af-scope .af-note{margin-left:0;width:100%} }
 
   /* Tables */
   table.data{width:100%;border-collapse:collapse;font-size:14px}
@@ -698,32 +706,64 @@ document.addEventListener('keydown', e => {
 
 const syncHtml = `<span class="sync"><span class="ok"></span>S${SEMAINE.num} · VEN→VEN</span><span class="sync" title="Délai de reporting Believe 48–72h (§8.2)"><span class="warn"></span>BELIEVE J-3</span>`;
 
+const PERIODES = { '7 j': {mult:1, lab:'7 j', pts:8}, '28 j': {mult:3.7, lab:'28 j', pts:8}, '12 sem': {mult:11.4, lab:'12 sem', pts:8} };
+const PAYS_FALLBACK = { Monde:100, FR:62, BE:7, CH:5 };
+const AF = { periode:'7 j', dsp:'Tous', pays:'Monde', titre:'Tous' };
+const afDefault = () => AF.periode === '7 j' && AF.dsp === 'Tous' && AF.pays === 'Monde' && AF.titre === 'Tous';
+
+function paysShare(a){
+  if (AF.pays === 'Monde') return 1;
+  const row = (a && a.demo && a.demo.pays || []).find(([p]) => p.toUpperCase().startsWith(AF.pays));
+  return ((row ? row[1] : PAYS_FALLBACK[AF.pays]) || 0) / 100;
+}
+function dspShare(t){
+  if (AF.dsp === 'Tous') return 1;
+  return ((t && t.dsp && t.dsp[AF.dsp]) || 0) / 100;
+}
+/** Facteur appliqué aux volumes de streams selon les filtres actifs. */
+function afFactor(a, t){ return PERIODES[AF.periode].mult * paysShare(a) * dspShare(t || (a && a.titres[0])); }
+
+function setFilter(key, val){
+  if (AF[key] === val) return;
+  AF[key] = val;
+  const y = window.scrollY;
+  render();
+  window.scrollTo(0, y);
+  toast(`Périmètre : <b>${AF.periode} · ${AF.dsp === 'Tous' ? 'tous DSP' : AF.dsp} · ${AF.pays}${AF.titre === 'Tous' ? '' : ' · ' + AF.titre}</b>`);
+}
+function resetFilters(){
+  AF.periode = '7 j'; AF.dsp = 'Tous'; AF.pays = 'Monde'; AF.titre = 'Tous';
+  const y = window.scrollY; render(); window.scrollTo(0, y);
+  toast('Filtres réinitialisés');
+}
+const afChips = (key, vals) => vals.map(p =>
+  `<button class="chip chip-sm ${AF[key] === p ? 'active' : ''}" aria-pressed="${AF[key] === p}" onclick="setFilter('${key}', ${JSON.stringify(p).replace(/"/g, '&quot;')})">${p}</button>`).join('');
+
 function filtersBar(ctx, slim=false, titres=null){
   return `<div class="filters"><div class="wrap">
     <span class="group-label">Période</span>
-    ${['7 j','28 j','12 sem'].map((p,i) => `<button class="chip chip-sm ${i===0?'active':''}" onclick="fakeFilter(this,'période ${p}')">${p}</button>`).join('')}
+    ${afChips('periode', ['7 j','28 j','12 sem'])}
     <span class="sep"></span>
     <span class="group-label">DSP</span>
-    ${['Tous','Spotify','Apple','Deezer','Amazon'].map((p,i) => `<button class="chip chip-sm ${i===0?'active':''}" onclick="fakeFilter(this,'DSP ${p}')">${p}</button>`).join('')}
+    ${afChips('dsp', ['Tous','Spotify','Apple','Deezer','Amazon'])}
     <span class="sep"></span>
     <span class="group-label">Pays</span>
-    ${['Monde','FR','BE','CH'].map((p,i) => `<button class="chip chip-sm ${i===0?'active':''}" onclick="fakeFilter(this,'pays ${p}')">${p}</button>`).join('')}
+    ${afChips('pays', ['Monde','FR','BE','CH'])}
     ${titres ? `<span class="sep"></span>
     <span class="group-label">Titre / Projet</span>
-    ${['Tous', ...titres].map((p,i) => `<button class="chip chip-sm ${i===0?'active':''}" onclick="fakeFilter(this,'titre ${p.replace(/'/g,"\\'")}')">${p}</button>`).join('')}` : ''}
+    ${afChips('titre', ['Tous', ...titres])}` : ''}
+    ${afDefault() ? '' : `<button class="chip chip-sm af-reset" onclick="resetFilters()">Réinitialiser ✕</button>`}
     ${slim ? '' : `<div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('${ctx}')">Exporter <span class="ar">↗</span></button></div>`}
   </div></div>`;
 }
-function fakeFilter(btn, label){
-  let sib = btn.previousElementSibling;
-  const grp = [btn];
-  while (sib && sib.classList.contains('chip')) { grp.push(sib); sib = sib.previousElementSibling; }
-  sib = btn.nextElementSibling;
-  while (sib && sib.classList.contains('chip')) { grp.push(sib); sib = sib.nextElementSibling; }
-  grp.forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  toast(`Filtre : <b>${label}</b> — simulation prototype`);
+function afScope(a){
+  return `<div class="af-scope"><div class="wrap">
+    <span class="dot"></span>
+    <b>${AF.periode}</b> · <b>${AF.dsp === 'Tous' ? 'Tous DSP' : AF.dsp}</b> · <b>${AF.pays === 'Monde' ? 'Monde' : AF.pays}</b> · <b>${AF.titre === 'Tous' ? 'Tous les titres' : AF.titre}</b>
+    <span class="af-note">Volumes recalculés sur ce périmètre${AF.pays === 'Monde' ? '' : ` (part ${AF.pays} : ${Math.round(paysShare(a)*100)}%)`}.</span>
+  </div></div>`;
 }
+
 
 /* ================================================================
    VUE — ACCUEIL / ARTISTES
@@ -977,8 +1017,15 @@ function vArtiste(id){
   if (!a) return `<div class="empty" style="padding:100px">Artiste hors périmètre V1.</div>`;
   document.documentElement.style.setProperty('--accent', a.accent);
   const alertsA = ALERTES.filter(al => al.artiste === id);
-  const t0 = a.titres[0];
+  const titresSel = AF.titre === 'Tous' ? a.titres : a.titres.filter(t => t.titre === AF.titre);
+  const tl = titresSel.length ? titresSel : a.titres;
+  const t0 = tl[0];
+  const P = PERIODES[AF.periode];
+  const geo = paysShare(a);
+  const F = t => P.mult * geo * dspShare(t);
+  const sc = (v, t) => Math.round((v || 0) * F(t || t0));
   const scoreOk = a.score > SEUILS.score;
+
   const summary = (() => {
     const p = [];
     p.push(`${a.delta >= 0 ? 'Progression' : 'Repli'} hebdo de <b>${a.delta > 0 ? '+' : ''}${a.delta}%</b> des streams`);
@@ -1004,8 +1051,8 @@ function vArtiste(id){
   </div></section>
 
   <div class="kpi-band">
-    <div class="kpi rv"><div class="lab">Streams hebdo</div><div class="val">${fmt(a.streams)} <span class="cmp">${deltaHtml(a.delta)}</span></div></div>
-    <div class="kpi rv"><div class="lab">Auditeurs mensuels</div><div class="val">${fmt(a.listeners)} <span class="cmp">${deltaHtml(a.listenersDelta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(sc(AF.titre === 'Tous' ? a.streams : t0.streamsHebdo))} <span class="cmp">${deltaHtml(a.delta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Auditeurs mensuels${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.listeners * geo))} <span class="cmp">${deltaHtml(a.listenersDelta)}</span></div></div>
     <div class="kpi rv"><div class="lab">Score Spotify /100</div><div class="val" style="${scoreOk ? 'color:var(--accent)' : ''}">${a.score} <span class="cmp" style="color:var(--muted-foreground)">${scoreOk ? '> seuil 50' : 'S' + (SEMAINE.num-1) + ' : ' + a.scorePrev}</span></div></div>
     <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(a.social.ig + a.social.tt)} <span class="cmp">${deltaHtml(a.social.igD)}</span></div></div>
   </div>
@@ -1016,6 +1063,7 @@ function vArtiste(id){
   </div></div>
 
   ${filtersBar('Dashboard ' + a.nom, true, a.titres.map(t => t.titre))}
+  ${afScope(a)}
 
   <section class="band"><div class="wrap">
 
@@ -1028,22 +1076,22 @@ function vArtiste(id){
     </div>
 
     <div id="s-streaming" style="scroll-margin-top:130px;margin-top:56px">
-      <h2 class="h-sect rv">Streaming<span style="color:var(--accent)">.</span> <small>streams globaux · sources · seuil ± 20%</small></h2>
-      <p class="h-sub">Comparaison semaine N vs N-1 · Spotify, Apple, Deezer, Amazon.</p>
+      <h2 class="h-sect rv">Streaming<span style="color:var(--accent)">.</span> <small>${AF.dsp === 'Tous' ? 'streams globaux' : 'streams ' + AF.dsp} · sources · seuil ± 20%</small></h2>
+      <p class="h-sub">Comparaison semaine N vs N-1 · ${AF.dsp === 'Tous' ? 'Spotify, Apple, Deezer, Amazon' : AF.dsp} · ${AF.pays === 'Monde' ? 'Monde' : AF.pays} · ${P.lab}.</p>
       <div class="grid g-main">
         <div class="card hov rv">
-          <div class="kicker">MOMENTUM · 8 SEMAINES · ${t0.titre.toUpperCase()}</div>
+          <div class="kicker">MOMENTUM · 8 ${AF.periode === '12 sem' ? 'PÉRIODES' : 'SEMAINES'} · ${t0.titre.toUpperCase()}</div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 4px">
-            <span class="num-xl">${fmt(t0.streamsHebdo)}</span>
+            <span class="num-xl">${fmt(sc(t0.streamsHebdo))}</span>
             ${momBadge(t0.delta)}
           </div>
-          ${sparkline(t0.cadence, a.accent)}
+          ${sparkline(t0.cadence.map(v => Math.round(v * F(t0))), a.accent)}
         </div>
         <div style="display:grid;gap:16px">
           <div class="card hov rv">
-            <div class="kicker">STREAMS PAR DSP</div>
+            <div class="kicker">STREAMS PAR DSP${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase() + ' ISOLÉ'}</div>
             <div style="margin-top:14px">
-              ${Object.entries(t0.dsp).map(([d,p]) => `<div class="brow"><div class="btop"><b>${d}</b><span>${p}%</span></div><div class="track"><span class="fill" style="width:${p}%"></span></div></div>`).join('')}
+              ${Object.entries(t0.dsp).map(([d,p]) => `<div class="brow" style="opacity:${AF.dsp === 'Tous' || AF.dsp === d ? 1 : .32};cursor:pointer" onclick="setFilter('dsp','${AF.dsp === d ? 'Tous' : d}')"><div class="btop"><b>${d}</b><span>${p}% · ${fmt(Math.round(t0.streamsHebdo * p / 100 * P.mult * geo))}</span></div><div class="track"><span class="fill" style="width:${p}%"></span></div></div>`).join('')}
             </div>
           </div>
           <div class="card hov rv">
@@ -1060,19 +1108,19 @@ function vArtiste(id){
     </div>
 
     <div id="s-titres" style="scroll-margin-top:130px;margin-top:56px">
-      <h2 class="h-sect rv">Titres<span style="color:var(--accent)">.</span> <small>classés par streams · cliquer pour le drill-down ISRC/UPC</small></h2>
+      <h2 class="h-sect rv">Titres<span style="color:var(--accent)">.</span> <small>${AF.titre === 'Tous' ? 'classés par streams' : '1 titre filtré'} · cliquer pour le drill-down ISRC/UPC</small></h2>
       <div class="lb rv">
-        ${[...a.titres].sort((x,y) => y.streamsHebdo - x.streamsHebdo).map((t,i,arr) => `
+        ${[...tl].sort((x,y) => y.streamsHebdo - x.streamsHebdo).map((t,i,arr) => `
         <a class="lb-row lb-t" style="--acc:${a.accent}" href="#/titre/${t.isrc}">
           <span class="lb-rank">${String(i+1).padStart(2,'0')}<small class="${t.delta > 0 ? 'rk-up' : t.delta < 0 ? 'rk-dn' : 'rk-eq'}">${t.delta > 0 ? '↑' : t.delta < 0 ? '↓' : '—'} ${Math.abs(t.delta)}%</small></span>
           <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${U(TIMGS[t.isrc] || '')}" loading="lazy" alt="" onerror="this.remove()"></span>
           <span class="lb-name"><b>${t.titre}</b><span>${t.projet} · <span class="mono">${t.isrc}</span></span></span>
           <span class="hm">${sparkMini(t.cadence, a.accent)}</span>
           <span class="lb-val hm"><b style="${t.shazamJour > SEUILS.shazam ? 'color:var(--pop)' : ''}">${t.shazamJour}${t.shazamJour > SEUILS.shazam ? ' ⚑' : ''}</b><span>Shazam /j</span></span>
-          <span class="lb-val"><b>${fmt(t.streamsHebdo)}</b><span>streams · ${momBadgeTxt(t.delta)}</span></span>
+          <span class="lb-val"><b>${fmt(sc(t.streamsHebdo, t))}</b><span>streams ${P.lab} · ${momBadgeTxt(t.delta)}</span></span>
           <span class="go hm">↗</span>
         </a>`).join('')}
-        <div class="lb-foot">Un artiste porte 1 à N titres — le périmètre évolue avec les sorties. Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j.</div>
+        <div class="lb-foot">${AF.titre === 'Tous' ? '' : `Filtre titre actif — <a href="#" onclick="event.preventDefault();setFilter('titre','Tous')" style="font-weight:700">voir tous les titres</a>. `}Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j.</div>
       </div>
     </div>
 
@@ -1108,7 +1156,7 @@ function vArtiste(id){
         <div class="card hov rv">
           <div class="kicker">GÉOGRAPHIE DES FANS</div>
           <div style="margin-top:14px">
-            ${a.demo.pays.map(([p,v],i) => `<div class="brow"><div class="btop"><b>${p}</b><span>${v}%</span></div><div class="track"><span class="fill" style="width:${v}%;background:${['#ED2362','#1E5BFF','#5A8DB8','#2DE07A'][i] || '#B9B7B3'}"></span></div></div>`).join('')}
+            ${a.demo.pays.map(([p,v],i) => { const code = p.toUpperCase().slice(0,2); const sel = AF.pays !== 'Monde' && p.toUpperCase().startsWith(AF.pays); return `<div class="brow" style="opacity:${AF.pays === 'Monde' || sel ? 1 : .32};cursor:pointer" onclick="setFilter('pays','${sel ? 'Monde' : (['FR','BE','CH'].includes(code) ? code : 'Monde')}')"><div class="btop"><b>${p}${sel ? ' ✓' : ''}</b><span>${v}%</span></div><div class="track"><span class="fill" style="width:${v}%;background:${['#ED2362','#1E5BFF','#5A8DB8','#2DE07A'][i] || '#B9B7B3'}"></span></div></div>`; }).join('')}
           </div>
         </div>
         <div class="card hov rv">

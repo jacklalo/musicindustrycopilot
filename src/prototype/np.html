@@ -768,7 +768,83 @@ function whatChanged(){
     <ul>${f.map(([i, t]) => `<li>${i}<span>${t}</span></li>`).join('')}</ul>
   </div>`;
 }
+/* ===== Accueil : question libre (RAG) ===== */
+const askCard = (a, val, color, detail) => `<a class="ask-card" href="#/artiste/${a.id}">${coverPh(a, a.titres[0].isrc)}<div class="txt"><b>${a.nom}</b><span>${detail}</span></div><span class="val" style="color:${color}">${val}</span></a>`;
+const ASKS = [
+  { q: 'Quel artiste accélère cette semaine ?', run(){
+      const l = [...ARTISTS].sort((x,y) => y.delta - x.delta).slice(0,4);
+      return { txt: `Sur la semaine ${SEMAINE.num} (${SEMAINE.du} → ${SEMAINE.au}), <b>${l[0].nom}</b> signe la plus forte accélération du roster avec <b>+${l[0].delta}%</b> de streams. Le seuil d'alerte interne est fixé à ±${SEUILS.streaming}%.`,
+        cards: l.map(a => askCard(a, (a.delta>0?'+':'')+a.delta+'%', a.delta>=0?'var(--up)':'var(--down)', `${fmt(a.streams)} streams · ${a.label}`)),
+        src: ['Spotify', 'Believe', 'Shazam'] };
+    }},
+  { q: 'Qui recule et pourquoi ?', run(){
+      const l = [...ARTISTS].sort((x,y) => x.delta - y.delta).filter(a => a.delta < 0).slice(0,4);
+      if (!l.length) return { txt: 'Aucun artiste du roster n\'est en recul cette semaine.', cards: [], src: ['Believe'] };
+      return { txt: `<b>${l.length} artiste${l.length>1?'s':''}</b> en repli cette semaine. Le plus marqué : <b>${l[0].nom}</b> à <b>${l[0].delta}%</b> — ${Math.abs(l[0].delta) >= SEUILS.streaming ? 'seuil d\'alerte franchi, arbitrage à prévoir' : 'sous le seuil d\'alerte, à surveiller'}.`,
+        cards: l.map(a => askCard(a, a.delta+'%', 'var(--down)', `${fmt(a.streams)} streams · ${a.label}`)),
+        src: ['Believe', 'Spotify'] };
+    }},
+  { q: 'Quel titre est le plus shazamé ?', run(){
+      const l = ARTISTS.flatMap(a => a.titres.map(t => ({a,t}))).sort((x,y) => y.t.shazamJour - x.t.shazamJour).slice(0,4);
+      return { txt: `« <b>${l[0].t.titre}</b> » (${l[0].a.nom}) domine les Shazams avec <b>${l[0].t.shazamJour}/jour</b>. Le seuil de détection virale est à ${SEUILS.shazam} Shazams/jour.`,
+        cards: l.map(({a,t}) => `<a class="ask-card" href="#/titre/${t.isrc}">${coverPh(a, t.isrc)}<div class="txt"><b>${t.titre}</b><span>${a.nom} · ${t.isrc}</span></div><span class="val" style="color:${t.shazamJour >= SEUILS.shazam ? 'var(--up)' : 'var(--ink)'}">${t.shazamJour}/j</span></a>`),
+        src: ['Shazam', 'TikTok'] };
+    }},
+  { q: 'Que dois-je traiter en priorité ?', run(){
+      const open = ALERTES.filter(al => !alertDone[al.id]);
+      const crit = open.filter(al => critOf(al) === 'critique');
+      return { txt: `<b>${open.length} alerte${open.length>1?'s':''} ouverte${open.length>1?'s':''}</b>, dont <b>${crit.length}</b> à traiter en priorité. <a href="#/alertes">Ouvrir le centre d'alertes ↗</a>`,
+        cards: open.slice(0,4).map(al => { const a = artist(al.artiste); return a ? askCard(a, al.cat, 'var(--muted-foreground)', al.txt ? String(al.txt).replace(/<[^>]+>/g,'').slice(0,60) : al.cat) : ''; }).filter(Boolean),
+        src: ['Alertes #NP'] };
+    }},
+  { q: 'Résume-moi la semaine du label', run(){
+      const top = ranked()[0], mover = [...ARTISTS].sort((x,y) => y.delta - x.delta)[0];
+      const tot = ARTISTS.reduce((s,a) => s + a.streams, 0);
+      return { txt: `Semaine ${SEMAINE.num} : <b>${fmt(tot)} streams</b> cumulés sur ${ARTISTS.length} artistes. <b>${top.nom}</b> reste en tête du roster, <b>${mover.nom}</b> est la plus forte progression (+${mover.delta}%).`,
+        cards: ranked().slice(0,4).map(a => askCard(a, fmt(a.streams), 'var(--ink)', `${(a.delta>0?'+':'')+a.delta}% · ${a.label}`)),
+        src: ['Believe', 'Spotify', 'Saisies #NP'] };
+    }},
+];
+let askState = null;
+function askRun(q){
+  const found = ASKS.find(x => x.q.toLowerCase() === q.toLowerCase()) ||
+    ASKS.find(x => q.toLowerCase().split(/\s+/).filter(w => w.length > 4).some(w => x.q.toLowerCase().includes(w)));
+  const a = artist(q.toLowerCase().trim()) || ARTISTS.find(a => q.toLowerCase().includes(a.nom.toLowerCase()));
+  let res;
+  if (a) res = { txt: `<b>${a.nom}</b> (${a.label}) — <b>${fmt(a.streams)} streams</b> sur S${SEMAINE.num}, ${(a.delta>0?'+':'')+a.delta}% vs S${SEMAINE.num-1}, ${shazamOf(a)} Shazams/jour cumulés. <a href="#/artiste/${a.id}">Ouvrir la fiche ↗</a>`,
+    cards: [askCard(a, (a.delta>0?'+':'')+a.delta+'%', a.delta>=0?'var(--up)':'var(--down)', `${fmt(a.streams)} streams · ${a.genre}`)], src: ['Believe', 'Spotify', 'Shazam'] };
+  else if (found) res = found.run();
+  else res = ASKS[4].run();
+  askState = { q, ...res };
+  render();
+}
+function askSubmit(e){
+  e.preventDefault();
+  const i = $('#ask-input');
+  if (i && i.value.trim()) askRun(i.value.trim());
+  return false;
+}
+function vHome(){
+  const a = askState;
+  return `<div class="ask-wrap">
+    <div class="ask-mark">#NP INTELLIGENCE</div>
+    <h1 class="ask-h1">Posez n'importe quelle question.</h1>
+    <p class="ask-sub">Streaming, Shazam, alertes, saisies — la donnée du roster, en une phrase.</p>
+    <form class="ask-bar" onsubmit="return askSubmit(event)">
+      <input id="ask-input" autocomplete="off" placeholder="Ex : quel artiste accélère cette semaine ?" value="${a ? a.q.replace(/"/g,'&quot;') : ''}">
+      <button class="ask-send" type="submit" aria-label="Envoyer">↑</button>
+    </form>
+    <div class="ask-tags">${ASKS.map(x => `<button class="ask-tag" onclick="askRun(${JSON.stringify(x.q).replace(/"/g,'&quot;')})">${x.q}</button>`).join('')}</div>
+    ${a ? `<div class="ask-answer">
+      <div class="ask-q">${a.q}</div>
+      <div class="ask-txt">${a.txt}</div>
+      ${a.cards.length ? `<div class="ask-cards">${a.cards.join('')}</div>` : ''}
+      <div class="ask-src">${a.src.map(s => `<span>${s}</span>`).join('')}</div>
+    </div>` : ''}
+  </div>`;
+}
 function vArtistes(){
+
   const spot = spotArtist();
   return `
   ${hero('TOP ROSTER', `LABELS 6&7 + SYNDICATE RECORDS · ${ARTISTS.length} ARTISTES · S${SEMAINE.num}`, 'Top <em>roster</em>.',

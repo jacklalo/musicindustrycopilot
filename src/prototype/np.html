@@ -189,7 +189,7 @@
 
   /* Hero artiste avec photo */
   .a-hero{color:#fff;background:linear-gradient(135deg,var(--accent) 0%,#0B0B0B 72%)}
-  .a-hero .wrap{padding:46px 32px 50px;display:grid;grid-template-columns:1.2fr .8fr;gap:44px;align-items:center}
+  .a-hero .wrap{padding:46px 32px 70px;display:grid;grid-template-columns:1.2fr .8fr;gap:44px;align-items:center}
   @media(max-width:960px){.a-hero .wrap{grid-template-columns:1fr}}
   .a-hero .back{font-size:10px;font-weight:600;letter-spacing:.22em;color:rgba(255,255,255,.6);text-decoration:none;transition:color .2s}
   .a-hero .back:hover{color:#fff}
@@ -574,7 +574,7 @@
     .kpi .cmp{font-size:11.5px}
 
     /* --- Heros --- */
-    .a-hero .wrap{padding:24px 14px 28px;gap:18px}
+    .a-hero .wrap{padding:24px 14px 36px;gap:18px}
     .a-hero h1{font-size:clamp(32px,10vw,44px)}
     .a-hero p{font-size:14px}
     .a-hero .ph{max-height:none;border-radius:20px;aspect-ratio:4/3}
@@ -1672,7 +1672,7 @@ function vTitre(isrc){
   const shazAlert = sj > SEUILS.shazam;
   const plList = t.playlists.filter(([p,dsp]) => AF.dsp === 'Tous' || (dsp + '').toLowerCase().includes(AF.dsp.toLowerCase()));
   return `
-  <section class="a-hero"><div class="wrap" style="padding-top:40px;padding-bottom:44px">
+  <section class="a-hero"><div class="wrap" style="padding-top:40px">
     <div>
       <a class="back" href="#/artiste/${a.id}">← ${a.nom.toUpperCase()}</a>
       <div class="meta">VUE TITRE · ${t.projet} · ${t.sortie}</div>

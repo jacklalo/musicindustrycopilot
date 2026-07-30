@@ -683,6 +683,45 @@
     .chip:hover{transform:none}
     .alert-item:hover{transform:none}
   }
+  /* ================= INTRO / LOGIN ================= */
+  body.intro-mode header.site,
+  body.intro-mode footer.site,
+  body.intro-mode .tabbar{display:none!important}
+  body.intro-mode{overflow:hidden}
+  .intro{position:relative;min-height:100vh;min-height:100svh;display:grid;place-items:center;background:radial-gradient(120% 90% at 50% 0%,#1a1a1c 0%,#0B0B0B 55%,#000 100%);overflow:hidden;padding:40px 18px}
+  .intro-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 45% at 50% 45%,rgba(200,16,46,.18),transparent 70%)}
+  .intro-float{position:absolute;border-radius:18px;overflow:hidden;filter:grayscale(1) contrast(1.05) brightness(.85);box-shadow:0 40px 90px -30px rgba(0,0,0,.9);opacity:.5;animation:floaty 12s ease-in-out infinite}
+  .intro-float img{width:100%;height:100%;object-fit:cover;display:block}
+  .intro-float::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(200,16,46,.22),rgba(0,0,0,.45))}
+  .if1{width:190px;height:250px;top:8%;left:6%;rotate:-7deg;animation-delay:-1s}
+  .if2{width:150px;height:200px;bottom:10%;left:13%;rotate:5deg;animation-delay:-4s}
+  .if3{width:210px;height:270px;top:11%;right:7%;rotate:6deg;animation-delay:-2.5s}
+  .if4{width:140px;height:186px;bottom:9%;right:14%;rotate:-5deg;animation-delay:-6s}
+  @keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -18px}}
+  .intro-card{position:relative;z-index:2;width:100%;max-width:400px;text-align:center;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(22px);border-radius:28px;padding:38px 30px 30px;box-shadow:0 50px 120px -40px rgba(0,0,0,.9);animation:introUp .8s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes introUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  .intro-logo{display:inline-flex;align-items:center;justify-content:center;background:#0B0B0B;border:1px solid rgba(255,255,255,.12);border-radius:9999px;padding:12px 22px;margin-bottom:20px}
+  .intro-logo img{height:26px;display:block}
+  .intro-card h1{font-size:26px;font-weight:600;letter-spacing:-.02em;color:#fff;margin:0 0 6px}
+  .intro-card p.sub{font-size:13.5px;color:rgba(255,255,255,.55);margin:0 0 24px;line-height:1.5}
+  .intro-form{display:grid;gap:10px;text-align:left}
+  .intro-form input{width:100%;font-family:var(--font);font-size:15px;color:#fff;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:13px 16px;outline:none;transition:border-color .2s,background .2s}
+  .intro-form input::placeholder{color:rgba(255,255,255,.35)}
+  .intro-form input:focus{border-color:rgba(200,16,46,.8);background:rgba(255,255,255,.09)}
+  .intro-cta{width:100%;border:none;cursor:pointer;font-family:var(--font);font-size:14.5px;font-weight:600;color:#fff;background:#C8102E;border-radius:9999px;padding:14px 20px;margin-top:6px;transition:transform .2s,box-shadow .2s}
+  .intro-cta:hover{transform:translateY(-1px);box-shadow:0 18px 40px -14px rgba(200,16,46,.7)}
+  .intro-alt{background:none;border:none;color:rgba(255,255,255,.5);font-family:var(--font);font-size:12.5px;cursor:pointer;margin-top:12px}
+  .intro-alt:hover{color:#fff}
+  .intro-mention{position:relative;z-index:2;margin-top:22px;text-align:center;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+  .intro-mention b{color:rgba(255,255,255,.75);font-weight:600}
+  @media(max-width:760px){
+    .if1{width:118px;height:158px;top:4%;left:-14px}
+    .if2{width:96px;height:128px;bottom:6%;left:-10px}
+    .if3{width:120px;height:160px;top:5%;right:-14px}
+    .if4{width:100px;height:132px;bottom:5%;right:-10px}
+    .intro-card{padding:30px 20px 24px;border-radius:24px}
+    .intro-card h1{font-size:22px}
+  }
 </style>
 
 </head>
@@ -690,7 +729,7 @@
 
 <header class="site">
   <div class="wrap">
-    <a class="brand" href="#/home"><img class="logo-mic" src="/__l5e/assets-v1/edc626b7-3a66-45a2-946d-aedc2393da1e/MIC_LOGO.svg" alt="MIC"></a>
+    <a class="brand" href="#/intro" title="Écran d'accueil #MIC"><img class="logo-mic" src="/__l5e/assets-v1/edc626b7-3a66-45a2-946d-aedc2393da1e/MIC_LOGO.svg" alt="MIC"></a>
     <nav class="main" id="nav">
       <a href="#/home" data-r="home">Accueil</a>
       <a href="#/artistes" data-r="artistes">Artistes</a>
@@ -699,7 +738,7 @@
     </nav>
     <div class="hdr-actions">
       <div class="search-pill" onclick="openSearch()">🔍 Rechercher <kbd>⌘K</kbd></div>
-      <div class="avatar-mc">MC</div>
+      <div class="avatar-mc" onclick="micLogout()" title="Se déconnecter">MC</div>
     </div>
   </div>
 </header>
@@ -2158,6 +2197,48 @@ function observeSpy(){
   }, {rootMargin:'-30% 0px -60% 0px'});
   SECTIONS.forEach(([id2]) => { const el = document.getElementById('s-' + id2); if (el) spyObs.observe(el); });
 }
+/* ================= INTRO / LOGIN ================= */
+let micAuth = false;
+try { micAuth = sessionStorage.getItem('mic_auth') === '1'; } catch(e){}
+function micLogin(ev){
+  if (ev) ev.preventDefault();
+  try { sessionStorage.setItem('mic_auth','1'); } catch(e){}
+  micAuth = true;
+  location.hash = '#/home';
+  render();
+  if (typeof toast === 'function') toast('Bienvenue sur #MIC');
+  return false;
+}
+function micLogout(){
+  try { sessionStorage.removeItem('mic_auth'); } catch(e){}
+  micAuth = false;
+  location.hash = '#/intro';
+  render();
+}
+function vIntro(){
+  const ph = k => IMGS[k];
+  return `<section class="intro">
+    <div class="intro-glow"></div>
+    <div class="intro-float if1"><img src="${ph('zazie')}" alt=""></div>
+    <div class="intro-float if2"><img src="${ph('krisy')}" alt=""></div>
+    <div class="intro-float if3"><img src="${ph('jeremy-frerot')}" alt=""></div>
+    <div class="intro-float if4"><img src="${ph('hina')}" alt=""></div>
+    <div>
+      <div class="intro-card">
+        <a class="intro-logo" href="#/intro"><img src="/__l5e/assets-v1/edc626b7-3a66-45a2-946d-aedc2393da1e/MIC_LOGO.svg" alt="MIC"></a>
+        <h1>Le copilote du label.</h1>
+        <p class="sub">Streaming, Shazam, alertes et saisies — toute la donnée du roster 6&amp;7 en un seul endroit.</p>
+        <form class="intro-form" onsubmit="return micLogin(event)">
+          <input type="email" placeholder="Adresse e-mail" value="marie.c@6et7.fr" autocomplete="email">
+          <input type="password" placeholder="Mot de passe" value="••••••••" autocomplete="current-password">
+          <button class="intro-cta" type="submit">Connexion</button>
+        </form>
+        <button class="intro-alt" onclick="micLogin()">Continuer en mode démo →</button>
+      </div>
+      <div class="intro-mention"><b>#MIC</b> — Music Industry Copilot · pour le label 6&amp;7</div>
+    </div>
+  </section>`;
+}
 function render(){
   const nOpen = ALERTES.filter(al => !alertDone[al.id]).length;
   $('#nav-alert-count').textContent = nOpen;
@@ -2167,6 +2248,13 @@ function render(){
   const app = $('#app');
   document.querySelectorAll('nav.main a, .tabbar a').forEach(a => a.classList.toggle('active',
     a.dataset.r === route || (a.dataset.r === 'artistes' && (route === 'artiste' || route === 'titre'))));
+  if (route === 'intro' || !micAuth) {
+    document.body.classList.add('intro-mode');
+    app.innerHTML = vIntro();
+    window.scrollTo(0,0);
+    return;
+  }
+  document.body.classList.remove('intro-mode');
   if (route === 'home') app.innerHTML = vHome();
   else if (route === 'artiste' && param) app.innerHTML = vArtiste(param);
   else if (route === 'titre' && param) app.innerHTML = vTitre(param);

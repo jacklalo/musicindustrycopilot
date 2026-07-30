@@ -1384,6 +1384,8 @@ function vTitre(isrc){
   const geo = paysShare(a);
   const F = P.mult * geo * dspShare(t);
   const scT = v => Math.round((v || 0) * F);
+  const SERIES = periodSeries(a, t);
+  const PERIOD_DELTA = periodDelta(t);
   const sj = perDay(t.shazamJour, a);
   const shazAlert = sj > SEUILS.shazam;
   const plList = t.playlists.filter(([p,dsp]) => AF.dsp === 'Tous' || (dsp + '').toLowerCase().includes(AF.dsp.toLowerCase()));
@@ -1403,7 +1405,7 @@ function vTitre(isrc){
   </div></section>
 
   <div class="kpi-band">
-    <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(scT(t.streamsHebdo))} <span class="cmp">${deltaHtml(t.delta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(SERIES.total)} <span class="cmp">${deltaHtml(PERIOD_DELTA)}</span></div></div>
     <div class="kpi rv"><div class="lab">Shazam / jour${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val" style="${shazAlert ? 'color:var(--accent)' : ''}">${sj} <span class="cmp" style="color:var(--muted-foreground)">seuil ${SEUILS.shazam}${shazAlert ? ' ⚑' : ''}</span></div></div>
     <div class="kpi rv"><div class="lab">Playlists édito${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}</div><div class="val">${plList.length}</div></div>
     <div class="kpi rv"><div class="lab">Sources actives</div><div class="val">${t.sources.actives}%</div></div>
@@ -1417,12 +1419,12 @@ function vTitre(isrc){
     <div class="grid g-main">
       <div style="display:grid;gap:18px">
         <div class="card hov rv">
-          <div class="kicker">CADENCE HEBDO · 8 ${AF.periode === '12 sem' ? 'PÉRIODES' : 'SEMAINES'} (VEN → VEN)${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase()}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div>
+          <div class="kicker">CADENCE · ${SERIES.labels.length} ${AF.periode === '7 j' ? 'JOURS' : 'SEMAINES'}${AF.periode === '7 j' ? '' : ' (VEN → VEN)'}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase()}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 4px">
-            <span class="num-xl">${fmt(scT(t.streamsHebdo))}</span>
-            ${momBadge(t.delta)}
+            <span class="num-xl">${fmt(SERIES.total)}</span>
+            ${momBadge(PERIOD_DELTA)}
           </div>
-          ${barsWeekly(t.cadence.map(v => Math.round(v * F)), a.accent)}
+          ${barsWeekly(SERIES.values, a.accent, SERIES.labels)}
         </div>
         <div class="lb rv">
           <div class="kicker" style="padding:20px 28px 14px">PLAYLISTS ÉDITORIALES · ENTRÉES / SORTIES · RANKING${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase()}</div>

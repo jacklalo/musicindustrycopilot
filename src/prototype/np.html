@@ -1107,12 +1107,23 @@ function openExport(ctx, kind, id){
    PDF DE SYNTHÈSE (aperçu + téléchargement)
 ================================================================ */
 const pdfD = n => `<span class="${n >= 0 ? 'pdf-up' : 'pdf-dn'}">${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}%</span>`;
-function pdfHead(kick, titre, lead){
-  return `<div class="pdf-kick">${kick}</div><h1>${titre}</h1><div class="pdf-rule"></div><p class="pdf-lead">${lead}</p>`;
+const MIC_LOGO = '/__l5e/assets-v1/edc626b7-3a66-45a2-946d-aedc2393da1e/MIC_LOGO.svg';
+function pdfHero(kick, titre, lead, art){
+  return `<div class="pdf-hero"><div class="row">
+    ${art ? `<img class="art" src="${art}" alt="">` : ''}
+    <div style="min-width:0">
+      <div class="kick">${kick}</div>
+      <h1>${titre}</h1>
+      <p>${lead}</p>
+    </div>
+    <div class="badge"><img src="${MIC_LOGO}" alt="#MIC"><span class="w">Semaine ${SEMAINE.num}</span></div>
+  </div></div>`;
 }
 function pdfFoot(ctx){
-  return `<div class="pdf-foot"><span>#MIC · Music Industry Copilot</span><span>${ctx}</span><span class="sp">Semaine ${SEMAINE.num} · ${SEMAINE.du} → ${SEMAINE.au}</span></div>`;
+  return `<div class="pdf-foot"><span>#MIC · Music Industry Copilot</span><span>${ctx}</span><span class="sp">${SEMAINE.du} → ${SEMAINE.au}</span></div>`;
 }
+function pdfKpi(l, v, d){ return `<div class="pdf-kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="d">${d}</div></div>`; }
+
 function pdfRoster(){
   const all = ranked();
   const tot = all.reduce((s,a) => s + a.streams, 0);
@@ -1120,33 +1131,42 @@ function pdfRoster(){
   const dLab = all.reduce((s,a) => s + a.delta * a.streams, 0) / tot;
   const movers = [...ARTISTS].sort((x,y) => y.delta - x.delta);
   return `<div class="pdfpage">
-    ${pdfHead(`Synthèse roster · Semaine ${SEMAINE.num}`, 'Top roster.', `Classement streaming hebdomadaire du roster (${ARTISTS.length} artistes), période du ${SEMAINE.du} au ${SEMAINE.au}. Données consolidées Believe (J-3), tous DSP, monde.`)}
+    ${pdfHero(`Synthèse roster · ${ARTISTS.length} artistes`, 'Top roster.', `Classement streaming hebdomadaire consolidé Believe (J-3), tous DSP, monde. Période du ${SEMAINE.du} au ${SEMAINE.au}.`)}
     <div class="pdf-kpis">
-      <div class="pdf-kpi"><div class="l">Streams roster</div><div class="v">${fmt(tot)}</div><div class="d">${pdfD(dLab)} vs S${SEMAINE.num - 1}</div></div>
-      <div class="pdf-kpi"><div class="l">Auditeurs mensuels</div><div class="v">${fmt(lis)}</div><div class="d">${pdfD(all.reduce((s,a) => s + a.listenersDelta, 0) / all.length)}</div></div>
-      <div class="pdf-kpi"><div class="l">Artistes suivis</div><div class="v">${ARTISTS.length}</div><div class="d">${movers.filter(a => a.delta > 0).length} en progression</div></div>
-      <div class="pdf-kpi"><div class="l">Alertes semaine</div><div class="v">${ALERTES.length}</div><div class="d">${ALERTES.filter(x => x.crit === 'risk').length} à risque</div></div>
+      ${pdfKpi('Streams roster', fmt(tot), `${pdfD(dLab)} vs S${SEMAINE.num - 1}`)}
+      ${pdfKpi('Auditeurs mensuels', fmt(lis), pdfD(all.reduce((s,a) => s + a.listenersDelta, 0) / all.length))}
+      ${pdfKpi('Artistes suivis', ARTISTS.length, `${movers.filter(a => a.delta > 0).length} en progression`)}
+      ${pdfKpi('Alertes', ALERTES.length, `${ALERTES.filter(x => x.crit === 'risk').length} à risque`)}
     </div>
-    <div class="pdf-sec">Classement streaming</div>
-    <table class="pdf-tbl"><thead><tr><th style="width:34px">#</th><th>Artiste</th><th>Label</th><th class="num">Streams S${SEMAINE.num}</th><th class="num">Évol.</th><th class="num">Auditeurs</th></tr></thead><tbody>
-      ${all.map((a,i) => `<tr><td class="num">${i+1}</td><td><b>${a.nom}</b></td><td>${a.label}</td><td class="num">${fmt(a.streams)}</td><td class="num">${pdfD(a.delta)}</td><td class="num">${fmt(a.listeners)}</td></tr>`).join('')}
-    </tbody></table>
-    ${pdfFoot('Synthèse roster · 1/2')}
-  </div>
-  <div class="pdfpage">
-    ${pdfHead(`Synthèse roster · Semaine ${SEMAINE.num}`, 'Lecture & alertes.', `Suite de la synthèse roster, semaine ${SEMAINE.num}.`)}
-    <div class="pdf-sec">Ce qui a changé</div>
-    <ul class="pdf-bul">
-      <li>Meilleure progression : <b>${movers[0].nom}</b> ${pdfD(movers[0].delta)} (${fmt(movers[0].streams)} streams).</li>
-      <li>Point de vigilance : <b>${movers[movers.length-1].nom}</b> ${pdfD(movers[movers.length-1].delta)}.</li>
-      <li>N°1 de la semaine : <b>${all[0].nom}</b> avec ${fmt(all[0].streams)} streams.</li>
-      <li>${ALERTES.length} alertes déclenchées dont ${ALERTES.filter(x => x.crit === 'opp').length} opportunités.</li>
-    </ul>
-    <div class="pdf-sec">Alertes de la semaine</div>
-    <table class="pdf-tbl"><thead><tr><th>Catégorie</th><th>Alerte</th><th style="width:74px">Type</th></tr></thead><tbody>
-      ${ALERTES.slice(0,8).map(al => `<tr><td>${al.cat}</td><td>${al.txt}</td><td>${al.crit === 'risk' ? 'Risque' : 'Opportunité'}</td></tr>`).join('')}
-    </tbody></table>
-    ${pdfFoot('Synthèse roster · 2/2')}
+    <div class="pdf-cols">
+      <div class="pdf-col">
+        <div class="pdf-card" style="flex:1 1 auto;min-height:0">
+          <div class="pdf-sec">Classement streaming</div>
+          <table class="pdf-tbl"><thead><tr><th style="width:26px"></th><th>Artiste</th><th class="num">Streams</th><th class="num">Évol.</th><th class="num">Auditeurs</th></tr></thead><tbody>
+            ${all.map((a,i) => `<tr><td><span class="pdf-rk${i === 0 ? ' top' : ''}">${i+1}</span></td><td><b>${a.nom}</b><br><span style="color:#9A9A9A;font-size:9px">${a.label}</span></td><td class="num">${fmt(a.streams)}</td><td class="num">${pdfD(a.delta)}</td><td class="num">${fmt(a.listeners)}</td></tr>`).join('')}
+          </tbody></table>
+        </div>
+        <div class="pdf-card">
+          <div class="pdf-sec">Ce qui a changé</div>
+          <ul class="pdf-bul">
+            <li>Meilleure progression : <b>${movers[0].nom}</b> ${pdfD(movers[0].delta)} (${fmt(movers[0].streams)} streams).</li>
+            <li>Point de vigilance : <b>${movers[movers.length-1].nom}</b> ${pdfD(movers[movers.length-1].delta)}.</li>
+            <li>N°1 de la semaine : <b>${all[0].nom}</b> avec ${fmt(all[0].streams)} streams.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pdf-col">
+        <div class="pdf-card" style="flex:1 1 auto;min-height:0">
+          <div class="pdf-sec">Alertes</div>
+          ${ALERTES.slice(0,7).map(al => `<div style="padding:8px 0;border-bottom:1px solid #F5F3F0">
+            <span class="pdf-tag ${al.crit === 'risk' ? 'risk' : 'opp'}">${al.crit === 'risk' ? 'Risque' : 'Opportunité'}</span>
+            <div style="margin-top:5px;font-size:10.5px;line-height:1.45;color:#3D3D3D">${al.txt}</div>
+            <div style="margin-top:3px;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:#A5A5A5">${al.cat}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    ${pdfFoot('Synthèse roster')}
   </div>`;
 }
 function pdfArtiste(id){
@@ -1154,44 +1174,56 @@ function pdfArtiste(id){
   const t0 = a.titres[0];
   const als = ALERTES.filter(x => x.artiste === a.id);
   return `<div class="pdfpage">
-    ${pdfHead(`Dashboard artiste · Semaine ${SEMAINE.num}`, a.nom, `${a.label} · ${a.genre} · ${a.ville}. ${a.bio}`)}
+    ${pdfHero(`${a.label} · ${a.genre}`, a.nom, a.bio, IMGS[a.id])}
     <div class="pdf-kpis">
-      <div class="pdf-kpi"><div class="l">Streams S${SEMAINE.num}</div><div class="v">${fmt(a.streams)}</div><div class="d">${pdfD(a.delta)}</div></div>
-      <div class="pdf-kpi"><div class="l">Auditeurs mensuels</div><div class="v">${fmt(a.listeners)}</div><div class="d">${pdfD(a.listenersDelta)}</div></div>
-      <div class="pdf-kpi"><div class="l">Score Spotify</div><div class="v">${a.score}</div><div class="d">${pdfD(a.score - a.scorePrev)} pt vs S${SEMAINE.num-1}</div></div>
-      <div class="pdf-kpi"><div class="l">Rang radio</div><div class="v">#${a.radio.rang}</div><div class="d">${a.radio.rang <= a.radio.rangPrev ? '<span class="pdf-up">▲</span>' : '<span class="pdf-dn">▼</span>'} vs #${a.radio.rangPrev}</div></div>
+      ${pdfKpi(`Streams S${SEMAINE.num}`, fmt(a.streams), pdfD(a.delta))}
+      ${pdfKpi('Auditeurs mensuels', fmt(a.listeners), pdfD(a.listenersDelta))}
+      ${pdfKpi('Score Spotify', a.score, `${pdfD(a.score - a.scorePrev)} vs S${SEMAINE.num-1}`)}
+      ${pdfKpi('Rang radio', '#' + a.radio.rang, `${a.radio.rang <= a.radio.rangPrev ? '<span class="pdf-up">▲</span>' : '<span class="pdf-dn">▼</span>'} vs #${a.radio.rangPrev}`)}
     </div>
-    <div class="pdf-sec">Titres</div>
-    <table class="pdf-tbl"><thead><tr><th>Titre</th><th>Projet</th><th class="num">Streams hebdo</th><th class="num">Évol.</th><th class="num">Shazams/j</th></tr></thead><tbody>
-      ${a.titres.map(t => `<tr><td><b>${t.titre}</b><br><span style="color:#9A9A9A;font-size:9.5px">${t.isrc}</span></td><td>${t.projet}</td><td class="num">${fmt(t.streamsHebdo)}</td><td class="num">${pdfD(t.delta)}</td><td class="num">${t.shazamJour}</td></tr>`).join('')}
-    </tbody></table>
-    <div class="pdf-sec">Répartition DSP · « ${t0.titre} »</div>
-    <table class="pdf-tbl"><thead><tr><th>Plateforme</th><th class="num">Part</th><th class="num">Streams estimés</th></tr></thead><tbody>
-      ${Object.entries(t0.dsp).map(([k,v]) => `<tr><td>${k}</td><td class="num">${v}%</td><td class="num">${fmt(Math.round(t0.streamsHebdo * v / 100))}</td></tr>`).join('')}
-    </tbody></table>
-    ${pdfFoot(a.nom + ' · 1/2')}
-  </div>
-  <div class="pdfpage">
-    ${pdfHead(`Dashboard artiste · Semaine ${SEMAINE.num}`, 'Audience & lecture.', `${a.nom} · suite de la synthèse hebdomadaire.`)}
-    <div class="pdf-sec">Audience & social</div>
-    <table class="pdf-tbl"><thead><tr><th>Indicateur</th><th class="num">Valeur</th><th class="num">Évol.</th></tr></thead><tbody>
-      <tr><td>Instagram</td><td class="num">${fmt(a.social.ig)}</td><td class="num">${pdfD(a.social.igD)}</td></tr>
-      <tr><td>TikTok</td><td class="num">${fmt(a.social.tt)}</td><td class="num">${pdfD(a.social.ttD)}</td></tr>
-      <tr><td>Vidéos UGC</td><td class="num">${fmt(a.social.ugc)}</td><td class="num">${pdfD(a.social.ugcD)}</td></tr>
-      <tr><td>Audience féminine</td><td class="num">${a.demo.f}%</td><td class="num">${a.demo.age}</td></tr>
-      ${a.demo.pays.map(([p,v]) => `<tr><td>Pays · ${p}</td><td class="num">${v}%</td><td class="num"></td></tr>`).join('')}
-    </tbody></table>
-    <div class="pdf-sec">Lecture de la semaine</div>
-    <ul class="pdf-bul">
-      <li>${a.demo.shift}</li>
-      <li>Radio : ${a.radio.diffusions.slice(0,3).map(([r,n]) => `${r} (${n} diff.)`).join(', ')}.</li>
-      <li>Physique : ${fmt(a.physique.mep)} MEP · ${fmt(a.physique.d2c)} D2C · ${fmt(a.physique.magasins)} magasins.</li>
-      ${als.length ? `<li>${als.length} alerte${als.length>1?'s':''} active${als.length>1?'s':''} : ${als.map(x => x.txt).join(' ; ')}.</li>` : '<li>Aucune alerte active cette semaine.</li>'}
-      ${a.actus.length ? `<li>À venir : ${a.actus.map(([t,d,dt]) => `${t} ${d}${dt ? ` (${dt})` : ''}`).join(' ; ')}.</li>` : ''}
-    </ul>
-    ${pdfFoot(a.nom + ' · 2/2')}
+    <div class="pdf-cols">
+      <div class="pdf-col">
+        <div class="pdf-card">
+          <div class="pdf-sec">Titres</div>
+          <table class="pdf-tbl"><thead><tr><th>Titre</th><th class="num">Streams</th><th class="num">Évol.</th><th class="num">Shazams/j</th></tr></thead><tbody>
+            ${a.titres.slice(0,5).map(t => `<tr><td><b>${t.titre}</b><br><span style="color:#9A9A9A;font-size:9px">${t.projet}</span></td><td class="num">${fmt(t.streamsHebdo)}</td><td class="num">${pdfD(t.delta)}</td><td class="num">${t.shazamJour}</td></tr>`).join('')}
+          </tbody></table>
+        </div>
+        <div class="pdf-card" style="flex:1 1 auto;min-height:0">
+          <div class="pdf-sec">Lecture de la semaine</div>
+          <ul class="pdf-bul">
+            <li>${a.demo.shift}</li>
+            <li>Radio : ${a.radio.diffusions.slice(0,3).map(([r,n]) => `${r} (${n} diff.)`).join(', ')}.</li>
+            <li>Physique : ${fmt(a.physique.mep)} MEP · ${fmt(a.physique.d2c)} D2C · ${fmt(a.physique.magasins)} magasins.</li>
+            ${als.length ? `<li>${als.length} alerte${als.length>1?'s':''} active${als.length>1?'s':''} : ${als.map(x => x.txt).join(' ; ')}.</li>` : '<li>Aucune alerte active cette semaine.</li>'}
+            ${a.actus.length ? `<li>À venir : ${a.actus.slice(0,2).map(([t,d,dt]) => `${t} ${d}${dt ? ` (${dt})` : ''}`).join(' ; ')}.</li>` : ''}
+          </ul>
+        </div>
+      </div>
+      <div class="pdf-col">
+        <div class="pdf-card">
+          <div class="pdf-sec">Répartition DSP</div>
+          <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#A5A5A5;margin:-4px 0 6px">« ${t0.titre} »</div>
+          ${Object.entries(t0.dsp).map(([k,v]) => `<div class="pdf-mini"><span class="k">${k}</span><span class="v">${v}%</span></div>`).join('')}
+        </div>
+        <div class="pdf-card">
+          <div class="pdf-sec">Audience & social</div>
+          <div class="pdf-mini"><span class="k">Instagram</span><span class="v">${fmt(a.social.ig)} ${pdfD(a.social.igD)}</span></div>
+          <div class="pdf-mini"><span class="k">TikTok</span><span class="v">${fmt(a.social.tt)} ${pdfD(a.social.ttD)}</span></div>
+          <div class="pdf-mini"><span class="k">Vidéos UGC</span><span class="v">${fmt(a.social.ugc)} ${pdfD(a.social.ugcD)}</span></div>
+          <div class="pdf-mini"><span class="k">Audience féminine</span><span class="v">${a.demo.f}%</span></div>
+          <div class="pdf-mini"><span class="k">Cœur de cible</span><span class="v">${a.demo.age}</span></div>
+        </div>
+        <div class="pdf-card" style="flex:1 1 auto;min-height:0">
+          <div class="pdf-sec">Pays</div>
+          ${a.demo.pays.map(([p,v]) => `<div class="pdf-mini"><span class="k">${p}</span><span class="v">${v}%</span></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    ${pdfFoot(a.nom)}
   </div>`;
 }
+
 function openPdf(kind, id, ctx){
   const doc = kind === 'artiste' ? pdfArtiste(id) : pdfRoster();
   $('#pdfv-ttl').textContent = `Aperçu PDF · ${ctx || 'Synthèse'}`;

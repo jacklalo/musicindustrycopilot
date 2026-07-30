@@ -849,6 +849,12 @@ function audience(a){
 }
 /** Volumes journaliers (Shazam, diffusions) : sensibles au pays, pas au DSP. */
 const perDay = (v, a) => Math.max(1, Math.round((v || 0) * paysShare(a)));
+/** Répartition des sources estimée selon le DSP sélectionné ; stable sur la période. */
+function filteredSources(t){
+  const shift = { Spotify:3, Apple:-4, Deezer:-2, Amazon:-6 }[AF.dsp] || 0;
+  const active = Math.max(8, Math.min(92, Math.round((t.sources.actives || 0) + shift)));
+  return { actives:active, passives:100-active, est:AF.dsp !== 'Tous' };
+}
 
 function setFilter(key, val){
   if (AF[key] === val) return;
@@ -884,7 +890,7 @@ function afScope(a){
   return `<div class="af-scope"><div class="wrap">
     <span class="dot"></span>
     <b>${AF.periode}</b> · <b>${AF.dsp === 'Tous' ? 'Tous DSP' : AF.dsp}</b> · <b>${AF.pays === 'Monde' ? 'Monde' : AF.pays}</b>
-    <span class="af-note">Streams, Shazam et audiences recalculés sur ce périmètre${AF.pays === 'Monde' ? '' : ` · part ${AF.pays} : ${Math.round(paysShare(a)*100)}%`}${AF.dsp === 'Tous' ? '' : ` · part ${AF.dsp} : ${Math.round((dspMix(a)[AF.dsp] || 0))}%`} · physique &amp; radios : France, hors filtre DSP.</span>
+    <span class="af-note">Streams recalculés selon période, DSP et pays${AF.pays === 'Monde' ? '' : ` · part ${AF.pays} : ${Math.round(paysShare(a)*100)}%`}${AF.dsp === 'Tous' ? '' : ` · part ${AF.dsp} : ${Math.round((dspMix(a)[AF.dsp] || 0))}%`} · audience : DSP et pays · Shazam : pays uniquement · physique &amp; radios : France, hors DSP.</span>
   </div></div>`;
 }
 
@@ -1167,6 +1173,7 @@ function vArtiste(id){
   const artistPeriodDelta = periodDelta(a);
   const leadSeries = periodSeries(a, t0);
   const leadPeriodDelta = periodDelta(t0);
+  const leadSources = filteredSources(t0);
 
   const summary = (() => {
     const p = [];
@@ -1232,7 +1239,7 @@ function vArtiste(id){
           <span class="lb-val"><b>${fmt(ts.total)}</b><span>streams ${P.lab} · ${momBadgeTxt(td)}</span></span>
           <span class="go hm">↗</span>
         </a>`; }).join('')}
-        <div class="lb-foot">Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j${AF.dsp === 'Tous' ? '' : ` · volumes isolés sur ${AF.dsp}`}.</div>
+        <div class="lb-foot">Variation streams calculée sur ${P.lab} · seuil d'alerte opérationnel ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j, indépendant du DSP.</div>
       </div>
     </div>
 
@@ -1257,12 +1264,12 @@ function vArtiste(id){
           </div>
           <div class="card hov rv">
             <div class="kicker">SOURCES ACTIVES VS PASSIVES</div>
-            <div style="display:flex;align-items:baseline;gap:10px;margin:10px 0 8px"><span class="num-lg" style="color:var(--accent)">${t0.sources.actives}%</span><span style="font-size:13px;color:var(--muted-foreground)">actives</span></div>
+            <div style="display:flex;align-items:baseline;gap:10px;margin:10px 0 8px"><span class="num-lg" style="color:var(--accent)">${leadSources.actives}%</span><span style="font-size:13px;color:var(--muted-foreground)">actives${leadSources.est ? ' · est.' : ''}</span></div>
             <div style="display:flex;height:12px;border-radius:9999px;overflow:hidden">
-              <span style="width:${t0.sources.actives}%;background:var(--accent)"></span>
-              <span style="width:${t0.sources.passives}%;background:#E5E4E2"></span>
+              <span style="width:${leadSources.actives}%;background:var(--accent)"></span>
+              <span style="width:${leadSources.passives}%;background:#E5E4E2"></span>
             </div>
-            <div style="font-size:12px;color:var(--muted-foreground);margin-top:8px">${t0.sources.passives}% passives (playlists, algo, radio)</div>
+            <div style="font-size:12px;color:var(--muted-foreground);margin-top:8px">${leadSources.passives}% passives (playlists, algo, radio)${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}</div>
           </div>
         </div>
       </div>

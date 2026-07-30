@@ -1156,7 +1156,7 @@ function vArtiste(id){
         <div class="card hov rv">
           <div class="kicker">GÉOGRAPHIE DES FANS</div>
           <div style="margin-top:14px">
-            ${a.demo.pays.map(([p,v],i) => `<div class="brow"><div class="btop"><b>${p}</b><span>${v}%</span></div><div class="track"><span class="fill" style="width:${v}%;background:${['#ED2362','#1E5BFF','#5A8DB8','#2DE07A'][i] || '#B9B7B3'}"></span></div></div>`).join('')}
+            ${a.demo.pays.map(([p,v],i) => { const code = p.toUpperCase().slice(0,2); const sel = AF.pays !== 'Monde' && p.toUpperCase().startsWith(AF.pays); return `<div class="brow" style="opacity:${AF.pays === 'Monde' || sel ? 1 : .32};cursor:pointer" onclick="setFilter('pays','${sel ? 'Monde' : (['FR','BE','CH'].includes(code) ? code : 'Monde')}')"><div class="btop"><b>${p}${sel ? ' ✓' : ''}</b><span>${v}%</span></div><div class="track"><span class="fill" style="width:${v}%;background:${['#ED2362','#1E5BFF','#5A8DB8','#2DE07A'][i] || '#B9B7B3'}"></span></div></div>`; }).join('')}
           </div>
         </div>
         <div class="card hov rv">

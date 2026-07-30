@@ -727,7 +727,45 @@
     .intro-card{padding:30px 20px 24px;border-radius:24px}
     .intro-card h1{font-size:22px}
   }
+  /* ===== PDF PREVIEW ===== */
+  .pdfv{position:fixed;inset:0;z-index:200;background:rgba(11,11,11,.82);backdrop-filter:blur(10px);display:none;flex-direction:column}
+  .pdfv.show{display:flex}
+  .pdfv-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;color:#fff;flex:0 0 auto}
+  .pdfv-bar .ttl{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.66)}
+  .pdfv-bar .sp{margin-left:auto;display:flex;gap:8px}
+  .pdfv-btn{border:0;cursor:pointer;font:inherit;font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;background:#fff;color:#0B0B0B}
+  .pdfv-btn.ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.24)}
+  .pdfv-scroll{flex:1;overflow:auto;padding:0 16px 32px;display:flex;flex-direction:column;align-items:center;gap:18px}
+  .pdfpage{width:794px;min-height:1123px;background:#fff;color:#0B0B0B;box-shadow:0 24px 60px rgba(0,0,0,.4);padding:46px 48px 40px;box-sizing:border-box;font-size:12px}
+  .pdfpage h1{font-size:34px;line-height:1.02;letter-spacing:-.02em;margin:10px 0 6px}
+  .pdfpage .pdf-kick{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#8A8A8A}
+  .pdfpage .pdf-lead{color:#5C5C5C;font-size:12.5px;line-height:1.5;margin:0 0 22px;max-width:560px}
+  .pdf-rule{height:3px;background:#0B0B0B;margin:0 0 18px}
+  .pdf-sec{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#8A8A8A;margin:24px 0 10px;border-top:1px solid #E7E5E2;padding-top:10px}
+  .pdf-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .pdf-kpi{border:1px solid #E7E5E2;border-radius:14px;padding:12px 13px}
+  .pdf-kpi .l{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#8A8A8A}
+  .pdf-kpi .v{font-size:21px;font-weight:700;letter-spacing:-.02em;margin-top:5px}
+  .pdf-kpi .d{font-size:10.5px;font-weight:600;margin-top:2px}
+  .pdf-tbl{width:100%;border-collapse:collapse}
+  .pdf-tbl th{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#8A8A8A;text-align:left;padding:7px 8px;border-bottom:1px solid #E7E5E2;font-weight:600}
+  .pdf-tbl td{padding:8px;border-bottom:1px solid #F1EFEC;font-size:11.5px}
+  .pdf-tbl td.num,.pdf-tbl th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .pdf-up{color:#16A34A;font-weight:600}.pdf-dn{color:#DC2626;font-weight:600}
+  .pdf-foot{margin-top:26px;padding-top:10px;border-top:1px solid #E7E5E2;display:flex;gap:8px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#9A9A9A}
+  .pdf-foot .sp{margin-left:auto}
+  .pdf-bul{margin:0;padding-left:16px;list-style:disc;color:#3D3D3D;font-size:11.5px;line-height:1.65}
+  @media(max-width:860px){ .pdfpage{width:100%;min-height:0;padding:26px 20px} .pdf-kpis{grid-template-columns:repeat(2,1fr)} }
+  @media print{
+    body>*{display:none !important}
+    #pdfview{display:block !important;position:static;background:#fff;backdrop-filter:none}
+    #pdfview .pdfv-bar{display:none !important}
+    #pdfview .pdfv-scroll{display:block;overflow:visible;padding:0}
+    .pdfpage{box-shadow:none;width:100%;min-height:0;padding:0;page-break-after:always}
+    @page{size:A4;margin:14mm}
+  }
 </style>
+
 
 </head>
 <body>
@@ -766,6 +804,17 @@
 
 <div id="toast"></div>
 <div id="overlay" onclick="if(event.target===this)closeOverlay()"><div class="modal" id="modal"></div></div>
+<div id="pdfview" class="pdfv">
+  <div class="pdfv-bar">
+    <span class="ttl" id="pdfv-ttl">Aperçu PDF</span>
+    <span class="sp">
+      <button class="pdfv-btn ghost" onclick="closePdf()">Fermer</button>
+      <button class="pdfv-btn" onclick="downloadPdf()">Télécharger le PDF ↓</button>
+    </span>
+  </div>
+  <div class="pdfv-scroll" id="pdfv-body"></div>
+</div>
+
 
 <script>
 const SEMAINE = { num: 31, du: 'ven 24/07', au: 'ven 31/07/2026' };
@@ -1019,16 +1068,115 @@ function sparkMini(data, color, w=110, h=38){
 ================================================================ */
 function toast(msg){ const t = $('#toast'); t.innerHTML = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2600); }
 function closeOverlay(){ $('#overlay').classList.remove('show'); }
-function openExport(ctx){
+function openExport(ctx, kind, id){
+  kind = kind || 'roster';
   $('#modal').innerHTML = `
     <div class="m-head"><div class="lab">EXPORT</div><b>Partager « ${ctx} »</b></div>
     <div class="m-body">
-      <div class="opt" onclick="closeOverlay();toast('📄&nbsp; PDF de synthèse généré <b>${ctx}</b> (S${SEMAINE.num})')"><span class="ic">📄</span><div><b>PDF de synthèse</b><span>Format uniforme management, partenaires, artistes</span></div></div>
+      <div class="opt" onclick="closeOverlay();openPdf('${kind}','${id || ''}','${ctx.replace(/'/g,"\\'")}')"><span class="ic">📄</span><div><b>PDF de synthèse</b><span>Aperçu du document, puis téléchargement</span></div></div>
       <div class="opt" onclick="closeOverlay();toast('🖼&nbsp; Capture image enregistrée <b>${ctx}</b>')"><span class="ic">🖼</span><div><b>Capture image de la vue</b><span>Screenshot partageable de l'écran courant</span></div></div>
       <div style="font-size:11px;color:var(--muted-foreground);margin-top:4px">PPT éditable & CSV : hors V1 (après ateliers).</div>
     </div>`;
   $('#overlay').classList.add('show');
 }
+
+/* ================================================================
+   PDF DE SYNTHÈSE (aperçu + téléchargement)
+================================================================ */
+const pdfD = n => `<span class="${n >= 0 ? 'pdf-up' : 'pdf-dn'}">${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}%</span>`;
+function pdfHead(kick, titre, lead){
+  return `<div class="pdf-kick">${kick}</div><h1>${titre}</h1><div class="pdf-rule"></div><p class="pdf-lead">${lead}</p>`;
+}
+function pdfFoot(ctx){
+  return `<div class="pdf-foot"><span>#MIC · Music Industry Copilot</span><span>${ctx}</span><span class="sp">Semaine ${SEMAINE.num} · ${SEMAINE.du} → ${SEMAINE.au}</span></div>`;
+}
+function pdfRoster(){
+  const all = ranked();
+  const tot = all.reduce((s,a) => s + a.streams, 0);
+  const lis = all.reduce((s,a) => s + a.listeners, 0);
+  const dLab = all.reduce((s,a) => s + a.delta * a.streams, 0) / tot;
+  const movers = [...ARTISTS].sort((x,y) => y.delta - x.delta);
+  return `<div class="pdfpage">
+    ${pdfHead(`Synthèse roster · Semaine ${SEMAINE.num}`, 'Top roster.', `Classement streaming hebdomadaire du roster (${ARTISTS.length} artistes), période du ${SEMAINE.du} au ${SEMAINE.au}. Données consolidées Believe (J-3), tous DSP, monde.`)}
+    <div class="pdf-kpis">
+      <div class="pdf-kpi"><div class="l">Streams roster</div><div class="v">${fmt(tot)}</div><div class="d">${pdfD(dLab)} vs S${SEMAINE.num - 1}</div></div>
+      <div class="pdf-kpi"><div class="l">Auditeurs mensuels</div><div class="v">${fmt(lis)}</div><div class="d">${pdfD(all.reduce((s,a) => s + a.listenersDelta, 0) / all.length)}</div></div>
+      <div class="pdf-kpi"><div class="l">Artistes suivis</div><div class="v">${ARTISTS.length}</div><div class="d">${movers.filter(a => a.delta > 0).length} en progression</div></div>
+      <div class="pdf-kpi"><div class="l">Alertes semaine</div><div class="v">${ALERTES.length}</div><div class="d">${ALERTES.filter(x => x.crit === 'risk').length} à risque</div></div>
+    </div>
+    <div class="pdf-sec">Classement streaming</div>
+    <table class="pdf-tbl"><thead><tr><th style="width:34px">#</th><th>Artiste</th><th>Label</th><th class="num">Streams S${SEMAINE.num}</th><th class="num">Évol.</th><th class="num">Auditeurs</th></tr></thead><tbody>
+      ${all.map((a,i) => `<tr><td class="num">${i+1}</td><td><b>${a.nom}</b></td><td>${a.label}</td><td class="num">${fmt(a.streams)}</td><td class="num">${pdfD(a.delta)}</td><td class="num">${fmt(a.listeners)}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="pdf-sec">Ce qui a changé</div>
+    <ul class="pdf-bul">
+      <li>Meilleure progression : <b>${movers[0].nom}</b> ${pdfD(movers[0].delta)} (${fmt(movers[0].streams)} streams).</li>
+      <li>Point de vigilance : <b>${movers[movers.length-1].nom}</b> ${pdfD(movers[movers.length-1].delta)}.</li>
+      <li>N°1 de la semaine : <b>${all[0].nom}</b> avec ${fmt(all[0].streams)} streams.</li>
+      <li>${ALERTES.length} alertes déclenchées dont ${ALERTES.filter(x => x.crit === 'opp').length} opportunités.</li>
+    </ul>
+    <div class="pdf-sec">Alertes de la semaine</div>
+    <table class="pdf-tbl"><thead><tr><th>Catégorie</th><th>Alerte</th><th style="width:74px">Type</th></tr></thead><tbody>
+      ${ALERTES.slice(0,8).map(al => `<tr><td>${al.cat}</td><td>${al.txt}</td><td>${al.crit === 'risk' ? 'Risque' : 'Opportunité'}</td></tr>`).join('')}
+    </tbody></table>
+    ${pdfFoot('Synthèse roster')}
+  </div>`;
+}
+function pdfArtiste(id){
+  const a = ARTISTS.find(x => x.id === id) || ranked()[0];
+  const t0 = a.titres[0];
+  const als = ALERTES.filter(x => x.artiste === a.id);
+  return `<div class="pdfpage">
+    ${pdfHead(`Dashboard artiste · Semaine ${SEMAINE.num}`, a.nom, `${a.label} · ${a.genre} · ${a.ville}. ${a.bio}`)}
+    <div class="pdf-kpis">
+      <div class="pdf-kpi"><div class="l">Streams S${SEMAINE.num}</div><div class="v">${fmt(a.streams)}</div><div class="d">${pdfD(a.delta)}</div></div>
+      <div class="pdf-kpi"><div class="l">Auditeurs mensuels</div><div class="v">${fmt(a.listeners)}</div><div class="d">${pdfD(a.listenersDelta)}</div></div>
+      <div class="pdf-kpi"><div class="l">Score Spotify</div><div class="v">${a.score}</div><div class="d">${pdfD(a.score - a.scorePrev)} pt vs S${SEMAINE.num-1}</div></div>
+      <div class="pdf-kpi"><div class="l">Rang radio</div><div class="v">#${a.radio.rang}</div><div class="d">${a.radio.rang <= a.radio.rangPrev ? '<span class="pdf-up">▲</span>' : '<span class="pdf-dn">▼</span>'} vs #${a.radio.rangPrev}</div></div>
+    </div>
+    <div class="pdf-sec">Titres</div>
+    <table class="pdf-tbl"><thead><tr><th>Titre</th><th>Projet</th><th class="num">Streams hebdo</th><th class="num">Évol.</th><th class="num">Shazams/j</th></tr></thead><tbody>
+      ${a.titres.map(t => `<tr><td><b>${t.titre}</b><br><span style="color:#9A9A9A;font-size:9.5px">${t.isrc}</span></td><td>${t.projet}</td><td class="num">${fmt(t.streamsHebdo)}</td><td class="num">${pdfD(t.delta)}</td><td class="num">${t.shazamJour}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="pdf-sec">Répartition DSP · « ${t0.titre} »</div>
+    <table class="pdf-tbl"><thead><tr><th>Plateforme</th><th class="num">Part</th><th class="num">Streams estimés</th></tr></thead><tbody>
+      ${Object.entries(t0.dsp).map(([k,v]) => `<tr><td>${k}</td><td class="num">${v}%</td><td class="num">${fmt(Math.round(t0.streamsHebdo * v / 100))}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="pdf-sec">Audience & social</div>
+    <table class="pdf-tbl"><thead><tr><th>Indicateur</th><th class="num">Valeur</th><th class="num">Évol.</th></tr></thead><tbody>
+      <tr><td>Instagram</td><td class="num">${fmt(a.social.ig)}</td><td class="num">${pdfD(a.social.igD)}</td></tr>
+      <tr><td>TikTok</td><td class="num">${fmt(a.social.tt)}</td><td class="num">${pdfD(a.social.ttD)}</td></tr>
+      <tr><td>Vidéos UGC</td><td class="num">${fmt(a.social.ugc)}</td><td class="num">${pdfD(a.social.ugcD)}</td></tr>
+      <tr><td>Audience féminine</td><td class="num">${a.demo.f}%</td><td class="num">${a.demo.age}</td></tr>
+      ${a.demo.pays.map(([p,v]) => `<tr><td>Pays · ${p}</td><td class="num">${v}%</td><td class="num"></td></tr>`).join('')}
+    </tbody></table>
+    <div class="pdf-sec">Lecture de la semaine</div>
+    <ul class="pdf-bul">
+      <li>${a.demo.shift}</li>
+      <li>Radio : ${a.radio.diffusions.slice(0,3).map(([r,n]) => `${r} (${n} diff.)`).join(', ')}.</li>
+      <li>Physique : ${fmt(a.physique.mep)} MEP · ${fmt(a.physique.d2c)} D2C · ${fmt(a.physique.magasins)} magasins.</li>
+      ${als.length ? `<li>${als.length} alerte${als.length>1?'s':''} active${als.length>1?'s':''} : ${als.map(x => x.txt).join(' ; ')}.</li>` : '<li>Aucune alerte active cette semaine.</li>'}
+      ${a.actus.length ? `<li>À venir : ${a.actus.map(([t,d,dt]) => `${t} ${d}${dt ? ` (${dt})` : ''}`).join(' ; ')}.</li>` : ''}
+    </ul>
+    ${pdfFoot(a.nom)}
+  </div>`;
+}
+function openPdf(kind, id, ctx){
+  const doc = kind === 'artiste' ? pdfArtiste(id) : pdfRoster();
+  $('#pdfv-ttl').textContent = `Aperçu PDF · ${ctx || 'Synthèse'}`;
+  $('#pdfv-body').innerHTML = doc;
+  window._pdfName = (kind === 'artiste' ? `MIC-${id}` : 'MIC-roster') + `-S${SEMAINE.num}`;
+  $('#pdfview').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closePdf(){ $('#pdfview').classList.remove('show'); document.body.style.overflow = ''; }
+function downloadPdf(){
+  const prev = document.title;
+  document.title = window._pdfName || 'MIC-synthese';
+  toast('📄&nbsp; Choisissez <b>« Enregistrer au format PDF »</b> dans la boîte d\'impression');
+  setTimeout(() => { window.print(); document.title = prev; }, 350);
+}
+
 function openSearch(){
   $('#modal').innerHTML = `
     <input class="srch" id="srch-inp" placeholder="Chercher un artiste, un titre, un ISRC..." oninput="filterSearch(this.value)">
@@ -1048,7 +1196,7 @@ function filterSearch(q){
 }
 document.addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
-  if (e.key === 'Escape') closeOverlay();
+  if (e.key === 'Escape') { closeOverlay(); closePdf(); }
 });
 
 const syncHtml = `<span class="sync"><span class="ok"></span>S${SEMAINE.num} · VEN→VEN</span><span class="sync" title="Délai de reporting Believe 48–72h (§8.2)"><span class="warn"></span>BELIEVE J-3</span>`;
@@ -1346,7 +1494,7 @@ function labelHero(){
           <h1 class="rv in">Top roster<span style="color:#C8102E">.</span></h1>
           <p class="lead">Le classement streaming de la semaine un rang, un chiffre, une tendance, puis la vue 360° de chaque artiste.</p>
           <div class="actions">
-            <button class="btn btn-light" onclick="openExport('Synthèse roster S${SEMAINE.num}')">Exporter la synthèse <span class="ar">↗</span></button>
+            <button class="btn btn-light" onclick="openExport('Synthèse roster S${SEMAINE.num}','roster')">Exporter la synthèse <span class="ar">↗</span></button>
             <a class="btn btn-outline-w" href="#/alertes">⚑ ${ALERTES.length} alertes cette semaine</a>
           </div>
         </div>
@@ -1494,7 +1642,7 @@ function vArtiste(id){
       <h1 class="rv in">${a.nom}</h1>
       <p>${a.bio}</p>
       <div class="actions">
-        <button class="btn btn-light" onclick="openExport('Dashboard ${a.nom}')">Exporter la synthèse <span class="ar">↗</span></button>
+        <button class="btn btn-light" onclick="openExport('Dashboard ${a.nom}','artiste','${a.id}')">Exporter la synthèse <span class="ar">↗</span></button>
         <a class="btn btn-outline-w" href="#/alertes">${alertsA.length} alerte${alertsA.length>1?'s':''}</a>
       </div>
     </div>
@@ -1512,7 +1660,7 @@ function vArtiste(id){
 
   <div class="subnav"><div class="wrap">
     ${SECTIONS.map(([id2,l],i) => `<a href="#s-${id2}" onclick="event.preventDefault();document.getElementById('s-${id2}').scrollIntoView({behavior:'smooth',block:'start'})" ${i===0?'class="on"':''}>${l}</a>`).join('')}
-    <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Dashboard ${a.nom}')">Exporter <span class="ar">↗</span></button></div>
+    <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Dashboard ${a.nom}','artiste','${a.id}')">Exporter <span class="ar">↗</span></button></div>
   </div></div>
 
   ${filtersBar('Dashboard ' + a.nom, true)}
@@ -1714,7 +1862,7 @@ function vTitre(isrc){
       <h1 class="rv in" style="font-size:clamp(40px,5.5vw,72px)">${t.titre}</h1>
       <p style="font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.65);margin-top:12px">ISRC ${t.isrc} · UPC ${t.upc}</p>
       <div class="actions">
-        <button class="btn btn-light" onclick="openExport('${t.titre} ${a.nom}')">Exporter <span class="ar">↗</span></button>
+        <button class="btn btn-light" onclick="openExport('${t.titre} ${a.nom}','artiste','${a.id}')">Exporter <span class="ar">↗</span></button>
         ${alerte ? `<span class="btn btn-outline-w" style="cursor:default">⚑ Alerte ± 20% déclenchée</span>` : ''}
       </div>
     </div>

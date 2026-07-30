@@ -753,16 +753,17 @@
   .pdf-tbl td{padding:8px;border-bottom:1px solid #F1EFEC;font-size:11.5px}
   .pdf-tbl td.num,.pdf-tbl th.num{text-align:right;font-variant-numeric:tabular-nums}
   .pdf-up{color:#16A34A;font-weight:600}.pdf-dn{color:#DC2626;font-weight:600}
-  .pdf-foot{margin-top:26px;padding-top:10px;border-top:1px solid #E7E5E2;display:flex;gap:8px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#9A9A9A}
+  .pdf-foot{margin-top:auto;padding-top:10px;border-top:1px solid #E7E5E2;display:flex;gap:8px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#9A9A9A}
   .pdf-foot .sp{margin-left:auto}
   .pdf-bul{margin:0;padding-left:16px;list-style:disc;color:#3D3D3D;font-size:11.5px;line-height:1.65}
-  @media(max-width:860px){ .pdfpage{width:100%;min-height:0;padding:26px 20px} .pdf-kpis{grid-template-columns:repeat(2,1fr)} }
+  @media(max-width:860px){ .pdfpage{width:100%;height:auto;min-height:0;padding:26px 20px} .pdf-kpis{grid-template-columns:repeat(2,1fr)} }
   @media print{
     body>*{display:none !important}
     #pdfview{display:block !important;position:static;background:#fff;backdrop-filter:none}
     #pdfview .pdfv-bar{display:none !important}
     #pdfview .pdfv-scroll{display:block;overflow:visible;padding:0}
-    .pdfpage{box-shadow:none;width:100%;min-height:0;padding:0;page-break-after:always}
+    .pdfpage{box-shadow:none;width:100%;height:auto;min-height:0;padding:0;page-break-after:always;display:block}
+    .pdf-foot{margin-top:26px}
     @page{size:A4;margin:14mm}
   }
 </style>

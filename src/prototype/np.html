@@ -1393,6 +1393,7 @@ function vTitre(isrc){
   const scT = v => Math.round((v || 0) * F);
   const SERIES = periodSeries(a, t);
   const PERIOD_DELTA = periodDelta(t);
+  const SOURCES = filteredSources(t);
   const sj = perDay(t.shazamJour, a);
   const shazAlert = sj > SEUILS.shazam;
   const plList = t.playlists.filter(([p,dsp]) => AF.dsp === 'Tous' || (dsp + '').toLowerCase().includes(AF.dsp.toLowerCase()));
@@ -1415,7 +1416,7 @@ function vTitre(isrc){
     <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(SERIES.total)} <span class="cmp">${deltaHtml(PERIOD_DELTA)}</span></div></div>
     <div class="kpi rv"><div class="lab">Shazam / jour${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val" style="${shazAlert ? 'color:var(--accent)' : ''}">${sj} <span class="cmp" style="color:var(--muted-foreground)">seuil ${SEUILS.shazam}${shazAlert ? ' ⚑' : ''}</span></div></div>
     <div class="kpi rv"><div class="lab">Playlists édito${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}</div><div class="val">${plList.length}</div></div>
-    <div class="kpi rv"><div class="lab">Sources actives</div><div class="val">${t.sources.actives}%</div></div>
+    <div class="kpi rv"><div class="lab">Sources actives${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}</div><div class="val">${SOURCES.actives}%${SOURCES.est ? ' <span class="cmp" style="color:var(--muted-foreground)">est.</span>' : ''}</div></div>
   </div>
 
   ${filtersBar(t.titre + ' — ' + a.nom)}

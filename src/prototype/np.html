@@ -1941,8 +1941,6 @@ function csvValidate(){
   const rows = PROP.rows.filter(r => r.sel && r.ok);
   if (!rows.length){ toast('⚠&nbsp; Aucune ligne valide sélectionnée'); return; }
   const file = PROP.file;
-  SAI_GROUPS[file] = { par:'MC', ok:rows.length, rejet:PROP.rows.length - rows.length };
-  saiGrpOpen[file] = true;
   rows.slice().reverse().forEach(r => SAISIES.unshift({
     type:'Physique — ' + r.type, artiste:r.artiste, ref:r.ref,
     val:`${r.qty.toLocaleString('fr-FR')} unités vendues`, sem:r.sem,

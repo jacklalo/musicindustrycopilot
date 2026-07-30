@@ -1076,22 +1076,22 @@ function vArtiste(id){
     </div>
 
     <div id="s-streaming" style="scroll-margin-top:130px;margin-top:56px">
-      <h2 class="h-sect rv">Streaming<span style="color:var(--accent)">.</span> <small>streams globaux · sources · seuil ± 20%</small></h2>
-      <p class="h-sub">Comparaison semaine N vs N-1 · Spotify, Apple, Deezer, Amazon.</p>
+      <h2 class="h-sect rv">Streaming<span style="color:var(--accent)">.</span> <small>${AF.dsp === 'Tous' ? 'streams globaux' : 'streams ' + AF.dsp} · sources · seuil ± 20%</small></h2>
+      <p class="h-sub">Comparaison semaine N vs N-1 · ${AF.dsp === 'Tous' ? 'Spotify, Apple, Deezer, Amazon' : AF.dsp} · ${AF.pays === 'Monde' ? 'Monde' : AF.pays} · ${P.lab}.</p>
       <div class="grid g-main">
         <div class="card hov rv">
-          <div class="kicker">MOMENTUM · 8 SEMAINES · ${t0.titre.toUpperCase()}</div>
+          <div class="kicker">MOMENTUM · 8 ${AF.periode === '12 sem' ? 'PÉRIODES' : 'SEMAINES'} · ${t0.titre.toUpperCase()}</div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 4px">
-            <span class="num-xl">${fmt(t0.streamsHebdo)}</span>
+            <span class="num-xl">${fmt(sc(t0.streamsHebdo))}</span>
             ${momBadge(t0.delta)}
           </div>
-          ${sparkline(t0.cadence, a.accent)}
+          ${sparkline(t0.cadence.map(v => Math.round(v * F(t0))), a.accent)}
         </div>
         <div style="display:grid;gap:16px">
           <div class="card hov rv">
-            <div class="kicker">STREAMS PAR DSP</div>
+            <div class="kicker">STREAMS PAR DSP${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase() + ' ISOLÉ'}</div>
             <div style="margin-top:14px">
-              ${Object.entries(t0.dsp).map(([d,p]) => `<div class="brow"><div class="btop"><b>${d}</b><span>${p}%</span></div><div class="track"><span class="fill" style="width:${p}%"></span></div></div>`).join('')}
+              ${Object.entries(t0.dsp).map(([d,p]) => `<div class="brow" style="opacity:${AF.dsp === 'Tous' || AF.dsp === d ? 1 : .32};cursor:pointer" onclick="setFilter('dsp','${AF.dsp === d ? 'Tous' : d}')"><div class="btop"><b>${d}</b><span>${p}% · ${fmt(Math.round(t0.streamsHebdo * p / 100 * P.mult * geo))}</span></div><div class="track"><span class="fill" style="width:${p}%"></span></div></div>`).join('')}
             </div>
           </div>
           <div class="card hov rv">

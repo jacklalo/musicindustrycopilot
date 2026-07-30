@@ -1244,7 +1244,7 @@ function vAlertes(){
   const nUp = ALERTES.filter(al => al.cat === 'STREAMING' && al.ic === '↑').length;
   const nDn = ALERTES.filter(al => al.cat === 'STREAMING' && al.ic === '↓').length;
   const nPl = ALERTES.filter(al => al.cat === 'PLAYLIST ÉDITO').length;
-  const nNew = ALERTES.filter(al => !alertRead[al.id]).length;
+  const nNew = ALERTES.filter(al => !alertDone[al.id]).length;
   const grp = (lab, arr, first) => arr.length ? `<div class="grp-lab${first?' first':''}">${lab} · ${arr.length}</div><div class="grid" style="gap:12px">${arr.map(alertItem).join('')}</div>` : '';
   return `
   ${hero('ALERTES', 'MOTEUR DE RÈGLES · SEUILS FIXES V1', 'Alertes<em>.</em>', 'Signaux détectés automatiquement, niveau artiste et global. Aucune IA : des règles simples, lisibles, vérifiables.',

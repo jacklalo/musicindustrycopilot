@@ -805,7 +805,7 @@ function filtersBar(ctx, slim=false){
 function afScope(a){
   return `<div class="af-scope"><div class="wrap">
     <span class="dot"></span>
-    <b>${AF.periode}</b> · <b>${AF.dsp === 'Tous' ? 'Tous DSP' : AF.dsp}</b> · <b>${AF.pays === 'Monde' ? 'Monde' : AF.pays}</b> · <b>${AF.titre === 'Tous' ? 'Tous les titres' : AF.titre}</b>
+    <b>${AF.periode}</b> · <b>${AF.dsp === 'Tous' ? 'Tous DSP' : AF.dsp}</b> · <b>${AF.pays === 'Monde' ? 'Monde' : AF.pays}</b>
     <span class="af-note">Volumes recalculés sur ce périmètre${AF.pays === 'Monde' ? '' : ` (part ${AF.pays} : ${Math.round(paysShare(a)*100)}%)`}.</span>
   </div></div>`;
 }

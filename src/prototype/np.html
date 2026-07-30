@@ -754,7 +754,7 @@
   .pdf-up{color:#16A34A;font-weight:600}.pdf-dn{color:#DC2626;font-weight:600}
   .pdf-foot{margin-top:26px;padding-top:10px;border-top:1px solid #E7E5E2;display:flex;gap:8px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#9A9A9A}
   .pdf-foot .sp{margin-left:auto}
-  .pdf-bul{margin:0;padding-left:16px;color:#3D3D3D;font-size:11.5px;line-height:1.65}
+  .pdf-bul{margin:0;padding-left:16px;list-style:disc;color:#3D3D3D;font-size:11.5px;line-height:1.65}
   @media(max-width:860px){ .pdfpage{width:100%;min-height:0;padding:26px 20px} .pdf-kpis{grid-template-columns:repeat(2,1fr)} }
   @media print{
     body>*{display:none !important}
@@ -1131,7 +1131,7 @@ function pdfArtiste(id){
     <div class="pdf-kpis">
       <div class="pdf-kpi"><div class="l">Streams S${SEMAINE.num}</div><div class="v">${fmt(a.streams)}</div><div class="d">${pdfD(a.delta)}</div></div>
       <div class="pdf-kpi"><div class="l">Auditeurs mensuels</div><div class="v">${fmt(a.listeners)}</div><div class="d">${pdfD(a.listenersDelta)}</div></div>
-      <div class="pdf-kpi"><div class="l">Score Spotify</div><div class="v">${a.score}</div><div class="d">${pdfD(a.score - a.scorePrev)}pt vs S${SEMAINE.num-1}</div></div>
+      <div class="pdf-kpi"><div class="l">Score Spotify</div><div class="v">${a.score}</div><div class="d">${pdfD(a.score - a.scorePrev)} pt vs S${SEMAINE.num-1}</div></div>
       <div class="pdf-kpi"><div class="l">Rang radio</div><div class="v">#${a.radio.rang}</div><div class="d">${a.radio.rang <= a.radio.rangPrev ? '<span class="pdf-up">▲</span>' : '<span class="pdf-dn">▼</span>'} vs #${a.radio.rangPrev}</div></div>
     </div>
     <div class="pdf-sec">Titres</div>
@@ -1156,7 +1156,7 @@ function pdfArtiste(id){
       <li>Radio : ${a.radio.diffusions.slice(0,3).map(([r,n]) => `${r} (${n} diff.)`).join(', ')}.</li>
       <li>Physique : ${fmt(a.physique.mep)} MEP · ${fmt(a.physique.d2c)} D2C · ${fmt(a.physique.magasins)} magasins.</li>
       ${als.length ? `<li>${als.length} alerte${als.length>1?'s':''} active${als.length>1?'s':''} : ${als.map(x => x.txt).join(' ; ')}.</li>` : '<li>Aucune alerte active cette semaine.</li>'}
-      ${a.actus.length ? `<li>À venir : ${a.actus.map(([t,d,dt]) => `${t} ${d} (${dt})`).join(' ; ')}.</li>` : ''}
+      ${a.actus.length ? `<li>À venir : ${a.actus.map(([t,d,dt]) => `${t} ${d}${dt ? ` (${dt})` : ''}`).join(' ; ')}.</li>` : ''}
     </ul>
     ${pdfFoot(a.nom)}
   </div>`;

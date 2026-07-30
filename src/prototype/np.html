@@ -1124,20 +1124,20 @@ function vArtiste(id){
 
 function alertItem(al){
   const k = critOf(al), c = CRIT[k];
-  const done = alertDone[al.id], read = alertRead[al.id] || done;
-  return `<div class="alert-item rv ${read ? '' : 'unread'} ${done ? 'done' : ''}" onmouseenter="markRead('${al.id}')">
+  const done = alertDone[al.id];
+  return `<div class="alert-item rv ${done ? 'done' : ''}">
     <span class="a-ic" style="background:${al.color}14;color:${al.color}">${al.ic}</span>
     <div style="flex:1;min-width:0">
       <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
         <span class="crit" style="background:${c.c}14;color:${c.c}"><i style="background:${c.c}"></i>${c.lab}</span>
         <span class="cat-lab" style="color:${al.color};margin:0">${al.cat} · ${al.niveau.toUpperCase()}</span>
       </div>
-      <p style="${read ? '' : 'font-weight:800'}">${al.txt}</p>
+      <p>${al.txt}</p>
       <div class="rule">${al.rule}</div>
     </div>
     <time title="${al.ts || ''}">${al.time}</time>
     <button class="a-act" onclick="event.stopPropagation();toggleDone('${al.id}')">${done ? 'Rouvrir' : 'Marquer traité'}</button>
-    <a class="btn btn-outline btn-sm" style="flex:none" href="${al.link || ('#/artiste/' + al.artiste)}" onclick="event.stopPropagation();markRead('${al.id}')">Ouvrir <span class="ar">↗</span></a>
+    <a class="btn btn-outline btn-sm" style="flex:none" href="${al.link || ('#/artiste/' + al.artiste)}" onclick="event.stopPropagation()">Ouvrir <span class="ar">↗</span></a>
   </div>`;
 }
 

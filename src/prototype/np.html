@@ -736,7 +736,8 @@
   .pdfv-btn{border:0;cursor:pointer;font:inherit;font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;background:#fff;color:#0B0B0B}
   .pdfv-btn.ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.24)}
   .pdfv-scroll{flex:1;overflow:auto;padding:0 16px 32px;display:flex;flex-direction:column;align-items:center;gap:18px}
-  .pdfpage{width:794px;min-height:1123px;background:#fff;color:#0B0B0B;box-shadow:0 24px 60px rgba(0,0,0,.4);padding:46px 48px 40px;box-sizing:border-box;font-size:12px}
+  .pdfpage{width:794px;height:1123px;overflow:hidden;display:flex;flex-direction:column;background:#fff;color:#0B0B0B;box-shadow:0 24px 60px rgba(0,0,0,.4);padding:46px 48px 40px;box-sizing:border-box;font-size:12px}
+  .pdfpage>*{flex:0 0 auto}
   .pdfpage h1{font-size:34px;line-height:1.02;letter-spacing:-.02em;margin:10px 0 6px}
   .pdfpage .pdf-kick{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#8A8A8A}
   .pdfpage .pdf-lead{color:#5C5C5C;font-size:12.5px;line-height:1.5;margin:0 0 22px;max-width:560px}

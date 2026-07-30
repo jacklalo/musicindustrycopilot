@@ -336,7 +336,6 @@
   .digest .row{display:flex;gap:26px;flex-wrap:wrap;align-items:center;margin-top:12px}
   .digest .row b{font-size:22px;font-weight:800;letter-spacing:-.02em;display:block}
   .digest .row small{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-foreground)}
-  .alert-item.unread{box-shadow:inset 3px 0 0 var(--ink)}
   .alert-item.done{opacity:.45}
   .alert-item.done p{text-decoration:line-through}
   .a-act{background:none;border:1px solid var(--line);border-radius:9999px;font-family:var(--font);font-size:11px;font-weight:700;padding:6px 11px;cursor:pointer;color:var(--muted-foreground);transition:.2s;flex:none}
@@ -728,7 +727,7 @@ function fakeFilter(btn, label){
 ================================================================ */
 let labelFilter = 'Tous', rosterQuery = '', sortKey = 'streams', spotId = null;
 const MES_ARTISTES = ['zazie','hina','jeremy-frerot'];
-const alertRead = {}, alertDone = {};
+const alertDone = {};
 let heroOpen = true;
 try { heroOpen = !localStorage.getItem('np_seen'); localStorage.setItem('np_seen', '1'); } catch (e) {}
 function toggleHero(){ heroOpen = !heroOpen; render(); }

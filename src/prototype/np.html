@@ -1108,6 +1108,10 @@ function pdfRoster(){
     <table class="pdf-tbl"><thead><tr><th style="width:34px">#</th><th>Artiste</th><th>Label</th><th class="num">Streams S${SEMAINE.num}</th><th class="num">Évol.</th><th class="num">Auditeurs</th></tr></thead><tbody>
       ${all.map((a,i) => `<tr><td class="num">${i+1}</td><td><b>${a.nom}</b></td><td>${a.label}</td><td class="num">${fmt(a.streams)}</td><td class="num">${pdfD(a.delta)}</td><td class="num">${fmt(a.listeners)}</td></tr>`).join('')}
     </tbody></table>
+    ${pdfFoot('Synthèse roster · 1/2')}
+  </div>
+  <div class="pdfpage">
+    ${pdfHead(`Synthèse roster · Semaine ${SEMAINE.num}`, 'Lecture & alertes.', `Suite de la synthèse roster, semaine ${SEMAINE.num}.`)}
     <div class="pdf-sec">Ce qui a changé</div>
     <ul class="pdf-bul">
       <li>Meilleure progression : <b>${movers[0].nom}</b> ${pdfD(movers[0].delta)} (${fmt(movers[0].streams)} streams).</li>
@@ -1119,7 +1123,7 @@ function pdfRoster(){
     <table class="pdf-tbl"><thead><tr><th>Catégorie</th><th>Alerte</th><th style="width:74px">Type</th></tr></thead><tbody>
       ${ALERTES.slice(0,8).map(al => `<tr><td>${al.cat}</td><td>${al.txt}</td><td>${al.crit === 'risk' ? 'Risque' : 'Opportunité'}</td></tr>`).join('')}
     </tbody></table>
-    ${pdfFoot('Synthèse roster')}
+    ${pdfFoot('Synthèse roster · 2/2')}
   </div>`;
 }
 function pdfArtiste(id){

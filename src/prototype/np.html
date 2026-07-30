@@ -1790,11 +1790,8 @@ const TYPES_PHY = ['Mise en place','Magasins','D2C'];
 const TYPES_ACT = ['Date média','Lancement publicitaire','Sortie prévue'];
 const UNITS_PHY = ['unités distribuées','unités vendues'];
 const UNITS_ACT = ['€ (budget)','date (JJ/MM/AAAA)'];
-const SAI_GROUPS = {};
-const saiGrpOpen = {};
 let saiText = '', saiFocus = false, saiDragOver = false, panelOpen = false;
 let PROP = null, DUP = null;
-let saiFil = { artiste:'Tous', type:'Tous', sem:'Toutes', source:'Toutes' };
 
 const typesOf = () => saisieTab === 'physique' ? TYPES_PHY : TYPES_ACT;
 const unitsOf = () => saisieTab === 'physique' ? UNITS_PHY : UNITS_ACT;

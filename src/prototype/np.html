@@ -24,7 +24,10 @@
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{font-family:var(--font);background:var(--background);color:var(--foreground);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
+  body{font-family:var(--font);background:var(--background);color:var(--foreground);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .np-proto{display:flex;flex-direction:column;min-height:100vh}
+  .np-proto > main#app{flex:1;display:flex;flex-direction:column}
+  .np-proto > footer.site{margin-top:auto}
   a{color:inherit}
   .wrap{max-width:1240px;margin:0 auto;padding:0 32px}
 

@@ -826,7 +826,29 @@
     </nav>
     <div class="hdr-actions">
       <div class="search-pill" onclick="openSearch()">🔍 Rechercher <kbd>⌘K</kbd></div>
-      <div class="avatar-mc" onclick="micLogout()" title="Se déconnecter">MC</div>
+      <div class="prof">
+        <div class="avatar-mc" id="prof-av" onclick="profToggle(event)" title="Mon profil">MC</div>
+        <div class="prof-menu" id="prof-menu">
+          <div class="prof-head">
+            <div class="av">MC</div>
+            <div style="min-width:0">
+              <div class="nm">Margot Charrié</div>
+              <div class="em">margot.charrie@6et7.fr</div>
+            </div>
+          </div>
+          <span class="prof-role">Label 6&amp;7 · Marketing</span>
+          <div class="prof-sep"></div>
+          <button class="prof-i" onclick="profAct('Mon profil')"><span class="ic">👤</span>Mon profil</button>
+          <button class="prof-i" onclick="profAct('Mes artistes suivis')"><span class="ic">★</span>Mes artistes suivis<span class="tag">4</span></button>
+          <button class="prof-i" onclick="profAct('Notifications')"><span class="ic">🔔</span>Notifications<span class="tag">Hebdo</span></button>
+          <button class="prof-i" onclick="profAct('Préférences')"><span class="ic">⚙</span>Préférences</button>
+          <div class="prof-sep"></div>
+          <button class="prof-i" onclick="profAct('Aide & raccourcis')"><span class="ic">?</span>Aide &amp; raccourcis<span class="tag">⌘K</span></button>
+          <button class="prof-i danger" onclick="profClose();micLogout()"><span class="ic">⏻</span>Se déconnecter</button>
+          <div class="prof-foot">#MIC mock · v2.5</div>
+        </div>
+      </div>
+
     </div>
   </div>
 </header>

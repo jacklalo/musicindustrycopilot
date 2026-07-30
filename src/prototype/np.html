@@ -696,13 +696,13 @@ function sparkline(data, color, w=520, h=150){
     ${pts.map((p,i) => `<circle cx="${p[0]}" cy="${p[1]}" r="${i === pts.length-1 ? 5 : 2.8}" fill="${color}"/>`).join('')}
   </svg>`;
 }
-function barsWeekly(data, color, w=520, h=150){
+function barsWeekly(data, color, labels=[], w=520, h=150){
   const max = Math.max(...data)*1.08;
   const bw = (w-36)/data.length - 10;
   return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="display:block">
     ${data.map((v,i) => { const bh = v/max*(h-34); const x = 20 + i*((w-36)/data.length);
       return `<rect x="${x}" y="${h-20-bh}" width="${bw}" height="${bh}" rx="5" fill="${i === data.length-1 ? color : color+'44'}"/>
-      <text x="${x+bw/2}" y="${h-5}" text-anchor="middle" class="spark-label">S${SEMAINE.num-data.length+1+i}</text>`; }).join('')}
+      <text x="${x+bw/2}" y="${h-5}" text-anchor="middle" class="spark-label">${labels[i] || `S${SEMAINE.num-data.length+1+i}`}</text>`; }).join('')}
   </svg>`;
 }
 
@@ -755,7 +755,7 @@ document.addEventListener('keydown', e => {
 
 const syncHtml = `<span class="sync"><span class="ok"></span>S${SEMAINE.num} · VEN→VEN</span><span class="sync" title="Délai de reporting Believe 48–72h (§8.2)"><span class="warn"></span>BELIEVE J-3</span>`;
 
-const PERIODES = { '7 j': {mult:1, lab:'7 j', pts:8}, '28 j': {mult:3.7, lab:'28 j', pts:8}, '12 sem': {mult:11.4, lab:'12 sem', pts:8} };
+const PERIODES = { '7 j': {mult:1, lab:'7 j', pts:7}, '28 j': {mult:4, lab:'28 j', pts:4}, '12 sem': {mult:12, lab:'12 sem', pts:12} };
 const PAYS_FALLBACK = { Monde:100, FR:62, BE:7, CH:5 };
 const AF = { periode:'7 j', dsp:'Tous', pays:'Monde' };
 const afDefault = () => AF.periode === '7 j' && AF.dsp === 'Tous' && AF.pays === 'Monde';
@@ -771,6 +771,49 @@ function dspShare(t){
 }
 /** Facteur appliqué aux volumes de streams selon les filtres actifs. */
 function afFactor(a, t){ return PERIODES[AF.periode].mult * paysShare(a) * dspShare(t || (a && a.titres[0])); }
+
+/* Séries temporelles cohérentes : 7 points journaliers, 4 semaines ou 12 semaines. */
+function weeklyHistory(entity){
+  const source = entity.cadence ? [...entity.cadence] : serieOf(entity);
+  const latest = (entity.streamsHebdo || entity.streams || 0) / 1000;
+  const scale = latest && source[source.length-1] ? latest / source[source.length-1] : 1;
+  const known = source.map(v => v * scale);
+  const ratio = known[1] ? Math.max(.82, Math.min(1.18, known[1] / known[0])) : 1.02;
+  const older = [];
+  let cursor = known[0] || latest;
+  for(let i=0;i<Math.max(0,12-known.length);i++){
+    cursor = cursor / ratio * (i % 2 ? 1.012 : .994);
+    older.unshift(cursor);
+  }
+  return [...older, ...known].slice(-12);
+}
+function periodSeries(a, entity){
+  const weekly = weeklyHistory(entity);
+  let values, labels;
+  if(AF.periode === '7 j'){
+    const latest = weekly[weekly.length-1] * 1000;
+    const trend = Math.max(-.18, Math.min(.18, (entity.delta || a.delta || 0) / 100));
+    const weights = [.135,.14,.125,.14,.145,.15,.165].map((v,i) => v * (1 + trend * (i-3)/3));
+    const sum = weights.reduce((s,v) => s+v,0);
+    values = weights.map(v => latest * v / sum);
+    labels = ['Ven','Sam','Dim','Lun','Mar','Mer','Jeu'];
+  } else if(AF.periode === '28 j'){
+    values = weekly.slice(-4).map(v => v * 1000);
+    labels = Array.from({length:4},(_,i) => `S${SEMAINE.num-3+i}`);
+  } else {
+    values = weekly.map(v => v * 1000);
+    labels = Array.from({length:12},(_,i) => `S${SEMAINE.num-11+i}`);
+  }
+  const factor = paysShare(a) * dspShare(entity.cadence ? entity : (a.titres && a.titres[0]));
+  return { values:values.map(v => Math.round(v*factor)), labels, total:Math.round(values.reduce((s,v)=>s+v,0)*factor) };
+}
+function periodDelta(entity){
+  const w = weeklyHistory(entity);
+  if(AF.periode === '7 j') return entity.delta || 0;
+  const recent = w.slice(-4).reduce((s,v)=>s+v,0);
+  const prior = AF.periode === '28 j' ? w.slice(-8,-4).reduce((s,v)=>s+v,0) : w.slice(0,4).reduce((s,v)=>s+v,0);
+  return prior ? Math.round((recent/prior-1)*1000)/10 : entity.delta || 0;
+}
 
 /* ---- Cohérence des métriques non-streaming avec les filtres ---- */
 const DSP_AUD_DELTA = { Spotify:0, Apple:-1.1, Deezer:0.8, Amazon:-1.9 };

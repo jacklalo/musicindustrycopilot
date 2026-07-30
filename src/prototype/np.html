@@ -804,6 +804,17 @@
 
 <div id="toast"></div>
 <div id="overlay" onclick="if(event.target===this)closeOverlay()"><div class="modal" id="modal"></div></div>
+<div id="pdfview" class="pdfv">
+  <div class="pdfv-bar">
+    <span class="ttl" id="pdfv-ttl">Aperçu PDF</span>
+    <span class="sp">
+      <button class="pdfv-btn ghost" onclick="closePdf()">Fermer</button>
+      <button class="pdfv-btn" onclick="downloadPdf()">Télécharger le PDF ↓</button>
+    </span>
+  </div>
+  <div class="pdfv-scroll" id="pdfv-body"></div>
+</div>
+
 
 <script>
 const SEMAINE = { num: 31, du: 'ven 24/07', au: 'ven 31/07/2026' };

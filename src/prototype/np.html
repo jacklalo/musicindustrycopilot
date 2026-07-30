@@ -1159,13 +1159,18 @@ function resetFilters(){
 const afChips = (key, vals) => vals.map(p =>
   `<button class="chip chip-sm ${AF[key] === p ? 'active' : ''}" aria-pressed="${AF[key] === p}" onclick="setFilter('${key}', ${JSON.stringify(p).replace(/"/g, '&quot;')})">${p}</button>`).join('');
 
+/** Filtre DSP contextuel, affiché uniquement dans la section Streaming. */
+function dspInline(){
+  return `<div class="dsp-inline">
+    <span class="group-label">DSP</span>
+    ${afChips('dsp', ['Tous','Spotify','Apple','Deezer','Amazon'])}
+  </div>`;
+}
+
 function filtersBar(ctx, slim=false){
   return `<div class="filters"><div class="wrap">
     <span class="group-label">Période</span>
     ${afChips('periode', ['1 sem','1 mois','3 mois'])}
-    <span class="sep"></span>
-    <span class="group-label">DSP</span>
-    ${afChips('dsp', ['Tous','Spotify','Apple','Deezer','Amazon'])}
     <span class="sep"></span>
     <span class="group-label">Pays</span>
     ${afChips('pays', ['Monde','FR','BE','CH'])}

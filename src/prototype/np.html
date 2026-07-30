@@ -1519,6 +1519,7 @@ function vArtiste(id){
     <div id="s-streaming" style="scroll-margin-top:130px;margin-top:56px">
       <h2 class="h-sect rv">Streaming<span style="color:var(--accent)">.</span> <small>${AF.dsp === 'Tous' ? 'streams globaux' : 'streams ' + AF.dsp} · sources · seuil ± 20%</small></h2>
       <p class="h-sub">Comparaison semaine N vs N-1 · ${AF.dsp === 'Tous' ? 'Spotify, Apple, Deezer, Amazon' : AF.dsp} · ${AF.pays === 'Monde' ? 'Monde' : AF.pays} · ${P.lab}.</p>
+      ${dspInline()}
       <div class="grid g-main">
         <div class="card hov rv">
           <div class="kicker">MOMENTUM · ${leadSeries.labels.length} ${AF.periode === '1 sem' ? 'JOURS' : 'SEMAINES'} · ${t0.titre.toUpperCase()}</div>

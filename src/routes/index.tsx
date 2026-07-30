@@ -52,7 +52,7 @@ function PrototypePage() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: PROTO_CSS }} />
-      <div dangerouslySetInnerHTML={{ __html: PROTO_BODY }} />
+      <div className="np-proto" dangerouslySetInnerHTML={{ __html: PROTO_BODY }} />
     </>
   );
 }

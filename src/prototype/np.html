@@ -1862,7 +1862,7 @@ function vTitre(isrc){
       <h1 class="rv in" style="font-size:clamp(40px,5.5vw,72px)">${t.titre}</h1>
       <p style="font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.65);margin-top:12px">ISRC ${t.isrc} · UPC ${t.upc}</p>
       <div class="actions">
-        <button class="btn btn-light" onclick="openExport('${t.titre} ${a.nom}')">Exporter <span class="ar">↗</span></button>
+        <button class="btn btn-light" onclick="openExport('${t.titre} ${a.nom}','artiste','${a.id}')">Exporter <span class="ar">↗</span></button>
         ${alerte ? `<span class="btn btn-outline-w" style="cursor:default">⚑ Alerte ± 20% déclenchée</span>` : ''}
       </div>
     </div>

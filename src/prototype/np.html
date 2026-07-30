@@ -1672,7 +1672,7 @@ function vTitre(isrc){
   const shazAlert = sj > SEUILS.shazam;
   const plList = t.playlists.filter(([p,dsp]) => AF.dsp === 'Tous' || (dsp + '').toLowerCase().includes(AF.dsp.toLowerCase()));
   return `
-  <section class="a-hero"><div class="wrap" style="padding-top:40px;padding-bottom:44px">
+  <section class="a-hero"><div class="wrap" style="padding-top:40px;padding-bottom:70px">
     <div>
       <a class="back" href="#/artiste/${a.id}">← ${a.nom.toUpperCase()}</a>
       <div class="meta">VUE TITRE · ${t.projet} · ${t.sortie}</div>

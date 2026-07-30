@@ -1264,11 +1264,10 @@ function vAlertes(){
   <section class="band"><div class="wrap">
     <div class="digest rv">
       <div class="kicker"><span class="dot"></span>DIGEST S${SEMAINE.num} · CE QUE DIT LE MOTEUR</div>
-      <div style="font-size:19px;font-weight:800;letter-spacing:-.025em;margin-top:10px">${nUp} hausse${nUp>1?'s':''} au-dessus du seuil, ${nDn} baisse${nDn>1?'s':''}, ${nPl} mouvement${nPl>1?'s':''} playlist — ${nNew} non lue${nNew>1?'s':''}.</div>
+      <div style="font-size:19px;font-weight:800;letter-spacing:-.025em;margin-top:10px">${nUp} hausse${nUp>1?'s':''} au-dessus du seuil, ${nDn} baisse${nDn>1?'s':''}, ${nPl} mouvement${nPl>1?'s':''} playlist — ${nNew} non traitée${nNew>1?'s':''}.</div>
       <div class="row">
         ${[['risk','à traiter'],['opp','opportunités'],['info','informations']].map(([k,l]) => `<div><b style="color:${CRIT[k].c}">${n(k)}</b><small>${l}</small></div>`).join('')}
         <div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-outline btn-sm" onclick="markAllRead()">Tout marquer comme lu</button>
           <button class="btn btn-outline btn-sm" onclick="openExport('Synthèse hebdo S${SEMAINE.num} (PDF)')">Synthèse PDF <span class="ar">↗</span></button>
         </div>
       </div>

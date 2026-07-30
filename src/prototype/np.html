@@ -1101,7 +1101,7 @@ function labelHero(){
   return `${hero}
   ${labelKpis(tot, dLab, lis, shaz, soc)}
   <div class="lab-filters"><div class="wrap">
-    <div class="right">
+    <div class="right" style="margin-left:auto">
       <input class="hero-input" placeholder="Filtrer le roster..." value="${rosterQuery}" oninput="rosterQuery=this.value;renderRosterOnly()">
       ${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Leaderboard roster S${SEMAINE.num}')">Exporter <span class="ar">↗</span></button>
     </div>

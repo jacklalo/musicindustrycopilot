@@ -698,32 +698,64 @@ document.addEventListener('keydown', e => {
 
 const syncHtml = `<span class="sync"><span class="ok"></span>S${SEMAINE.num} · VEN→VEN</span><span class="sync" title="Délai de reporting Believe 48–72h (§8.2)"><span class="warn"></span>BELIEVE J-3</span>`;
 
+const PERIODES = { '7 j': {mult:1, lab:'7 j', pts:8}, '28 j': {mult:3.7, lab:'28 j', pts:8}, '12 sem': {mult:11.4, lab:'12 sem', pts:8} };
+const PAYS_FALLBACK = { Monde:100, FR:62, BE:7, CH:5 };
+const AF = { periode:'7 j', dsp:'Tous', pays:'Monde', titre:'Tous' };
+const afDefault = () => AF.periode === '7 j' && AF.dsp === 'Tous' && AF.pays === 'Monde' && AF.titre === 'Tous';
+
+function paysShare(a){
+  if (AF.pays === 'Monde') return 1;
+  const row = (a && a.demo && a.demo.pays || []).find(([p]) => p.toUpperCase().startsWith(AF.pays));
+  return ((row ? row[1] : PAYS_FALLBACK[AF.pays]) || 0) / 100;
+}
+function dspShare(t){
+  if (AF.dsp === 'Tous') return 1;
+  return ((t && t.dsp && t.dsp[AF.dsp]) || 0) / 100;
+}
+/** Facteur appliqué aux volumes de streams selon les filtres actifs. */
+function afFactor(a, t){ return PERIODES[AF.periode].mult * paysShare(a) * dspShare(t || (a && a.titres[0])); }
+
+function setFilter(key, val){
+  if (AF[key] === val) return;
+  AF[key] = val;
+  const y = window.scrollY;
+  render();
+  window.scrollTo(0, y);
+  toast(`Périmètre : <b>${AF.periode} · ${AF.dsp === 'Tous' ? 'tous DSP' : AF.dsp} · ${AF.pays}${AF.titre === 'Tous' ? '' : ' · ' + AF.titre}</b>`);
+}
+function resetFilters(){
+  AF.periode = '7 j'; AF.dsp = 'Tous'; AF.pays = 'Monde'; AF.titre = 'Tous';
+  const y = window.scrollY; render(); window.scrollTo(0, y);
+  toast('Filtres réinitialisés');
+}
+const afChips = (key, vals) => vals.map(p =>
+  `<button class="chip chip-sm ${AF[key] === p ? 'active' : ''}" aria-pressed="${AF[key] === p}" onclick="setFilter('${key}', ${JSON.stringify(p).replace(/"/g, '&quot;')})">${p}</button>`).join('');
+
 function filtersBar(ctx, slim=false, titres=null){
   return `<div class="filters"><div class="wrap">
     <span class="group-label">Période</span>
-    ${['7 j','28 j','12 sem'].map((p,i) => `<button class="chip chip-sm ${i===0?'active':''}" onclick="fakeFilter(this,'période ${p}')">${p}</button>`).join('')}
+    ${afChips('periode', ['7 j','28 j','12 sem'])}
     <span class="sep"></span>
     <span class="group-label">DSP</span>
-    ${['Tous','Spotify','Apple','Deezer','Amazon'].map((p,i) => `<button class="chip chip-sm ${i===0?'active':''}" onclick="fakeFilter(this,'DSP ${p}')">${p}</button>`).join('')}
+    ${afChips('dsp', ['Tous','Spotify','Apple','Deezer','Amazon'])}
     <span class="sep"></span>
     <span class="group-label">Pays</span>
-    ${['Monde','FR','BE','CH'].map((p,i) => `<button class="chip chip-sm ${i===0?'active':''}" onclick="fakeFilter(this,'pays ${p}')">${p}</button>`).join('')}
+    ${afChips('pays', ['Monde','FR','BE','CH'])}
     ${titres ? `<span class="sep"></span>
     <span class="group-label">Titre / Projet</span>
-    ${['Tous', ...titres].map((p,i) => `<button class="chip chip-sm ${i===0?'active':''}" onclick="fakeFilter(this,'titre ${p.replace(/'/g,"\\'")}')">${p}</button>`).join('')}` : ''}
+    ${afChips('titre', ['Tous', ...titres])}` : ''}
+    ${afDefault() ? '' : `<button class="chip chip-sm af-reset" onclick="resetFilters()">Réinitialiser ✕</button>`}
     ${slim ? '' : `<div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('${ctx}')">Exporter <span class="ar">↗</span></button></div>`}
   </div></div>`;
 }
-function fakeFilter(btn, label){
-  let sib = btn.previousElementSibling;
-  const grp = [btn];
-  while (sib && sib.classList.contains('chip')) { grp.push(sib); sib = sib.previousElementSibling; }
-  sib = btn.nextElementSibling;
-  while (sib && sib.classList.contains('chip')) { grp.push(sib); sib = sib.nextElementSibling; }
-  grp.forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  toast(`Filtre : <b>${label}</b> — simulation prototype`);
+function afScope(a){
+  return `<div class="af-scope"><div class="wrap">
+    <span class="dot"></span>
+    <b>${AF.periode}</b> · <b>${AF.dsp === 'Tous' ? 'Tous DSP' : AF.dsp}</b> · <b>${AF.pays === 'Monde' ? 'Monde' : AF.pays}</b> · <b>${AF.titre === 'Tous' ? 'Tous les titres' : AF.titre}</b>
+    <span class="af-note">Volumes recalculés sur ce périmètre${AF.pays === 'Monde' ? '' : ` (part ${AF.pays} : ${Math.round(paysShare(a)*100)}%)`}.</span>
+  </div></div>`;
 }
+
 
 /* ================================================================
    VUE — ACCUEIL / ARTISTES

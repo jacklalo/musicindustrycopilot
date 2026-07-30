@@ -336,7 +336,6 @@
   .digest .row{display:flex;gap:26px;flex-wrap:wrap;align-items:center;margin-top:12px}
   .digest .row b{font-size:22px;font-weight:800;letter-spacing:-.02em;display:block}
   .digest .row small{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-foreground)}
-  .alert-item.unread{box-shadow:inset 3px 0 0 var(--ink)}
   .alert-item.done{opacity:.45}
   .alert-item.done p{text-decoration:line-through}
   .a-act{background:none;border:1px solid var(--line);border-radius:9999px;font-family:var(--font);font-size:11px;font-weight:700;padding:6px 11px;cursor:pointer;color:var(--muted-foreground);transition:.2s;flex:none}
@@ -728,7 +727,7 @@ function fakeFilter(btn, label){
 ================================================================ */
 let labelFilter = 'Tous', rosterQuery = '', sortKey = 'streams', spotId = null;
 const MES_ARTISTES = ['zazie','hina','jeremy-frerot'];
-const alertRead = {}, alertDone = {};
+const alertDone = {};
 let heroOpen = true;
 try { heroOpen = !localStorage.getItem('np_seen'); localStorage.setItem('np_seen', '1'); } catch (e) {}
 function toggleHero(){ heroOpen = !heroOpen; render(); }
@@ -1124,20 +1123,20 @@ function vArtiste(id){
 
 function alertItem(al){
   const k = critOf(al), c = CRIT[k];
-  const done = alertDone[al.id], read = alertRead[al.id] || done;
-  return `<div class="alert-item rv ${read ? '' : 'unread'} ${done ? 'done' : ''}" onmouseenter="markRead('${al.id}')">
+  const done = alertDone[al.id];
+  return `<div class="alert-item rv ${done ? 'done' : ''}">
     <span class="a-ic" style="background:${al.color}14;color:${al.color}">${al.ic}</span>
     <div style="flex:1;min-width:0">
       <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
         <span class="crit" style="background:${c.c}14;color:${c.c}"><i style="background:${c.c}"></i>${c.lab}</span>
         <span class="cat-lab" style="color:${al.color};margin:0">${al.cat} · ${al.niveau.toUpperCase()}</span>
       </div>
-      <p style="${read ? '' : 'font-weight:800'}">${al.txt}</p>
+      <p>${al.txt}</p>
       <div class="rule">${al.rule}</div>
     </div>
     <time title="${al.ts || ''}">${al.time}</time>
     <button class="a-act" onclick="event.stopPropagation();toggleDone('${al.id}')">${done ? 'Rouvrir' : 'Marquer traité'}</button>
-    <a class="btn btn-outline btn-sm" style="flex:none" href="${al.link || ('#/artiste/' + al.artiste)}" onclick="event.stopPropagation();markRead('${al.id}')">Ouvrir <span class="ar">↗</span></a>
+    <a class="btn btn-outline btn-sm" style="flex:none" href="${al.link || ('#/artiste/' + al.artiste)}" onclick="event.stopPropagation()">Ouvrir <span class="ar">↗</span></a>
   </div>`;
 }
 
@@ -1244,7 +1243,7 @@ function vAlertes(){
   const nUp = ALERTES.filter(al => al.cat === 'STREAMING' && al.ic === '↑').length;
   const nDn = ALERTES.filter(al => al.cat === 'STREAMING' && al.ic === '↓').length;
   const nPl = ALERTES.filter(al => al.cat === 'PLAYLIST ÉDITO').length;
-  const nNew = ALERTES.filter(al => !alertRead[al.id]).length;
+  const nNew = ALERTES.filter(al => !alertDone[al.id]).length;
   const grp = (lab, arr, first) => arr.length ? `<div class="grp-lab${first?' first':''}">${lab} · ${arr.length}</div><div class="grid" style="gap:12px">${arr.map(alertItem).join('')}</div>` : '';
   return `
   ${hero('ALERTES', 'MOTEUR DE RÈGLES · SEUILS FIXES V1', 'Alertes<em>.</em>', 'Signaux détectés automatiquement, niveau artiste et global. Aucune IA : des règles simples, lisibles, vérifiables.',
@@ -1264,11 +1263,10 @@ function vAlertes(){
   <section class="band"><div class="wrap">
     <div class="digest rv">
       <div class="kicker"><span class="dot"></span>DIGEST S${SEMAINE.num} · CE QUE DIT LE MOTEUR</div>
-      <div style="font-size:19px;font-weight:800;letter-spacing:-.025em;margin-top:10px">${nUp} hausse${nUp>1?'s':''} au-dessus du seuil, ${nDn} baisse${nDn>1?'s':''}, ${nPl} mouvement${nPl>1?'s':''} playlist — ${nNew} non lue${nNew>1?'s':''}.</div>
+      <div style="font-size:19px;font-weight:800;letter-spacing:-.025em;margin-top:10px">${nUp} hausse${nUp>1?'s':''} au-dessus du seuil, ${nDn} baisse${nDn>1?'s':''}, ${nPl} mouvement${nPl>1?'s':''} playlist — ${nNew} non traitée${nNew>1?'s':''}.</div>
       <div class="row">
         ${[['risk','à traiter'],['opp','opportunités'],['info','informations']].map(([k,l]) => `<div><b style="color:${CRIT[k].c}">${n(k)}</b><small>${l}</small></div>`).join('')}
         <div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-outline btn-sm" onclick="markAllRead()">Tout marquer comme lu</button>
           <button class="btn btn-outline btn-sm" onclick="openExport('Synthèse hebdo S${SEMAINE.num} (PDF)')">Synthèse PDF <span class="ar">↗</span></button>
         </div>
       </div>
@@ -1277,9 +1275,7 @@ function vAlertes(){
     <div class="note-line">ⓘ Seuils adaptatifs (historique artiste) : V2+ · Alerte playlist utilisateur > 100K : hors MVP, à arbitrer. * Seuil Shazam 300 vs 500/j à trancher.</div>
   </div></section>`;
 }
-function markAllRead(){ ALERTES.forEach(al => alertRead[al.id] = true); toast('✓&nbsp; Toutes les alertes marquées comme lues'); render(); }
-function toggleDone(id){ alertDone[id] = !alertDone[id]; alertRead[id] = true; toast(alertDone[id] ? '✓&nbsp; Alerte marquée <b>traitée</b>' : '↩&nbsp; Alerte rouverte'); render(); }
-function markRead(id){ if (!alertRead[id]) { alertRead[id] = true; render(); } }
+function toggleDone(id){ alertDone[id] = !alertDone[id]; toast(alertDone[id] ? '✓&nbsp; Alerte marquée <b>traitée</b>' : '↩&nbsp; Alerte rouverte'); render(); }
 
 /* ================================================================
    VUE — SAISIE MANUELLE (§7.5)

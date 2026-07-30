@@ -1369,12 +1369,12 @@ function vTitre(isrc){
     <div class="grid g-main">
       <div style="display:grid;gap:18px">
         <div class="card hov rv">
-          <div class="kicker">CADENCE HEBDO · 8 SEMAINES (VEN → VEN) · MILLIERS DE STREAMS</div>
+          <div class="kicker">CADENCE HEBDO · 8 ${AF.periode === '12 sem' ? 'PÉRIODES' : 'SEMAINES'} (VEN → VEN)${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase()}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 4px">
-            <span class="num-xl">${fmt(t.streamsHebdo)}</span>
+            <span class="num-xl">${fmt(scT(t.streamsHebdo))}</span>
             ${momBadge(t.delta)}
           </div>
-          ${barsWeekly(t.cadence, a.accent)}
+          ${barsWeekly(t.cadence.map(v => Math.round(v * F)), a.accent)}
         </div>
         <div class="lb rv">
           <div class="kicker" style="padding:20px 28px 14px">PLAYLISTS ÉDITORIALES · ENTRÉES / SORTIES · RANKING</div>

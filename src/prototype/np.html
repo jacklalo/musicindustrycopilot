@@ -325,6 +325,55 @@
   .hero-toggle{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);background:none;border:1px solid rgba(255,255,255,.25);border-radius:9999px;padding:7px 14px;cursor:pointer;transition:.2s;font-family:var(--font)}
   .hero-toggle:hover{color:#fff;border-color:#fff}
   .hero-compact .hero-toggle{margin-left:auto}
+
+  /* ===== Hero sombre unifié — page Artistes ===== */
+  .lab-hero{color:#fff;background:linear-gradient(135deg,#1B1D22 0%,#0A0A0B 62%);position:relative;overflow:hidden}
+  .lab-hero::after{content:"";position:absolute;inset:0;background:radial-gradient(600px 320px at 82% 8%, rgba(200,16,46,.22), transparent 70%);pointer-events:none}
+  .lab-hero > *{position:relative;z-index:1}
+  .lab-hero .top{padding:40px 32px 26px;display:grid;grid-template-columns:1.25fr .75fr;gap:44px;align-items:center}
+  .lab-hero.slim .top{padding:20px 32px 16px;grid-template-columns:1fr}
+  .lab-hero .kicker{margin:0 0 16px;color:rgba(255,255,255,.55)}
+  .lab-hero h1{font-size:clamp(38px,5.4vw,72px);font-weight:800;letter-spacing:-.045em;line-height:.94}
+  .lab-hero.slim h1{font-size:24px;letter-spacing:-.03em}
+  .lab-hero .lead{color:rgba(255,255,255,.66);font-size:14.5px;max-width:470px;margin-top:14px;line-height:1.5}
+  .lab-hero .actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+  .lab-hero .head-row{display:flex;align-items:flex-start;gap:16px}
+  .lab-hero .head-row .hero-toggle{margin-left:auto;flex:none}
+
+  .lab-hero .kpis{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12)}
+  .lab-hero .kpi{padding:22px 32px;border-left:1px solid rgba(255,255,255,.1);background:none;transition:background .25s}
+  .lab-hero .kpi:first-child{border-left:none}
+  .lab-hero .kpi:hover{background:rgba(255,255,255,.045)}
+  .lab-hero .kpi .lab{color:rgba(255,255,255,.5);margin-bottom:8px}
+  .lab-hero .kpi .val{font-size:30px;color:#fff}
+  .lab-hero .kpi .cmp{color:rgba(255,255,255,.55)!important}
+
+  .lab-hero .toolbar{display:flex;align-items:center;gap:10px;padding:16px 32px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1)}
+  .lab-hero .toolbar .group-label{color:rgba(255,255,255,.45)}
+  .lab-hero .toolbar .right{margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .lab-hero .toolbar .sync{color:rgba(255,255,255,.45)}
+  .lab-hero .chip{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.8)}
+  .lab-hero .chip:hover{background:rgba(255,255,255,.13);color:#fff}
+  .lab-hero .chip.active{background:#fff;border-color:#fff;color:#0A0A0B}
+  .lab-hero .hero-input{font-family:var(--font);font-size:13px;border:1px solid rgba(255,255,255,.2);border-radius:9999px;padding:9px 17px;outline:none;background:rgba(255,255,255,.06);color:#fff;width:210px;transition:.2s}
+  .lab-hero .hero-input::placeholder{color:rgba(255,255,255,.42)}
+  .lab-hero .hero-input:focus{border-color:#fff;background:rgba(255,255,255,.1)}
+  .lab-hero .btn-light{background:#fff;color:#0A0A0B}
+
+  .lab-hero .changed{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-card);margin:22px 32px 30px;padding:18px 22px;backdrop-filter:blur(8px)}
+  .lab-hero .changed .kicker{margin:0;color:rgba(255,255,255,.5)}
+  .lab-hero .changed li{color:rgba(255,255,255,.85)}
+  .lab-hero .changed a{color:#fff}
+  @media(max-width:960px){
+    .lab-hero .top{grid-template-columns:1fr;padding:28px 20px 20px;gap:24px}
+    .lab-hero .kpis{grid-template-columns:1fr 1fr}
+    .lab-hero .kpi{padding:16px 20px}
+    .lab-hero .kpi .val{font-size:24px}
+    .lab-hero .toolbar{padding:14px 20px}
+    .lab-hero .toolbar .right{margin-left:0;width:100%}
+    .lab-hero .hero-input{flex:1;width:auto;min-width:0}
+    .lab-hero .changed{margin:18px 20px 24px}
+  }
   .changed{border:1px solid var(--line);border-radius:var(--radius-card);background:var(--card);padding:18px 22px;margin-bottom:18px}
   .changed ul{list-style:none;display:grid;gap:10px;margin-top:12px;padding:0}
   .changed li{display:flex;gap:10px;align-items:flex-start;font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.4}
@@ -895,34 +944,51 @@ function labelHero(){
   const shaz = ARTISTS.reduce((s,a) => s + shazamOf(a), 0);
   const soc = ARTISTS.reduce((s,a) => s + a.social.ig + a.social.tt, 0);
   const top = ranked().slice(0,4);
-  if (!heroOpen) return `<section class="hero-compact"><div class="wrap">
-    <div class="kicker"><span class="dot"></span>LABEL 6&7 · S${SEMAINE.num}</div>
-    <h1>TOP ROSTER</h1>
-    <button class="hero-toggle" onclick="toggleHero()">Déplier ▾</button>
-  </div></section>
-  ${labelKpis(tot, dLab, lis, shaz, soc)}`;
-  return `<section class="a-hero" style="--accent:#C8102E"><div class="wrap">
-    <div>
-      <div style="display:flex;align-items:flex-start"><div class="meta" style="margin-top:0">LABEL 6&7 · ${ARTISTS.length} ARTISTES · S${SEMAINE.num} (${SEMAINE.du} → ${SEMAINE.au})</div><button class="hero-toggle" style="margin-left:auto" onclick="toggleHero()">Réduire ▴</button></div>
-      <h1 class="rv in">Top <em style="font-style:italic;font-weight:400">roster</em>.</h1>
-      <p>Le classement streaming de la semaine, du premier coup d'œil au détail : un rang, un chiffre, une tendance — puis la vue 360° de chaque artiste.</p>
-      <div class="actions">
-        <a class="btn btn-light" href="#/alertes">⚑ ${ALERTES.length} alertes cette semaine</a>
-        <a class="btn btn-outline-w" href="#/saisie">Saisie manuelle <span class="ar">↗</span></a>
+  const head = heroOpen
+    ? `<div class="top">
+        <div>
+          <div class="head-row">
+            <div class="kicker"><span class="dot"></span>LABEL 6&7 · ${ARTISTS.length} ARTISTES · S${SEMAINE.num} (${SEMAINE.du} → ${SEMAINE.au})</div>
+            <button class="hero-toggle" onclick="toggleHero()">Réduire ▴</button>
+          </div>
+          <h1 class="rv in">Top <em style="font-style:italic;font-weight:400">roster</em>.</h1>
+          <p class="lead">Le classement streaming de la semaine, du premier coup d'œil au détail : un rang, un chiffre, une tendance — puis la vue 360° de chaque artiste.</p>
+          <div class="actions">
+            <a class="btn btn-light" href="#/alertes">⚑ ${ALERTES.length} alertes cette semaine</a>
+            <a class="btn btn-outline-w" href="#/saisie">Saisie manuelle <span class="ar">↗</span></a>
+          </div>
+        </div>
+        <div class="hero-collage">
+          ${top.map(a => `<a class="ph" style="--acc:${a.accent}" href="#/artiste/${a.id}" title="${a.nom}"><img src="${IMGS[a.id]}" loading="lazy" alt="" onerror="this.remove()"></a>`).join('')}
+        </div>
+      </div>`
+    : `<div class="top">
+        <div class="head-row" style="align-items:center">
+          <div class="kicker" style="margin:0"><span class="dot"></span>LABEL 6&7 · S${SEMAINE.num}</div>
+          <h1>Top roster<span style="color:var(--pop)">.</span></h1>
+          <button class="hero-toggle" onclick="toggleHero()">Déplier ▾</button>
+        </div>
+      </div>`;
+  return `<section class="lab-hero ${heroOpen ? '' : 'slim'}">
+    ${head}
+    ${labelKpis(tot, dLab, lis, shaz, soc)}
+    <div class="toolbar">
+      <span class="group-label">Label</span>
+      ${['Tous','6&7'].map(l => `<button class="chip ${labelFilter===l?'active':''}" onclick="labelFilter='${l.replace(/'/g,"\\'")}';render()">${l === 'Tous' ? 'Tous les labels' : l}</button>`).join('')}
+      <div class="right">
+        <input class="hero-input" placeholder="Filtrer le roster..." value="${rosterQuery}" oninput="rosterQuery=this.value;renderRosterOnly()">
+        ${syncHtml}<button class="btn btn-light btn-sm" onclick="openExport('Leaderboard roster S${SEMAINE.num}')">Exporter <span class="ar">↗</span></button>
       </div>
     </div>
-    <div class="hero-collage">
-      ${top.map((a,i) => `<a class="ph" style="--acc:${a.accent}" href="#/artiste/${a.id}" title="${a.nom}"><img src="${IMGS[a.id]}" loading="lazy" alt="" onerror="this.remove()"></a>`).join('')}
-    </div>
-  </div></section>
-  ${labelKpis(tot, dLab, lis, shaz, soc)}`;
+    ${whatChanged()}
+  </section>`;
 }
 function labelKpis(tot, dLab, lis, shaz, soc){
-  return `<div class="kpi-band">
+  return `<div class="kpis">
     <div class="kpi rv"><div class="lab">Streams hebdo cumulés</div><div class="val">${fmt(tot)} <span class="cmp">${deltaHtml(dLab)}</span></div></div>
-    <div class="kpi rv"><div class="lab">Auditeurs mensuels cumulés</div><div class="val">${fmt(lis)} <span class="cmp" style="color:var(--muted-foreground)">${ARTISTS.length} artistes</span></div></div>
-    <div class="kpi rv"><div class="lab">Shazams / jour</div><div class="val">${fmt(shaz)} <span class="cmp" style="color:var(--muted-foreground)">seuil ${SEUILS.shazam}/titre</span></div></div>
-    <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(soc)} <span class="cmp" style="color:var(--muted-foreground)">IG + TikTok</span></div></div>
+    <div class="kpi rv"><div class="lab">Auditeurs mensuels cumulés</div><div class="val">${fmt(lis)} <span class="cmp">${ARTISTS.length} artistes</span></div></div>
+    <div class="kpi rv"><div class="lab">Shazams / jour</div><div class="val">${fmt(shaz)} <span class="cmp">seuil ${SEUILS.shazam}/titre</span></div></div>
+    <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(soc)} <span class="cmp">IG + TikTok</span></div></div>
   </div>`;
 }
 function vArtistes(){
@@ -930,16 +996,7 @@ function vArtistes(){
   const spot = spotArtist();
   return `
   ${labelHero()}
-  <div class="filters"><div class="wrap">
-    <span class="group-label">Label</span>
-    ${['Tous','6&7'].map(l => `<button class="chip ${labelFilter===l?'active':''}" onclick="labelFilter='${l.replace(/'/g,"\\'")}';render()">${l === 'Tous' ? 'Tous les labels' : l}</button>`).join('')}
-    <div class="right">
-      <input placeholder="Filtrer le roster..." value="${rosterQuery}" oninput="rosterQuery=this.value;renderRosterOnly()" style="font-family:var(--font);font-size:13px;border:1px solid var(--line);border-radius:9999px;padding:9px 17px;outline:none;background:var(--card);width:210px">
-      ${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Leaderboard roster S${SEMAINE.num}')">Exporter <span class="ar">↗</span></button>
-    </div>
-  </div></div>
   <section class="band"><div class="wrap">
-    ${whatChanged()}
     <h2 class="h-sect rv">Leaderboard<span style="color:var(--pop)">.</span> <small>streams hebdo · S${SEMAINE.num} vs S${SEMAINE.num-1}</small></h2>
     <p class="h-sub">Trajectoire sur 8 semaines, alertes actives signalées sur la ligne. Cliquer une ligne ouvre le dashboard artiste.</p>
     <div class="grid g-main" style="align-items:start">

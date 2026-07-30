@@ -1116,6 +1116,9 @@ function vArtiste(id){
   const sc = (v, t) => Math.round((v || 0) * F(t || t0));
   const scoreOk = a.score > SEUILS.score;
   const spotifyScope = AF.dsp === 'Tous' || AF.dsp === 'Spotify';
+  const AUD = audience(a);
+  const MIX = dspMix(a);
+  const shz = v => perDay(v, a);
 
   const summary = (() => {
     const p = [];

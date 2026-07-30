@@ -2086,9 +2086,9 @@ function vSaisie(){
     <div class="kicker"><span class="dot"></span>DONNÉES NON-API — SAISIE MANUELLE</div>
   </div></section>
   <div class="sai-tools"><div class="wrap">
-    <button class="chip ${saisieTab==='physique'?'active':''}" onclick="saisieTab='physique';PROP=null;DUP=null;editIdx=-1;saiFil.type='Tous';render()">Ventes physiques · hebdo</button>
-    <button class="chip ${saisieTab==='actus'?'active':''}" onclick="saisieTab='actus';PROP=null;DUP=null;editIdx=-1;saiFil.type='Tous';render()">Actus à venir · continu</button>
-    <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Historique des saisies')">Exporter <span class="ar">↗</span></button></div>
+    <button class="chip ${saisieTab==='physique'?'active':''}" onclick="saisieTab='physique';PROP=null;DUP=null;editIdx=-1;render()">Ventes physiques · hebdo</button>
+    <button class="chip ${saisieTab==='actus'?'active':''}" onclick="saisieTab='actus';PROP=null;DUP=null;editIdx=-1;render()">Actus à venir · continu</button>
+    <div class="right">${syncHtml}</div>
   </div></div>
   <section class="band"><div class="wrap">
     <div class="grid g-main">

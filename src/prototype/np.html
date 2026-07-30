@@ -1071,8 +1071,8 @@ function vArtiste(id){
   if (!a) return `<div class="empty" style="padding:100px">Artiste hors périmètre V1.</div>`;
   document.documentElement.style.setProperty('--accent', a.accent);
   const alertsA = ALERTES.filter(al => al.artiste === id);
-  const titresSel = AF.titre === 'Tous' ? a.titres : a.titres.filter(t => t.titre === AF.titre);
-  const tl = titresSel.length ? titresSel : a.titres;
+  const titresSel = a.titres;
+  const tl = titresSel;
   const t0 = tl[0];
   const P = PERIODES[AF.periode];
   const geo = paysShare(a);

@@ -1081,13 +1081,14 @@ function vArtiste(id){
   const F = t => P.mult * geo * dspShare(t);
   const sc = (v, t) => Math.round((v || 0) * F(t || t0));
   const scoreOk = a.score > SEUILS.score;
+  const spotifyScope = AF.dsp === 'Tous' || AF.dsp === 'Spotify';
 
   const summary = (() => {
     const p = [];
     p.push(`${a.delta >= 0 ? 'Progression' : 'Repli'} hebdo de <b>${a.delta > 0 ? '+' : ''}${a.delta}%</b> des streams`);
     if (Math.abs(t0.delta) >= SEUILS.streaming) p.push(`« ${t0.titre} » ${t0.delta > 0 ? 'dépasse le seuil d\'alerte' : 'sous le seuil'} (${t0.delta > 0 ? '+' : ''}${t0.delta}%)`);
     if (t0.shazamJour > SEUILS.shazam) p.push(`Shazam au-dessus du seuil (${t0.shazamJour}/j)`);
-    if (scoreOk) p.push(`Score Spotify <b>${a.score}</b> > 50`);
+    if (scoreOk && spotifyScope) p.push(`Score Spotify <b>${a.score}</b> > 50`);
     return p.join(' · ') + '.';
   })();
 

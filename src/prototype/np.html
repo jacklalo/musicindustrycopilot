@@ -1074,52 +1074,47 @@ function labelHero(){
   const lis = ARTISTS.reduce((s,a) => s + a.listeners, 0);
   const shaz = ARTISTS.reduce((s,a) => s + shazamOf(a), 0);
   const soc = ARTISTS.reduce((s,a) => s + a.social.ig + a.social.tt, 0);
-  const top = ranked().slice(0,4);
-  const head = heroOpen
-    ? `<div class="top">
+  const n1 = ranked()[0];
+  const hero = heroOpen
+    ? `<section class="lab-hero"><div class="wrap">
         <div>
           <div class="head-row">
             <div class="kicker"><span class="dot"></span>LABEL 6&7 · ${ARTISTS.length} ARTISTES · S${SEMAINE.num} (${SEMAINE.du} → ${SEMAINE.au})</div>
             <button class="hero-toggle" onclick="toggleHero()">Réduire ▴</button>
           </div>
-          <h1 class="rv in">Top <em style="font-style:italic;font-weight:400">roster</em>.</h1>
-          <p class="lead">Le classement streaming de la semaine, du premier coup d'œil au détail : un rang, un chiffre, une tendance — puis la vue 360° de chaque artiste.</p>
+          <h1 class="rv in">Top roster<span style="color:#C8102E">.</span></h1>
+          <p class="lead">Le classement streaming de la semaine — un rang, un chiffre, une tendance, puis la vue 360° de chaque artiste.</p>
           <div class="actions">
-            <a class="btn btn-light" href="#/alertes">⚑ ${ALERTES.length} alertes cette semaine</a>
-            <a class="btn btn-outline-w" href="#/saisie">Saisie manuelle <span class="ar">↗</span></a>
+            <button class="btn btn-light" onclick="openExport('Synthèse roster S${SEMAINE.num}')">Exporter la synthèse <span class="ar">↗</span></button>
+            <a class="btn btn-outline-w" href="#/alertes">⚑ ${ALERTES.length} alertes cette semaine</a>
           </div>
         </div>
-        <div class="hero-collage">
-          ${top.map(a => `<a class="ph" style="--acc:${a.accent}" href="#/artiste/${a.id}" title="${a.nom}"><img src="${IMGS[a.id]}" loading="lazy" alt="" onerror="this.remove()"></a>`).join('')}
-        </div>
-      </div>`
-    : `<div class="top">
-        <div class="head-row" style="align-items:center">
-          <div class="kicker" style="margin:0"><span class="dot"></span>LABEL 6&7 · S${SEMAINE.num}</div>
-          <h1>Top roster<span style="color:var(--pop)">.</span></h1>
-          <button class="hero-toggle" onclick="toggleHero()">Déplier ▾</button>
-        </div>
-      </div>`;
-  return `<section class="lab-hero ${heroOpen ? '' : 'slim'}">
-    ${head}
-    ${labelKpis(tot, dLab, lis, shaz, soc)}
-    <div class="toolbar">
-      <span class="group-label">Label</span>
-      ${['Tous','6&7'].map(l => `<button class="chip ${labelFilter===l?'active':''}" onclick="labelFilter='${l.replace(/'/g,"\\'")}';render()">${l === 'Tous' ? 'Tous les labels' : l}</button>`).join('')}
-      <div class="right">
-        <input class="hero-input" placeholder="Filtrer le roster..." value="${rosterQuery}" oninput="rosterQuery=this.value;renderRosterOnly()">
-        ${syncHtml}<button class="btn btn-light btn-sm" onclick="openExport('Leaderboard roster S${SEMAINE.num}')">Exporter <span class="ar">↗</span></button>
-      </div>
+        <a href="#/artiste/${n1.id}" style="display:block" title="${n1.nom}">
+          ${ph(IMGS[n1.id], n1.accent, '', `<span class="track-chip"><span class="dot"></span>N°1 · ${n1.nom.toUpperCase()}</span>`)}
+        </a>
+      </div></section>`
+    : `<section class="lab-hero slim"><div class="wrap">
+        <div class="kicker"><span class="dot"></span>LABEL 6&7 · S${SEMAINE.num}</div>
+        <h1>Top roster<span style="color:#C8102E">.</span></h1>
+        <button class="hero-toggle" onclick="toggleHero()">Déplier ▾</button>
+      </div></section>`;
+  return `${hero}
+  ${labelKpis(tot, dLab, lis, shaz, soc)}
+  <div class="lab-filters"><div class="wrap">
+    <span class="group-label">Label</span>
+    ${['Tous','6&7'].map(l => `<button class="chip ${labelFilter===l?'active':''}" onclick="labelFilter='${l.replace(/'/g,"\\'")}';render()">${l === 'Tous' ? 'Tous les labels' : l}</button>`).join('')}
+    <div class="right">
+      <input class="hero-input" placeholder="Filtrer le roster..." value="${rosterQuery}" oninput="rosterQuery=this.value;renderRosterOnly()">
+      ${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Leaderboard roster S${SEMAINE.num}')">Exporter <span class="ar">↗</span></button>
     </div>
-    ${whatChanged()}
-  </section>`;
+  </div></div>`;
 }
 function labelKpis(tot, dLab, lis, shaz, soc){
-  return `<div class="kpis">
+  return `<div class="kpi-band">
     <div class="kpi rv"><div class="lab">Streams hebdo cumulés</div><div class="val">${fmt(tot)} <span class="cmp">${deltaHtml(dLab)}</span></div></div>
-    <div class="kpi rv"><div class="lab">Auditeurs mensuels cumulés</div><div class="val">${fmt(lis)} <span class="cmp">${ARTISTS.length} artistes</span></div></div>
-    <div class="kpi rv"><div class="lab">Shazams / jour</div><div class="val">${fmt(shaz)} <span class="cmp">seuil ${SEUILS.shazam}/titre</span></div></div>
-    <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(soc)} <span class="cmp">IG + TikTok</span></div></div>
+    <div class="kpi rv"><div class="lab">Auditeurs mensuels cumulés</div><div class="val">${fmt(lis)} <span class="cmp" style="color:var(--muted-foreground)">${ARTISTS.length} artistes</span></div></div>
+    <div class="kpi rv"><div class="lab">Shazams / jour</div><div class="val">${fmt(shaz)} <span class="cmp" style="color:var(--muted-foreground)">seuil ${SEUILS.shazam}/titre</span></div></div>
+    <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(soc)} <span class="cmp" style="color:var(--muted-foreground)">IG + TikTok</span></div></div>
   </div>`;
 }
 function vArtistes(){

@@ -339,6 +339,8 @@
   .lab-hero .actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
   .lab-hero .head-row{display:flex;align-items:flex-start;gap:16px}
   .lab-hero .head-row .hero-toggle{margin-left:auto;flex:none}
+  .lab-hero:not(.slim) .head-row .hero-toggle{position:absolute;top:32px;right:32px;margin:0}
+  @media(max-width:960px){.lab-hero:not(.slim) .head-row .hero-toggle{position:static}}
 
   .lab-hero .kpis{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12)}
   .lab-hero .kpi{padding:22px 32px;border-left:1px solid rgba(255,255,255,.1);background:none;transition:background .25s}

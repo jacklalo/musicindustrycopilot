@@ -1390,18 +1390,18 @@ function vTitre(isrc){
       </div>
       <div style="display:grid;gap:16px">
         <div class="card hov rv">
-          <div class="kicker">STREAMS PAR DSP</div>
+          <div class="kicker">STREAMS PAR DSP${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase() + ' ISOLÉ'}</div>
           <div style="margin-top:14px">
-            ${Object.entries(t.dsp).map(([d,p]) => `<div class="brow"><div class="btop"><b>${d}</b><span>${p}% · ${fmt(Math.round(t.streamsHebdo*p/100))}</span></div><div class="track"><span class="fill" style="width:${p}%"></span></div></div>`).join('')}
+            ${Object.entries(t.dsp).map(([d,p]) => `<div class="brow" style="opacity:${AF.dsp === 'Tous' || AF.dsp === d ? 1 : .32};cursor:pointer" onclick="setFilter('dsp','${AF.dsp === d ? 'Tous' : d}')"><div class="btop"><b>${d}</b><span>${p}% · ${fmt(Math.round(t.streamsHebdo*p/100*P.mult*geo))}</span></div><div class="track"><span class="fill" style="width:${p}%"></span></div></div>`).join('')}
           </div>
         </div>
         <div class="card hov rv">
-          <div class="kicker">SHAZAM FOCUS · GÉO</div>
+          <div class="kicker">SHAZAM FOCUS · GÉO${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div>
           <div style="display:flex;align-items:baseline;gap:10px;margin:12px 0 6px">
-            <span class="num-xl" style="${shazAlert ? 'color:var(--accent)' : ''}">${t.shazamJour}</span>
+            <span class="num-xl" style="${shazAlert ? 'color:var(--accent)' : ''}">${sj}</span>
             <span style="font-size:13px;color:var(--muted-foreground)">/ jour</span>
           </div>
-          <div class="track" style="margin:10px 0 6px"><span class="fill" style="width:${Math.min(100, t.shazamJour/(SEUILS.shazam*1.6)*100)}%"></span></div>
+          <div class="track" style="margin:10px 0 6px"><span class="fill" style="width:${Math.min(100, sj/(SEUILS.shazam*1.6)*100)}%"></span></div>
           <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted-foreground)"><span>0</span><span>seuil ${SEUILS.shazam}/j *</span></div>
           <div class="note-line">* 300 ou 500/j : à confirmer avec le client.</div>
         </div>

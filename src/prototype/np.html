@@ -1148,7 +1148,7 @@ function pdfArtiste(id){
       <tr><td>TikTok</td><td class="num">${fmt(a.social.tt)}</td><td class="num">${pdfD(a.social.ttD)}</td></tr>
       <tr><td>Vidéos UGC</td><td class="num">${fmt(a.social.ugc)}</td><td class="num">${pdfD(a.social.ugcD)}</td></tr>
       <tr><td>Audience féminine</td><td class="num">${a.demo.f}%</td><td class="num">${a.demo.age}</td></tr>
-      ${a.demo.pays.map(([p,v]) => `<tr><td>Pays · ${p}</td><td class="num">${v}%</td><td class="num">—</td></tr>`).join('').replace(/—/g,'')}
+      ${a.demo.pays.map(([p,v]) => `<tr><td>Pays · ${p}</td><td class="num">${v}%</td><td class="num"></td></tr>`).join('')}
     </tbody></table>
     <div class="pdf-sec">Lecture de la semaine</div>
     <ul class="pdf-bul">
@@ -1196,7 +1196,7 @@ function filterSearch(q){
 }
 document.addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
-  if (e.key === 'Escape') closeOverlay();
+  if (e.key === 'Escape') { closeOverlay(); closePdf(); }
 });
 
 const syncHtml = `<span class="sync"><span class="ok"></span>S${SEMAINE.num} · VEN→VEN</span><span class="sync" title="Délai de reporting Believe 48–72h (§8.2)"><span class="warn"></span>BELIEVE J-3</span>`;
@@ -1494,7 +1494,7 @@ function labelHero(){
           <h1 class="rv in">Top roster<span style="color:#C8102E">.</span></h1>
           <p class="lead">Le classement streaming de la semaine un rang, un chiffre, une tendance, puis la vue 360° de chaque artiste.</p>
           <div class="actions">
-            <button class="btn btn-light" onclick="openExport('Synthèse roster S${SEMAINE.num}')">Exporter la synthèse <span class="ar">↗</span></button>
+            <button class="btn btn-light" onclick="openExport('Synthèse roster S${SEMAINE.num}','roster')">Exporter la synthèse <span class="ar">↗</span></button>
             <a class="btn btn-outline-w" href="#/alertes">⚑ ${ALERTES.length} alertes cette semaine</a>
           </div>
         </div>
@@ -1642,7 +1642,7 @@ function vArtiste(id){
       <h1 class="rv in">${a.nom}</h1>
       <p>${a.bio}</p>
       <div class="actions">
-        <button class="btn btn-light" onclick="openExport('Dashboard ${a.nom}')">Exporter la synthèse <span class="ar">↗</span></button>
+        <button class="btn btn-light" onclick="openExport('Dashboard ${a.nom}','artiste','${a.id}')">Exporter la synthèse <span class="ar">↗</span></button>
         <a class="btn btn-outline-w" href="#/alertes">${alertsA.length} alerte${alertsA.length>1?'s':''}</a>
       </div>
     </div>
@@ -1660,7 +1660,7 @@ function vArtiste(id){
 
   <div class="subnav"><div class="wrap">
     ${SECTIONS.map(([id2,l],i) => `<a href="#s-${id2}" onclick="event.preventDefault();document.getElementById('s-${id2}').scrollIntoView({behavior:'smooth',block:'start'})" ${i===0?'class="on"':''}>${l}</a>`).join('')}
-    <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Dashboard ${a.nom}')">Exporter <span class="ar">↗</span></button></div>
+    <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Dashboard ${a.nom}','artiste','${a.id}')">Exporter <span class="ar">↗</span></button></div>
   </div></div>
 
   ${filtersBar('Dashboard ' + a.nom, true)}

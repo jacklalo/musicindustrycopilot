@@ -1101,8 +1101,6 @@ function labelHero(){
   return `${hero}
   ${labelKpis(tot, dLab, lis, shaz, soc)}
   <div class="lab-filters"><div class="wrap">
-    <span class="group-label">Label</span>
-    ${['Tous','6&7'].map(l => `<button class="chip ${labelFilter===l?'active':''}" onclick="labelFilter='${l.replace(/'/g,"\\'")}';render()">${l === 'Tous' ? 'Tous les labels' : l}</button>`).join('')}
     <div class="right">
       <input class="hero-input" placeholder="Filtrer le roster..." value="${rosterQuery}" oninput="rosterQuery=this.value;renderRosterOnly()">
       ${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Leaderboard roster S${SEMAINE.num}')">Exporter <span class="ar">↗</span></button>

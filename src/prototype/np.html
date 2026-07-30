@@ -757,8 +757,8 @@ const syncHtml = `<span class="sync"><span class="ok"></span>S${SEMAINE.num} · 
 
 const PERIODES = { '7 j': {mult:1, lab:'7 j', pts:8}, '28 j': {mult:3.7, lab:'28 j', pts:8}, '12 sem': {mult:11.4, lab:'12 sem', pts:8} };
 const PAYS_FALLBACK = { Monde:100, FR:62, BE:7, CH:5 };
-const AF = { periode:'7 j', dsp:'Tous', pays:'Monde', titre:'Tous' };
-const afDefault = () => AF.periode === '7 j' && AF.dsp === 'Tous' && AF.pays === 'Monde' && AF.titre === 'Tous';
+const AF = { periode:'7 j', dsp:'Tous', pays:'Monde' };
+const afDefault = () => AF.periode === '7 j' && AF.dsp === 'Tous' && AF.pays === 'Monde';
 
 function paysShare(a){
   if (AF.pays === 'Monde') return 1;
@@ -778,17 +778,17 @@ function setFilter(key, val){
   const y = window.scrollY;
   render();
   window.scrollTo(0, y);
-  toast(`Périmètre : <b>${AF.periode} · ${AF.dsp === 'Tous' ? 'tous DSP' : AF.dsp} · ${AF.pays}${AF.titre === 'Tous' ? '' : ' · ' + AF.titre}</b>`);
+  toast(`Périmètre : <b>${AF.periode} · ${AF.dsp === 'Tous' ? 'tous DSP' : AF.dsp} · ${AF.pays}</b>`);
 }
 function resetFilters(){
-  AF.periode = '7 j'; AF.dsp = 'Tous'; AF.pays = 'Monde'; AF.titre = 'Tous';
+  AF.periode = '7 j'; AF.dsp = 'Tous'; AF.pays = 'Monde';
   const y = window.scrollY; render(); window.scrollTo(0, y);
   toast('Filtres réinitialisés');
 }
 const afChips = (key, vals) => vals.map(p =>
   `<button class="chip chip-sm ${AF[key] === p ? 'active' : ''}" aria-pressed="${AF[key] === p}" onclick="setFilter('${key}', ${JSON.stringify(p).replace(/"/g, '&quot;')})">${p}</button>`).join('');
 
-function filtersBar(ctx, slim=false, titres=null){
+function filtersBar(ctx, slim=false){
   return `<div class="filters"><div class="wrap">
     <span class="group-label">Période</span>
     ${afChips('periode', ['7 j','28 j','12 sem'])}
@@ -798,9 +798,6 @@ function filtersBar(ctx, slim=false, titres=null){
     <span class="sep"></span>
     <span class="group-label">Pays</span>
     ${afChips('pays', ['Monde','FR','BE','CH'])}
-    ${titres ? `<span class="sep"></span>
-    <span class="group-label">Titre / Projet</span>
-    ${afChips('titre', ['Tous', ...titres])}` : ''}
     ${afDefault() ? '' : `<button class="chip chip-sm af-reset" onclick="resetFilters()">Réinitialiser ✕</button>`}
     ${slim ? '' : `<div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('${ctx}')">Exporter <span class="ar">↗</span></button></div>`}
   </div></div>`;
@@ -808,7 +805,7 @@ function filtersBar(ctx, slim=false, titres=null){
 function afScope(a){
   return `<div class="af-scope"><div class="wrap">
     <span class="dot"></span>
-    <b>${AF.periode}</b> · <b>${AF.dsp === 'Tous' ? 'Tous DSP' : AF.dsp}</b> · <b>${AF.pays === 'Monde' ? 'Monde' : AF.pays}</b> · <b>${AF.titre === 'Tous' ? 'Tous les titres' : AF.titre}</b>
+    <b>${AF.periode}</b> · <b>${AF.dsp === 'Tous' ? 'Tous DSP' : AF.dsp}</b> · <b>${AF.pays === 'Monde' ? 'Monde' : AF.pays}</b>
     <span class="af-note">Volumes recalculés sur ce périmètre${AF.pays === 'Monde' ? '' : ` (part ${AF.pays} : ${Math.round(paysShare(a)*100)}%)`}.</span>
   </div></div>`;
 }
@@ -1074,8 +1071,8 @@ function vArtiste(id){
   if (!a) return `<div class="empty" style="padding:100px">Artiste hors périmètre V1.</div>`;
   document.documentElement.style.setProperty('--accent', a.accent);
   const alertsA = ALERTES.filter(al => al.artiste === id);
-  const titresSel = AF.titre === 'Tous' ? a.titres : a.titres.filter(t => t.titre === AF.titre);
-  const tl = titresSel.length ? titresSel : a.titres;
+  const titresSel = a.titres;
+  const tl = titresSel;
   const t0 = tl[0];
   const P = PERIODES[AF.periode];
   const geo = paysShare(a);
@@ -1108,7 +1105,7 @@ function vArtiste(id){
   </div></section>
 
   <div class="kpi-band">
-    <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(sc(AF.titre === 'Tous' ? a.streams : t0.streamsHebdo))} <span class="cmp">${deltaHtml(a.delta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(sc(a.streams))} <span class="cmp">${deltaHtml(a.delta)}</span></div></div>
     <div class="kpi rv"><div class="lab">Auditeurs mensuels${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.listeners * geo))} <span class="cmp">${deltaHtml(a.listenersDelta)}</span></div></div>
     <div class="kpi rv"><div class="lab">Score Spotify /100</div><div class="val" style="${scoreOk ? 'color:var(--accent)' : ''}">${a.score} <span class="cmp" style="color:var(--muted-foreground)">${scoreOk ? '> seuil 50' : 'S' + (SEMAINE.num-1) + ' : ' + a.scorePrev}</span></div></div>
     <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(a.social.ig + a.social.tt)} <span class="cmp">${deltaHtml(a.social.igD)}</span></div></div>
@@ -1119,7 +1116,7 @@ function vArtiste(id){
     <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Dashboard ${a.nom}')">Exporter <span class="ar">↗</span></button></div>
   </div></div>
 
-  ${filtersBar('Dashboard ' + a.nom, true, a.titres.map(t => t.titre))}
+  ${filtersBar('Dashboard ' + a.nom, true)}
   ${afScope(a)}
 
   <section class="band"><div class="wrap">
@@ -1133,7 +1130,7 @@ function vArtiste(id){
     </div>
 
     <div id="s-titres" style="scroll-margin-top:130px;margin-top:56px">
-      <h2 class="h-sect rv">Titres<span style="color:var(--accent)">.</span> <small>${AF.titre === 'Tous' ? 'classés par streams' : '1 titre filtré'} · cliquer pour le drill-down ISRC/UPC</small></h2>
+      <h2 class="h-sect rv">Titres<span style="color:var(--accent)">.</span> <small>classés par streams · cliquer pour le drill-down ISRC/UPC</small></h2>
       <div class="lb rv">
         ${[...tl].sort((x,y) => y.streamsHebdo - x.streamsHebdo).map((t,i,arr) => `
         <a class="lb-row lb-t" style="--acc:${a.accent}" href="#/titre/${t.isrc}">
@@ -1145,7 +1142,7 @@ function vArtiste(id){
           <span class="lb-val"><b>${fmt(sc(t.streamsHebdo, t))}</b><span>streams ${P.lab} · ${momBadgeTxt(t.delta)}</span></span>
           <span class="go hm">↗</span>
         </a>`).join('')}
-        <div class="lb-foot">${AF.titre === 'Tous' ? '' : `Filtre titre actif — <a href="#" onclick="event.preventDefault();setFilter('titre','Tous')" style="font-weight:700">voir tous les titres</a>. `}Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j.</div>
+        <div class="lb-foot">Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j.</div>
       </div>
     </div>
 

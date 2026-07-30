@@ -330,13 +330,7 @@
   .placeholder-box:hover{border-color:var(--ink);transform:translateY(-3px)}
 
   /* ===== Couche copilot ===== */
-  .hero-compact{background:#000;color:#fff;padding:13px 0}
-  .hero-compact .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-  .hero-compact h1{font-size:21px;font-weight:800;letter-spacing:-.03em}
-  .hero-compact .kicker{margin:0;color:rgba(255,255,255,.55)}
-  .hero-toggle{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);background:none;border:1px solid rgba(255,255,255,.25);border-radius:9999px;padding:7px 14px;cursor:pointer;transition:.2s;font-family:var(--font)}
-  .hero-toggle:hover{color:#fff;border-color:#fff}
-  .hero-compact .hero-toggle{margin-left:auto}
+  /* Hero compact et toggle retirés : les héros restent toujours déployés */
 
   /* ===== Hero dégradé page Artistes / Top roster ===== */
   .lab-hero{color:#fff;background:linear-gradient(135deg,#C8102E 0%,#0B0B0B 72%);position:relative;overflow:hidden}
@@ -346,15 +340,10 @@
   .lab-hero .lead{color:rgba(255,255,255,.72);font-size:15px;max-width:460px;margin-top:14px;line-height:1.5}
   .lab-hero .actions{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
   .lab-hero .head-row{display:flex;align-items:flex-start;gap:16px}
-  .lab-hero .head-row .hero-toggle{margin-left:auto;flex:none}
+  
   .lab-hero .ph{border-radius:var(--radius-card);aspect-ratio:1/1;max-height:400px;width:100%;box-shadow:0 40px 90px -30px rgba(0,0,0,.6);display:block}
   .lab-hero .ph:hover img{transform:scale(1.045)}
   .lab-hero .btn-light{background:#fff;color:#0A0A0B}
-  .lab-hero.slim{min-height:0}
-  .lab-hero.slim .wrap{grid-template-columns:1fr;min-height:56px;padding:0 32px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-  .lab-hero.slim h1{font-size:22px;letter-spacing:-.03em}
-  .lab-hero.slim .kicker{margin:0}
-  .lab-hero.slim .hero-toggle{margin-left:auto}
 
   /* Barre de filtres claire page Artistes */
   .lab-filters{background:var(--background);border-bottom:1px solid var(--line)}
@@ -417,7 +406,7 @@
   .sai-band{background:#060606;color:#fff;min-height:56px;display:flex;align-items:center}
   .sai-band .wrap{display:flex;align-items:center;gap:14px;width:100%}
   .sai-band .kicker{color:rgba(255,255,255,.72);margin:0}
-  .sai-band .hero-toggle{margin-left:auto}
+  
   .sai-tools{border-bottom:1px solid var(--line);background:var(--card)}
   .sai-tools .wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-top:14px;padding-bottom:14px}
   .sai-tools .right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -602,9 +591,8 @@
     .lab-hero .actions .btn{flex:1 1 46%;justify-content:center;padding:0 12px;font-size:13px}
     .lab-hero .ph{aspect-ratio:16/11;max-height:220px;border-radius:20px}
     .lab-hero .head-row{gap:10px}
-    .hero-toggle{font-size:9px;padding:6px 11px;letter-spacing:.12em}
-    .lab-hero.slim .wrap{padding:0 14px;gap:10px}
-    .lab-hero.slim h1{font-size:18px}
+    .lab-hero h1{font-size:28px}
+    .lab-hero .lead{font-size:14px}
 
 
     /* --- Leaderboard : 3 colonnes lisibles --- */
@@ -1200,17 +1188,9 @@ function afScope(a){
 let rosterQuery = '', sortKey = 'streams', spotId = null;
 const MES_ARTISTES = ['zazie','hina','jeremy-frerot'];
 const alertDone = {};
-let heroOpen = true;
-try { heroOpen = !localStorage.getItem('np_seen'); localStorage.setItem('np_seen', '1'); } catch (e) {}
-function toggleHero(){ heroOpen = !heroOpen; render(); }
 function hero(short, kicker, title, lead, extra=''){
-  if (!heroOpen) return `<section class="hero-compact"><div class="wrap">
-    <div class="kicker"><span class="dot"></span>${kicker.split(' · ')[0]}</div>
-    <h1>${short}</h1>
-    <button class="hero-toggle" onclick="toggleHero()">Déplier ▾</button>
-  </div></section>`;
   return `<section class="band dark" style="padding:60px 0"><div class="wrap">
-    <div style="display:flex;align-items:flex-start"><div class="kicker"><span class="dot"></span>${kicker}</div><button class="hero-toggle" style="margin-left:auto" onclick="toggleHero()">Réduire ▴</button></div>
+    <div class="kicker"><span class="dot"></span>${kicker}</div>
     <h1 class="display rv in" style="font-size:clamp(46px,6.5vw,92px);margin:18px 0 18px">${title}</h1>
     <p class="lead">${lead}</p>${extra}
   </div></section>`;
@@ -1324,12 +1304,10 @@ function labelHero(){
   const shaz = ARTISTS.reduce((s,a) => s + shazamOf(a), 0);
   const soc = ARTISTS.reduce((s,a) => s + a.social.ig + a.social.tt, 0);
   const n1 = ranked()[0];
-  const hero = heroOpen
-    ? `<section class="lab-hero"><div class="wrap">
+  const hero = `<section class="lab-hero"><div class="wrap">
         <div>
           <div class="head-row">
             <div class="kicker"><span class="dot"></span>LABEL 6&7 · ${ARTISTS.length} ARTISTES · S${SEMAINE.num} (${SEMAINE.du} → ${SEMAINE.au})</div>
-            <button class="hero-toggle" onclick="toggleHero()">Réduire ▴</button>
           </div>
           <h1 class="rv in">Top roster<span style="color:#C8102E">.</span></h1>
           <p class="lead">Le classement streaming de la semaine un rang, un chiffre, une tendance, puis la vue 360° de chaque artiste.</p>
@@ -1341,11 +1319,6 @@ function labelHero(){
         <a href="#/artiste/${n1.id}" style="display:block" title="${n1.nom}">
           ${ph(IMGS[n1.id], n1.accent, '', `<span class="track-chip"><span class="dot"></span>N°1 · ${n1.nom.toUpperCase()}</span>`)}
         </a>
-      </div></section>`
-    : `<section class="lab-hero slim"><div class="wrap">
-        <div class="kicker"><span class="dot"></span>LABEL 6&7 · S${SEMAINE.num}</div>
-        <h1>Top roster<span style="color:#C8102E">.</span></h1>
-        <button class="hero-toggle" onclick="toggleHero()">Déplier ▾</button>
       </div></section>`;
   return `${hero}
   ${labelKpis(tot, dLab, lis, shaz, soc)}

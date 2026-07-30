@@ -1459,12 +1459,18 @@ function render(){
   const app = $('#app');
   document.querySelectorAll('nav.main a').forEach(a => a.classList.toggle('active',
     a.dataset.r === route || (a.dataset.r === 'artistes' && (route === 'artiste' || route === 'titre'))));
-  if (route === 'artiste' && param) app.innerHTML = vArtiste(param);
+  if (route === 'home') app.innerHTML = vHome();
+  else if (route === 'artiste' && param) app.innerHTML = vArtiste(param);
   else if (route === 'titre' && param) app.innerHTML = vTitre(param);
   else if (route === 'alertes') app.innerHTML = vAlertes();
   else if (route === 'saisie') app.innerHTML = vSaisie();
   else if (route === 'label') app.innerHTML = vLabel();
   else { spotId = null; document.documentElement.style.setProperty('--accent', '#C8102E'); app.innerHTML = vArtistes(); }
+  if (route === 'home' && askState) requestAnimationFrame(() => {
+    const el = app.querySelector('.ask-answer');
+    if (el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  });
+
   window.scrollTo(0, 0);
   observeRv();
   observeSpy();

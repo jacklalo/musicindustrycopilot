@@ -948,7 +948,7 @@ function afScope(a){
 /* ================================================================
    VUE — ACCUEIL / ARTISTES
 ================================================================ */
-let labelFilter = 'Tous', rosterQuery = '', sortKey = 'streams', spotId = null;
+let rosterQuery = '', sortKey = 'streams', spotId = null;
 const MES_ARTISTES = ['zazie','hina','jeremy-frerot'];
 const alertDone = {};
 let heroOpen = true;
@@ -1101,9 +1101,7 @@ function labelHero(){
   return `${hero}
   ${labelKpis(tot, dLab, lis, shaz, soc)}
   <div class="lab-filters"><div class="wrap">
-    <span class="group-label">Label</span>
-    ${['Tous','6&7'].map(l => `<button class="chip ${labelFilter===l?'active':''}" onclick="labelFilter='${l.replace(/'/g,"\\'")}';render()">${l === 'Tous' ? 'Tous les labels' : l}</button>`).join('')}
-    <div class="right">
+    <div class="right" style="margin-left:auto">
       <input class="hero-input" placeholder="Filtrer le roster..." value="${rosterQuery}" oninput="rosterQuery=this.value;renderRosterOnly()">
       ${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Leaderboard roster S${SEMAINE.num}')">Exporter <span class="ar">↗</span></button>
     </div>
@@ -1145,7 +1143,7 @@ function setSpot(id){
 }
 function rosterRows(){
   const all = ranked();
-  const list = sorted().filter(a => (labelFilter === 'Tous' || a.label === labelFilter) && a.nom.toLowerCase().includes(rosterQuery.toLowerCase()));
+  const list = sorted().filter(a => a.nom.toLowerCase().includes(rosterQuery.toLowerCase()));
   const th = (k, lab, cls='') => `<button class="${cls} ${sortKey===k?'on':''}" onclick="setSort('${k}')">${lab}${sortKey===k?' ↓':''}</button>`;
   const head = `<div class="lb-head lb-a">
     <span>Rang</span><span></span>

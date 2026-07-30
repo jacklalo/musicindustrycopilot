@@ -1357,11 +1357,13 @@ function labelHero(){
   </div></div>`;
 }
 function labelKpis(tot, dLab, lis, shaz, soc){
-  return `<div class="kpi-band">
-    <div class="kpi rv"><div class="lab">Streams hebdo cumulés</div><div class="val">${fmt(tot)} <span class="cmp">${deltaHtml(dLab)}</span></div></div>
-    <div class="kpi rv"><div class="lab">Auditeurs mensuels cumulés</div><div class="val">${fmt(lis)} <span class="cmp" style="color:var(--muted-foreground)">${ARTISTS.length} artistes</span></div></div>
-    <div class="kpi rv"><div class="lab">Shazams / jour</div><div class="val">${fmt(shaz)} <span class="cmp" style="color:var(--muted-foreground)">seuil ${SEUILS.shazam}/titre</span></div></div>
-    <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(soc)} <span class="cmp" style="color:var(--muted-foreground)">IG + TikTok</span></div></div>
+  return `<div class="kpi-float">
+    <div class="kpi-band">
+      <div class="kpi rv"><div class="lab">Streams hebdo cumulés</div><div class="val">${fmt(tot)} <span class="cmp">${deltaHtml(dLab)}</span></div></div>
+      <div class="kpi rv"><div class="lab">Auditeurs mensuels cumulés</div><div class="val">${fmt(lis)} <span class="cmp" style="color:var(--muted-foreground)">${ARTISTS.length} artistes</span></div></div>
+      <div class="kpi rv"><div class="lab">Shazams / jour</div><div class="val">${fmt(shaz)} <span class="cmp" style="color:var(--muted-foreground)">seuil ${SEUILS.shazam}/titre</span></div></div>
+      <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(soc)} <span class="cmp" style="color:var(--muted-foreground)">IG + TikTok</span></div></div>
+    </div>
   </div>`;
 }
 function vArtistes(){

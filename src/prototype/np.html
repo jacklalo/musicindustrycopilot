@@ -303,6 +303,48 @@
   .empty{padding:40px;text-align:center;color:var(--muted-foreground);font-size:13.5px}
   .placeholder-box{border:1px dashed #cfcecb;border-radius:var(--radius-card);padding:46px 34px;text-align:center;color:var(--muted-foreground);transition:border-color .25s, transform .25s}
   .placeholder-box:hover{border-color:var(--ink);transform:translateY(-3px)}
+
+  /* ===== Couche copilot ===== */
+  .hero-compact{background:#000;color:#fff;padding:13px 0}
+  .hero-compact .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .hero-compact h1{font-size:21px;font-weight:800;letter-spacing:-.03em}
+  .hero-compact .kicker{margin:0;color:rgba(255,255,255,.55)}
+  .hero-toggle{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);background:none;border:1px solid rgba(255,255,255,.25);border-radius:9999px;padding:7px 14px;cursor:pointer;transition:.2s;font-family:var(--font)}
+  .hero-toggle:hover{color:#fff;border-color:#fff}
+  .hero-compact .hero-toggle{margin-left:auto}
+  .changed{border:1px solid var(--line);border-radius:var(--radius-card);background:var(--card);padding:18px 22px;margin-bottom:18px}
+  .changed ul{list-style:none;display:grid;gap:10px;margin-top:12px;padding:0}
+  .changed li{display:flex;gap:10px;align-items:flex-start;font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.4}
+  .changed li i{font-style:normal;flex:none}
+  .changed a{color:inherit}
+  .lb-head{display:grid;align-items:center;gap:18px;padding:11px 26px;border-bottom:1px solid var(--line);background:var(--surface)}
+  .lb-head button,.lb-head span{font-family:var(--font);background:none;border:none;text-align:left;font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-foreground);padding:0}
+  .lb-head button{cursor:pointer;transition:color .2s}
+  .lb-head button:hover,.lb-head button.on{color:var(--ink)}
+  .lb-head .r{text-align:right}
+  .lb-a{grid-template-columns:52px 62px minmax(140px,1.5fr) 132px 150px 16px}
+  .flagpill{display:inline-flex;width:max-content;align-self:flex-start;align-items:center;gap:3px;font-size:10px;font-weight:800;background:rgba(200,16,46,.09);color:#C8102E;border-radius:9999px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+  .lb-name b{display:flex;align-items:center;flex-wrap:wrap}
+  .lb-val .sub-d{font-size:11px;font-weight:700;letter-spacing:0;text-transform:none;margin-top:5px;display:block}
+  .crit{display:inline-flex;align-items:center;gap:6px;font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;border-radius:9999px;padding:4px 9px;flex:none}
+  .crit i{width:7px;height:7px;border-radius:50%;display:block;font-style:normal}
+  .grp-lab{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-foreground);margin:24px 0 10px}
+  .grp-lab.first{margin-top:0}
+  .digest{border:1px solid var(--line);border-radius:var(--radius-card);background:var(--card);padding:20px 24px;margin-bottom:18px}
+  .digest .row{display:flex;gap:26px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .digest .row b{font-size:22px;font-weight:800;letter-spacing:-.02em;display:block}
+  .digest .row small{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-foreground)}
+  .alert-item.unread{box-shadow:inset 3px 0 0 var(--ink)}
+  .alert-item.done{opacity:.45}
+  .alert-item.done p{text-decoration:line-through}
+  .a-act{background:none;border:1px solid var(--line);border-radius:9999px;font-family:var(--font);font-size:11px;font-weight:700;padding:6px 11px;cursor:pointer;color:var(--muted-foreground);transition:.2s;flex:none}
+  .a-act:hover{color:var(--ink);border-color:var(--ink)}
+  .comp-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:13.5px;font-weight:600}
+  .comp-row .st{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border-radius:9999px;padding:3px 9px;margin-left:auto;flex:none}
+  .comp-row .st.ok{background:rgba(22,163,74,.1);color:#16A34A}
+  .comp-row .st.ko{background:rgba(234,88,12,.12);color:#EA580C}
+  .lnk{font-size:11.5px;font-weight:700;color:var(--muted-foreground);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:var(--font);padding:0}
+  .lnk:hover{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -445,40 +487,48 @@ const ARTISTS = [
 
 /* Alertes générées par le moteur de règles (§8.3 — seuils fixes) */
 const ALERTES = [
-  { cat:'STREAMING', color:'#16A34A', ic:'↑', niveau:'titre', artiste:'jeremy-frerot',
+  { id:'a1', cat:'STREAMING', color:'#16A34A', ic:'↑', niveau:'titre', artiste:'jeremy-frerot', crit:'opp',
+    link:'#/titre/FR-6V8-26-00214',
     txt:'Jérémy Frerot · « Un homme » : +22.8% de streams (S31 vs S30)',
-    rule:'Règle : évolution > +20% semaine N vs N-1', time:'il y a 2 h' },
-  { cat:'STREAMING', color:'#16A34A', ic:'↑', niveau:'titre', artiste:'hina',
+    rule:'Règle : évolution > +20% semaine N vs N-1', time:'il y a 2 h', ts:'ven. 31/07/2026 · 06:04 CET' },
+  { id:'a2', cat:'STREAMING', color:'#16A34A', ic:'↑', niveau:'titre', artiste:'hina', crit:'opp',
+    link:'#/titre/FR-6V8-26-00301',
     txt:'Hina · « Fantaisie » : +34.2% de streams (S31 vs S30)',
-    rule:'Règle : évolution > +20% semaine N vs N-1', time:'il y a 2 h' },
-  { cat:'STREAMING', color:'#EA580C', ic:'↓', niveau:'titre', artiste:'krisy',
+    rule:'Règle : évolution > +20% semaine N vs N-1', time:'il y a 2 h', ts:'ven. 31/07/2026 · 06:04 CET' },
+  { id:'a3', cat:'STREAMING', color:'#EA580C', ic:'↓', niveau:'titre', artiste:'krisy', crit:'risk',
+    link:'#/titre/FR-SYN-25-00076',
     txt:'Krisy · « Rituel » : −21.3% de streams (S31 vs S30)',
-    rule:'Règle : évolution < −20% semaine N vs N-1', time:'il y a 2 h' },
-  { cat:'SHAZAM', color:'#ED2362', ic:'✳', niveau:'titre', artiste:'hina',
+    rule:'Règle : évolution < −20% semaine N vs N-1', time:'il y a 2 h', ts:'ven. 31/07/2026 · 06:04 CET' },
+  { id:'a4', cat:'SHAZAM', color:'#ED2362', ic:'✳', niveau:'titre', artiste:'hina', crit:'opp',
+    link:'#/titre/FR-6V8-26-00301',
     txt:'Hina · « Fantaisie » : 412 Shazams/jour',
-    rule:'Règle : > 300/jour (seuil à confirmer : 500 évoqué — Q2 client)', time:'hier' },
-  { cat:'PLAYLIST ÉDITO', color:'#1E5BFF', ic:'▸', niveau:'titre', artiste:'zazie',
+    rule:'Règle : > 300/jour (seuil à confirmer : 500 évoqué — Q2 client)', time:'hier', ts:'jeu. 30/07/2026 · 06:02 CET' },
+  { id:'a5', cat:'PLAYLIST ÉDITO', color:'#1E5BFF', ic:'▸', niveau:'titre', artiste:'zazie', crit:'opp',
+    link:'#/titre/FR-Z03-26-00101',
     txt:'Zazie · « Peu Importe » : entrée playlist « Hits France » (Spotify, #12)',
-    rule:'Règle : entrée de playlist éditoriale', time:'il y a 4 h' },
-  { cat:'PLAYLIST ÉDITO', color:'#EA580C', ic:'◂', niveau:'titre', artiste:'skip-the-use',
+    rule:'Règle : entrée de playlist éditoriale', time:'il y a 4 h', ts:'ven. 31/07/2026 · 04:11 CET' },
+  { id:'a6', cat:'PLAYLIST ÉDITO', color:'#EA580C', ic:'◂', niveau:'titre', artiste:'skip-the-use', crit:'risk',
+    link:'#/titre/FR-SYN-26-00092',
     txt:'Skip the Use · « Silence » : sortie playlist « Rock FR » (Deezer)',
-    rule:'Règle : sortie de playlist éditoriale', time:'hier' },
-  { cat:'SCORE SPOTIFY', color:'#4B2D7A', ic:'★', niveau:'artiste', artiste:'zazie',
+    rule:'Règle : sortie de playlist éditoriale', time:'hier', ts:'jeu. 30/07/2026 · 05:48 CET' },
+  { id:'a7', cat:'SCORE SPOTIFY', color:'#4B2D7A', ic:'★', niveau:'artiste', artiste:'zazie', crit:'info',
+    link:'#/artiste/zazie/s-streaming',
     txt:'Zazie : Score Spotify 62/100 — au-dessus du seuil',
-    rule:'Règle : popularity > 50', time:'ven. dernier' },
-  { cat:'SCORE SPOTIFY', color:'#4B2D7A', ic:'★', niveau:'artiste', artiste:'jeremy-frerot',
+    rule:'Règle : popularity > 50', time:'ven. dernier', ts:'ven. 24/07/2026 · 06:00 CET' },
+  { id:'a8', cat:'SCORE SPOTIFY', color:'#4B2D7A', ic:'★', niveau:'artiste', artiste:'jeremy-frerot', crit:'info',
+    link:'#/artiste/jeremy-frerot/s-streaming',
     txt:'Jérémy Frerot : Score Spotify 58/100 — au-dessus du seuil',
-    rule:'Règle : popularity > 50', time:'ven. dernier' },
+    rule:'Règle : popularity > 50', time:'ven. dernier', ts:'ven. 24/07/2026 · 06:00 CET' },
 ];
 
 /* Saisies manuelles (historisées comme les données auto — §7.5) */
 let SAISIES = [
-  { type:'Physique — Mise en place', artiste:'Zazie', ref:'Album « Zest of » (UPC 3700187679095)', val:'12 500 unités', date:'25/07/2026', par:'MC' },
-  { type:'Physique — Magasins', artiste:'Jérémy Frerot', ref:'FNAC (national)', val:'2 300 unités', date:'25/07/2026', par:'MC' },
-  { type:'Physique — D2C', artiste:'Skip the Use', ref:'Shop officiel (merch + vinyle)', val:'2 210 unités', date:'24/07/2026', par:'AL' },
-  { type:'Actu — Date média', artiste:'Zazie', ref:'Quotidien (TMC) — interview', val:'04/08/2026', date:'22/07/2026', par:'MC' },
-  { type:'Actu — Lancement pub', artiste:'Hina', ref:'Activation créateurs TikTok', val:'8 000 € — 05/08/2026', date:'21/07/2026', par:'AL' },
-  { type:'Actu — Sortie prévue', artiste:'Hina', ref:'EP « Fantaisie » — 4 titres', val:'18/09/2026', date:'18/07/2026', par:'MC' },
+  { type:'Physique — Mise en place', artiste:'Zazie', ref:'Album « Zest of » (UPC 3700187679095)', val:'12 500 unités distribuées', sem:'S31', date:'25/07/2026', par:'MC' },
+  { type:'Physique — Magasins', artiste:'Jérémy Frerot', ref:'FNAC (national)', val:'2 300 unités vendues', sem:'S30', date:'25/07/2026', par:'MC' },
+  { type:'Physique — D2C', artiste:'Skip the Use', ref:'Shop officiel (merch + vinyle)', val:'2 210 unités vendues', sem:'S31', date:'24/07/2026', par:'AL' },
+  { type:'Actu — Date média', artiste:'Zazie', ref:'Quotidien (TMC) — interview', val:'04/08/2026', sem:'S31', date:'22/07/2026', par:'MC' },
+  { type:'Actu — Lancement pub', artiste:'Hina', ref:'Activation créateurs TikTok', val:'8 000 €', sem:'S31', date:'21/07/2026', par:'AL' },
+  { type:'Actu — Sortie prévue', artiste:'Hina', ref:'EP « Fantaisie » — 4 titres', val:'18/09/2026', sem:'S30', date:'18/07/2026', par:'MC' },
 ];
 
 /* ================================================================
@@ -643,28 +693,59 @@ function fakeFilter(btn, label){
 /* ================================================================
    VUE — ACCUEIL / ARTISTES
 ================================================================ */
-let labelFilter = 'Tous', rosterQuery = '';
+let labelFilter = 'Tous', rosterQuery = '', sortKey = 'streams', spotId = null;
+const MES_ARTISTES = ['zazie','hina','jeremy-frerot'];
+const alertRead = {}, alertDone = {};
+let heroOpen = true;
+try { heroOpen = !localStorage.getItem('np_seen'); localStorage.setItem('np_seen', '1'); } catch (e) {}
+function toggleHero(){ heroOpen = !heroOpen; render(); }
+function hero(short, kicker, title, lead, extra=''){
+  if (!heroOpen) return `<section class="hero-compact"><div class="wrap">
+    <div class="kicker"><span class="dot"></span>${kicker.split(' · ')[0]}</div>
+    <h1>${short}</h1>
+    <button class="hero-toggle" onclick="toggleHero()">Déplier ▾</button>
+  </div></section>`;
+  return `<section class="band dark" style="padding:60px 0"><div class="wrap">
+    <div style="display:flex;align-items:flex-start"><div class="kicker"><span class="dot"></span>${kicker}</div><button class="hero-toggle" style="margin-left:auto" onclick="toggleHero()">Réduire ▴</button></div>
+    <h1 class="display rv in" style="font-size:clamp(46px,6.5vw,92px);margin:18px 0 18px">${title}</h1>
+    <p class="lead">${lead}</p>${extra}
+  </div></section>`;
+}
+const alertsOf = id => ALERTES.filter(al => al.artiste === id && !alertDone[al.id]);
+const serieOf = a => a.titres[0].cadence.map((_, i) => a.titres.reduce((s, t) => s + (t.cadence[i] || 0), 0));
+const shazamOf = a => a.titres.reduce((s, t) => s + t.shazamJour, 0);
 const ranked = () => [...ARTISTS].sort((x,y) => y.streams - x.streams);
+const sorted = () => {
+  const l = [...ARTISTS];
+  if (sortKey === 'delta') return l.sort((x,y) => y.delta - x.delta);
+  if (sortKey === 'shazam') return l.sort((x,y) => shazamOf(y) - shazamOf(x));
+  if (sortKey === 'alertes') return l.sort((x,y) => alertsOf(y.id).length - alertsOf(x.id).length);
+  return l.sort((x,y) => y.streams - x.streams);
+};
+function setSort(k){ sortKey = k; renderRosterOnly(); }
+function whatChanged(){
+  const mover = [...ARTISTS].sort((x,y) => y.delta - x.delta)[0];
+  const drop = [...ARTISTS].sort((x,y) => x.delta - y.delta)[0];
+  const shaz = ARTISTS.flatMap(a => a.titres.map(t => ({a,t}))).sort((x,y) => y.t.shazamJour - x.t.shazamJour)[0];
+  const pl = ALERTES.filter(al => al.cat === 'PLAYLIST ÉDITO').length;
+  const f = [];
+  f.push([`<i style="color:var(--up)">▲</i>`, `<b>${mover.nom}</b> est le plus fort mouvement de la semaine : <b>+${mover.delta}%</b> de streams (S${SEMAINE.num} vs S${SEMAINE.num-1}). <a href="#/artiste/${mover.id}">Ouvrir ↗</a>`]);
+  if (drop.delta < 0) f.push([`<i style="color:var(--down)">▼</i>`, `<b>${drop.nom}</b> recule de <b>${drop.delta}%</b> — seuil d'alerte ${Math.abs(drop.delta) >= SEUILS.streaming ? 'franchi' : 'non franchi'}. <a href="#/artiste/${drop.id}">Ouvrir ↗</a>`]);
+  f.push([`<i>⚑</i>`, `<b>${shaz.t.shazamJour} Shazams/jour</b> sur « ${shaz.t.titre} » (${shaz.a.nom}) et <b>${pl} mouvement${pl>1?'s':''} de playlist édito</b> depuis vendredi. <a href="#/alertes">Voir les alertes ↗</a>`]);
+  return `<div class="changed rv">
+    <div class="kicker"><span class="dot"></span>CE QUI A CHANGÉ DEPUIS VENDREDI · S${SEMAINE.num}</div>
+    <ul>${f.map(([i, t]) => `<li>${i}<span>${t}</span></li>`).join('')}</ul>
+  </div>`;
+}
 function vArtistes(){
-  const top = ranked()[0];
+  const spot = spotArtist();
   return `
-  <section class="band dark" style="padding:56px 0 52px">
-    <div class="wrap" style="display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center">
-      <div>
-        <div class="kicker"><span class="dot"></span>LABELS 6&7 + SYNDICATE RECORDS · ${ARTISTS.length} ARTISTES · S${SEMAINE.num}</div>
-        <h1 class="display rv in" style="font-size:clamp(50px,7vw,98px);margin:20px 0 20px">Top <em>roster</em>.</h1>
-        <p class="lead">Le classement streaming de la semaine, du premier coup d'œil au détail : un rang, un chiffre, une tendance — puis la vue 360° de chaque artiste.</p>
-        <div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap">
-          <a class="btn btn-light" href="#/alertes">⚑ ${ALERTES.length} alertes cette semaine</a>
-          <a class="btn btn-outline-w" href="#/saisie">Saisie manuelle <span class="ar">↗</span></a>
-        </div>
-      </div>
-      <div class="stack">
-        ${ph(IMGS[top.id], top.accent, 's1', `<span class="track-chip"><span class="dot"></span>#1 · ${top.nom.toUpperCase()}</span>`)}
-        ${ph(IMGS[ranked()[3].id], ranked()[3].accent, 's2')}
-      </div>
-    </div>
-  </section>
+  ${hero('TOP ROSTER', `LABELS 6&7 + SYNDICATE RECORDS · ${ARTISTS.length} ARTISTES · S${SEMAINE.num}`, 'Top <em>roster</em>.',
+    "Le classement streaming de la semaine, du premier coup d'œil au détail : un rang, un chiffre, une tendance — puis la vue 360° de chaque artiste.",
+    `<div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap">
+      <a class="btn btn-light" href="#/alertes">⚑ ${ALERTES.length} alertes cette semaine</a>
+      <a class="btn btn-outline-w" href="#/saisie">Saisie manuelle <span class="ar">↗</span></a>
+    </div>`)}
   <div class="filters"><div class="wrap">
     <span class="group-label">Label</span>
     ${['Tous','6&7','Syndicate Records'].map(l => `<button class="chip ${labelFilter===l?'active':''}" onclick="labelFilter='${l.replace(/'/g,"\\'")}';render()">${l === 'Tous' ? 'Tous les labels' : l}</button>`).join('')}
@@ -674,47 +755,69 @@ function vArtistes(){
     </div>
   </div></div>
   <section class="band"><div class="wrap">
+    ${whatChanged()}
     <h2 class="h-sect rv">Leaderboard<span style="color:var(--pop)">.</span> <small>streams hebdo · S${SEMAINE.num} vs S${SEMAINE.num-1}</small></h2>
-    <p class="h-sub">La jauge compare chaque artiste au n°1 de la semaine. Cliquer une ligne ouvre le dashboard artiste.</p>
+    <p class="h-sub">Trajectoire sur 8 semaines, alertes actives signalées sur la ligne. Cliquer une ligne ouvre le dashboard artiste.</p>
     <div class="grid g-main" style="align-items:start">
       <div class="lb rv" id="roster-grid">${rosterRows()}</div>
-      ${spotlight(top)}
+      ${spotlight(spot)}
     </div>
     <div class="note-line">ⓘ Liste artistes figée pour le cadrage V1 · ⚑ Laura Ferré : accès Believe individuel (co-exploitation PlayTwo).</div>
   </div></section>`;
 }
+function spotArtist(){
+  if (spotId) return artist(spotId);
+  return [...ARTISTS].sort((x,y) => y.delta - x.delta)[0];
+}
+function setSpot(id){
+  if (spotId === id) return;
+  spotId = id;
+  const el = $('#spot-card');
+  if (el) el.outerHTML = spotlight(artist(id));
+}
 function rosterRows(){
   const all = ranked();
-  const max = all[0].streams;
-  const list = all.filter(a => (labelFilter === 'Tous' || a.label === labelFilter) && a.nom.toLowerCase().includes(rosterQuery.toLowerCase()));
-  return list.map(a => {
+  const list = sorted().filter(a => (labelFilter === 'Tous' || a.label === labelFilter) && a.nom.toLowerCase().includes(rosterQuery.toLowerCase()));
+  const th = (k, lab, cls='') => `<button class="${cls} ${sortKey===k?'on':''}" onclick="setSort('${k}')">${lab}${sortKey===k?' ↓':''}</button>`;
+  const head = `<div class="lb-head lb-a">
+    <span>Rang</span><span></span>
+    ${th('alertes','Artiste · alertes')}
+    ${th('shazam','8 semaines / Shazam')}
+    ${th('streams','Streams S' + SEMAINE.num, 'r')}
+    <span></span>
+  </div>`;
+  const rows = list.map(a => {
     const rank = all.indexOf(a) + 1;
-    return `<a class="lb-row lb-a" style="--acc:${a.accent}" href="#/artiste/${a.id}">
-      <span class="lb-rank">${String(rank).padStart(2,'0')}<small class="${a.delta >= SEUILS.streaming ? 'rk-up' : a.delta <= -SEUILS.streaming ? 'rk-dn' : a.delta > 0 ? 'rk-up' : a.delta < 0 ? 'rk-dn' : 'rk-eq'}">${a.delta > 0 ? '↑' : a.delta < 0 ? '↓' : '—'} ${Math.abs(a.delta)}%</small></span>
+    const nA = alertsOf(a.id).length;
+    const col = a.delta >= SEUILS.streaming ? 'var(--up)' : a.delta <= -SEUILS.streaming ? 'var(--down)' : a.delta > 0 ? 'var(--up)' : a.delta < 0 ? 'var(--down)' : 'var(--stable)';
+    return `<a class="lb-row lb-a" style="--acc:${a.accent}" href="#/artiste/${a.id}" onmouseenter="setSpot('${a.id}')">
+      <span class="lb-rank">${String(rank).padStart(2,'0')}</span>
       <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${IMGS[a.id]}" loading="lazy" alt="" onerror="this.remove()"></span>
-      <span class="lb-name"><b>${a.nom}</b><span>${a.label} · ${a.genre}${a.special ? ' · ⚑' : ''}</span></span>
-      <span class="lb-gauge hm"><span class="glab"><span>vs n°1</span><span>${Math.round(a.streams/max*100)}%</span></span><span class="track"><span class="fill" style="width:${Math.round(a.streams/max*100)}%;background:${a.accent}"></span></span></span>
-      <span class="lb-val"><b>${fmt(a.streams)}</b><span>streams · 7 j</span></span>
+      <span class="lb-name"><b>${a.nom}${nA ? `<span class="flagpill" title="${nA} alerte(s) active(s)">⚑ ${nA}</span>` : ''}</b><span>${a.label} · ${a.genre}${a.special ? ' · ⚑' : ''}</span></span>
+      <span class="lb-gauge hm" title="Trajectoire streams — 8 dernières semaines">${sparkMini(serieOf(a), a.accent, 118, 34)}<span class="glab" style="margin:4px 0 0">${shazamOf(a)} shazams/j</span></span>
+      <span class="lb-val"><b>${fmt(a.streams)}</b><span class="sub-d" style="color:${col}" title="Évolution du volume de streams, S${SEMAINE.num} vs S${SEMAINE.num-1}">${a.delta > 0 ? '▲ +' : a.delta < 0 ? '▼ ' : '— '}${a.delta}% <span style="color:var(--muted-foreground);font-weight:600">vs S${SEMAINE.num-1}</span></span></span>
       <span class="go hm">↗</span>
     </a>`;
   }).join('') || '<div class="empty">Aucun artiste ne correspond.</div>';
+  return head + rows;
 }
 function spotlight(a){
   const t0 = a.titres[0];
-  const nA = ALERTES.filter(al => al.artiste === a.id).length;
-  return `<div class="spot rv">
-    ${ph(IMGS[a.id], a.accent, '', `<span class="track-chip"><span class="dot"></span>#1 CETTE SEMAINE</span>`)}
+  const alerts = alertsOf(a.id);
+  const rank = ranked().indexOf(a) + 1;
+  return `<div class="spot rv in" id="spot-card">
+    ${ph(IMGS[a.id], a.accent, '', `<span class="track-chip"><span class="dot"></span>${spotId ? 'N°' + rank + ' · SÉLECTION' : 'PLUS FORTE VARIATION'}</span>`)}
     <div class="body">
       <h3>${a.nom}</h3>
       <div class="meta">${a.label} · ${a.genre} · ${a.ville}</div>
       <div class="stats">
         <div><div class="lab">Streams 7j</div><b>${fmt(a.streams)}</b></div>
-        <div><div class="lab">Δ 7j</div><b style="color:${a.accent}">${a.delta > 0 ? '+' : ''}${a.delta}%</b></div>
+        <div><div class="lab">Δ 7j</div><b style="color:${a.delta >= 0 ? 'var(--up)' : 'var(--down)'}">${a.delta > 0 ? '+' : ''}${a.delta}%</b></div>
         <div><div class="lab">Listeners</div><b>${fmt(a.listeners)}</b></div>
       </div>
       <div class="kicker" style="letter-spacing:.18em;margin-bottom:6px">VÉLOCITÉ · ${t0.titre.toUpperCase()} · 8 SEM</div>
       ${sparkline(t0.cadence, a.accent, 400, 110)}
-      ${nA ? `<div style="font-size:12.5px;font-weight:600;color:var(--muted-foreground);margin:10px 0 2px">⚑ ${nA} alerte${nA>1?'s':''} active${nA>1?'s':''} sur cet artiste</div>` : ''}
+      ${alerts.length ? `<div style="margin:12px 0 2px;display:grid;gap:6px">${alerts.slice(0,2).map(al => `<a href="${al.link || ('#/artiste/' + a.id)}" style="font-size:12.5px;font-weight:700;color:${CRIT[critOf(al)].c};text-decoration:none">⚑ ${al.cat} — ${al.txt.split(' : ')[1] || al.txt}</a>`).join('')}</div>` : ''}
       <a class="btn btn-dark" style="width:100%;justify-content:center;margin-top:14px" href="#/artiste/${a.id}">Ouvrir la fiche artiste <span class="ar">↗</span></a>
     </div>
   </div>`;
@@ -911,16 +1014,21 @@ function vArtiste(id){
 }
 
 function alertItem(al){
-  const a = artist(al.artiste);
-  return `<div class="alert-item rv">
+  const k = critOf(al), c = CRIT[k];
+  const done = alertDone[al.id], read = alertRead[al.id] || done;
+  return `<div class="alert-item rv ${read ? '' : 'unread'} ${done ? 'done' : ''}" onmouseenter="markRead('${al.id}')">
     <span class="a-ic" style="background:${al.color}14;color:${al.color}">${al.ic}</span>
-    <div style="flex:1">
-      <div class="cat-lab" style="color:${al.color}">${al.cat} · ${al.niveau.toUpperCase()}</div>
-      <p>${al.txt}</p>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+        <span class="crit" style="background:${c.c}14;color:${c.c}"><i style="background:${c.c}"></i>${c.lab}</span>
+        <span class="cat-lab" style="color:${al.color};margin:0">${al.cat} · ${al.niveau.toUpperCase()}</span>
+      </div>
+      <p style="${read ? '' : 'font-weight:800'}">${al.txt}</p>
       <div class="rule">${al.rule}</div>
     </div>
-    <time>${al.time}</time>
-    <a class="btn btn-outline btn-sm" style="flex:none" href="#/artiste/${al.artiste}" onclick="event.stopPropagation()">Ouvrir <span class="ar">↗</span></a>
+    <time title="${al.ts || ''}">${al.time}</time>
+    <button class="a-act" onclick="event.stopPropagation();toggleDone('${al.id}')">${done ? 'Rouvrir' : 'Marquer traité'}</button>
+    <a class="btn btn-outline btn-sm" style="flex:none" href="${al.link || ('#/artiste/' + al.artiste)}" onclick="event.stopPropagation();markRead('${al.id}')">Ouvrir <span class="ar">↗</span></a>
   </div>`;
 }
 
@@ -1006,89 +1114,194 @@ function vTitre(isrc){
 /* ================================================================
    VUE — CENTRE D'ALERTES (§7.3)
 ================================================================ */
-let alertFilter = 'Toutes';
+let alertFilter = 'Toutes', alertCrit = 'Toutes', alertMine = false;
+const CRIT = {
+  risk: { lab:'À TRAITER', c:'#DC2626', o:0 },
+  opp:  { lab:'OPPORTUNITÉ', c:'#16A34A', o:1 },
+  info: { lab:'INFO', c:'#8A8A85', o:2 },
+};
+const critOf = al => al.crit || 'info';
 function vAlertes(){
   const cats = ['Toutes','STREAMING','SHAZAM','PLAYLIST ÉDITO','SCORE SPOTIFY'];
-  const list = ALERTES.filter(al => alertFilter === 'Toutes' || al.cat === alertFilter);
   document.documentElement.style.setProperty('--accent', '#C8102E');
+  const list = ALERTES
+    .filter(al => alertFilter === 'Toutes' || al.cat === alertFilter)
+    .filter(al => alertCrit === 'Toutes' || critOf(al) === alertCrit)
+    .filter(al => !alertMine || MES_ARTISTES.includes(al.artiste))
+    .sort((x, y) => CRIT[critOf(x)].o - CRIT[critOf(y)].o);
+  const today = list.filter(al => /h$/.test(al.time) || al.time === "aujourd'hui");
+  const week = list.filter(al => !today.includes(al));
+  const n = k => ALERTES.filter(al => critOf(al) === k).length;
+  const nUp = ALERTES.filter(al => al.cat === 'STREAMING' && al.ic === '↑').length;
+  const nDn = ALERTES.filter(al => al.cat === 'STREAMING' && al.ic === '↓').length;
+  const nPl = ALERTES.filter(al => al.cat === 'PLAYLIST ÉDITO').length;
+  const nNew = ALERTES.filter(al => !alertRead[al.id]).length;
+  const grp = (lab, arr, first) => arr.length ? `<div class="grp-lab${first?' first':''}">${lab} · ${arr.length}</div><div class="grid" style="gap:12px">${arr.map(alertItem).join('')}</div>` : '';
   return `
-  <section class="band dark" style="padding:60px 0"><div class="wrap">
-    <div class="kicker"><span class="dot"></span>MOTEUR DE RÈGLES · SEUILS FIXES V1</div>
-    <h1 class="display rv in" style="font-size:clamp(46px,6.5vw,92px);margin:18px 0 18px">Alertes<em>.</em></h1>
-    <p class="lead">Signaux détectés automatiquement, niveau artiste et global. Aucune IA : des règles simples, lisibles, vérifiables.</p>
-    <div style="display:flex;gap:34px;margin-top:30px;flex-wrap:wrap">
+  ${hero('ALERTES', 'MOTEUR DE RÈGLES · SEUILS FIXES V1', 'Alertes<em>.</em>', 'Signaux détectés automatiquement, niveau artiste et global. Aucune IA : des règles simples, lisibles, vérifiables.',
+    `<div style="display:flex;gap:34px;margin-top:30px;flex-wrap:wrap">
       ${[['± 20 %','streaming hebdo'],['> ' + SEUILS.shazam + '/j','Shazam *'],['E / S','playlist édito'],['> ' + SEUILS.score,'score Spotify']].map(([v,l]) => `<div class="rv"><div style="font-size:34px;font-weight:800;letter-spacing:-.02em">${v}</div><div class="kicker" style="margin-top:6px;color:rgba(255,255,255,.5)">${l.toUpperCase()}</div></div>`).join('')}
-    </div>
-  </div></section>
+    </div>`)}
   <div class="filters"><div class="wrap">
+    <span class="group-label">Criticité</span>
+    ${['Toutes','risk','opp','info'].map(c => `<button class="chip chip-sm ${alertCrit===c?'active':''}" onclick="alertCrit='${c}';render()">${c === 'Toutes' ? 'Toutes' : CRIT[c].lab.charAt(0) + CRIT[c].lab.slice(1).toLowerCase() + ' (' + n(c) + ')'}</button>`).join('')}
+    <span class="sep"></span>
     <span class="group-label">Règle</span>
-    ${cats.map(c => `<button class="chip ${alertFilter===c?'active':''}" onclick="alertFilter='${c.replace(/'/g,"\\'")}';render()">${c === 'Toutes' ? 'Toutes (' + ALERTES.length + ')' : c === 'SCORE SPOTIFY' ? 'Score Spotify' : c.charAt(0) + c.slice(1).toLowerCase()}</button>`).join('')}
-    <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Centre d\\'alertes S${SEMAINE.num}')">Exporter <span class="ar">↗</span></button></div>
+    ${cats.map(c => `<button class="chip chip-sm ${alertFilter===c?'active':''}" onclick="alertFilter='${c.replace(/'/g,"\\'")}';render()">${c === 'Toutes' ? 'Toutes (' + ALERTES.length + ')' : c === 'SCORE SPOTIFY' ? 'Score Spotify' : c.charAt(0) + c.slice(1).toLowerCase()}</button>`).join('')}
+    <span class="sep"></span>
+    <button class="chip chip-sm ${alertMine?'active':''}" onclick="alertMine=!alertMine;render()">Mes artistes</button>
+    <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Digest alertes S${SEMAINE.num}')">Exporter le digest <span class="ar">↗</span></button></div>
   </div></div>
   <section class="band"><div class="wrap">
-    <div class="grid" style="gap:12px">${list.map(alertItem).join('') || '<div class="empty">Aucune alerte pour cette règle.</div>'}</div>
+    <div class="digest rv">
+      <div class="kicker"><span class="dot"></span>DIGEST S${SEMAINE.num} · CE QUE DIT LE MOTEUR</div>
+      <div style="font-size:19px;font-weight:800;letter-spacing:-.025em;margin-top:10px">${nUp} hausse${nUp>1?'s':''} au-dessus du seuil, ${nDn} baisse${nDn>1?'s':''}, ${nPl} mouvement${nPl>1?'s':''} playlist — ${nNew} non lue${nNew>1?'s':''}.</div>
+      <div class="row">
+        ${[['risk','à traiter'],['opp','opportunités'],['info','informations']].map(([k,l]) => `<div><b style="color:${CRIT[k].c}">${n(k)}</b><small>${l}</small></div>`).join('')}
+        <div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-outline btn-sm" onclick="markAllRead()">Tout marquer comme lu</button>
+          <button class="btn btn-outline btn-sm" onclick="openExport('Synthèse hebdo S${SEMAINE.num} (PDF)')">Synthèse PDF <span class="ar">↗</span></button>
+        </div>
+      </div>
+    </div>
+    ${list.length ? grp("Aujourd'hui", today, true) + grp('Cette semaine', week, !today.length) : '<div class="empty">Aucune alerte pour ce filtre.</div>'}
     <div class="note-line">ⓘ Seuils adaptatifs (historique artiste) : V2+ · Alerte playlist utilisateur > 100K : hors MVP, à arbitrer. * Seuil Shazam 300 vs 500/j à trancher.</div>
   </div></section>`;
 }
+function markAllRead(){ ALERTES.forEach(al => alertRead[al.id] = true); toast('✓&nbsp; Toutes les alertes marquées comme lues'); render(); }
+function toggleDone(id){ alertDone[id] = !alertDone[id]; alertRead[id] = true; toast(alertDone[id] ? '✓&nbsp; Alerte marquée <b>traitée</b>' : '↩&nbsp; Alerte rouverte'); render(); }
+function markRead(id){ if (!alertRead[id]) { alertRead[id] = true; render(); } }
 
 /* ================================================================
    VUE — SAISIE MANUELLE (§7.5)
 ================================================================ */
-let saisieTab = 'physique';
+let saisieTab = 'physique', editIdx = -1;
+const SEM_OPTS = ['S31','S30','S29','S28'];
+const UNITS = { 'Mise en place':'unités distribuées', 'D2C':'unités', 'Magasins':'unités' };
+function projetsDe(nom){
+  const a = ARTISTS.find(x => x.nom === nom);
+  if (!a) return [];
+  const out = [];
+  const seen = new Set();
+  a.titres.forEach(t => {
+    if (!seen.has(t.projet)) { seen.add(t.projet); out.push([`${t.projet} — UPC ${t.upc}`, `${t.projet} (UPC ${t.upc})`]); }
+    out.push([`Titre « ${t.titre} » — ISRC ${t.isrc}`, `« ${t.titre} » (ISRC ${t.isrc})`]);
+  });
+  return out;
+}
+function renderRattach(){
+  const el = $('#f-rattach-wrap'); if (!el) return;
+  el.innerHTML = rattachHtml($('#f-artiste').value);
+}
+function rattachHtml(nom, sel=''){
+  const opts = projetsDe(nom);
+  return `<select id="f-rattach" onchange="$('#f-ref-other').style.display=this.value==='__autre'?'block':'none'">
+      ${opts.map(([lab,val]) => `<option value="${val}"${val===sel?' selected':''}>${lab}</option>`).join('')}
+      <option value="__autre">Autre — enseigne / réseau (texte libre)</option>
+    </select>
+    <input id="f-ref-other" placeholder="ex : FNAC (national)" style="display:none;margin-top:8px">`;
+}
+function completude(){
+  const attendu = ARTISTS.map(a => {
+    const done = SAISIES.find(s => s.artiste === a.nom && s.sem === 'S' + SEMAINE.num && s.type.startsWith(saisieTab === 'physique' ? 'Physique' : 'Actu'));
+    return [a.nom, !!done];
+  });
+  const manquants = attendu.filter(([, d]) => !d).length;
+  return `<div class="card rv" style="margin-bottom:16px">
+    <div class="kicker">SAISIES ATTENDUES · S${SEMAINE.num}</div>
+    <div style="font-size:19px;font-weight:800;letter-spacing:-.02em;margin:10px 0 12px">${attendu.length - manquants}/${attendu.length} saisies faites${manquants ? ` · ${manquants} manquante${manquants>1?'s':''}` : ' · complet ✓'}</div>
+    ${attendu.map(([nom, done]) => `<div class="comp-row"><span>${nom}</span><span class="st ${done?'ok':'ko'}">${done ? 'fait ✓' : 'manquant ⚠'}</span>${done ? '' : `<button class="a-act" onclick="toast('🔔&nbsp; Relance envoyée — <b>${nom}</b>')">Relancer</button>`}</div>`).join('')}
+  </div>`;
+}
 function vSaisie(){
   document.documentElement.style.setProperty('--accent', '#C8102E');
   const typesPhysique = ['Mise en place (unités distribuées)','D2C — vente directe artiste','Ventes magasins (FNAC, Cultura…)'];
   const typesActus = ['Date média (interview, article)','Lancement publicitaire (date + budget)','Sortie prévue (single, album, feature)'];
   const types = saisieTab === 'physique' ? typesPhysique : typesActus;
+  const rows = SAISIES.map((s, i) => [s, i]).filter(([s]) => saisieTab === 'physique' ? s.type.startsWith('Physique') : s.type.startsWith('Actu'));
+  const first = ARTISTS[0].nom;
   return `
-  <section class="band dark" style="padding:60px 0"><div class="wrap">
-    <div class="kicker"><span class="dot"></span>DONNÉES NON-API · HISTORISÉES COMME LES DONNÉES AUTOMATISÉES</div>
-    <h1 class="display rv in" style="font-size:clamp(46px,6.5vw,92px);margin:18px 0 18px">Saisie <em>manuelle</em>.</h1>
-    <p class="lead">Ventes physiques (hebdo) et actus à venir (continu), rattachées à l'artiste ou au titre concerné.</p>
-  </div></section>
+  ${hero('SAISIE MANUELLE', 'DONNÉES NON-API · HISTORISÉES COMME LES DONNÉES AUTOMATISÉES', 'Saisie <em>manuelle</em>.', "Ventes physiques (hebdo) et actus à venir (continu), rattachées au projet ou au titre concerné (UPC / ISRC).")}
   <div class="filters"><div class="wrap">
-    <button class="chip ${saisieTab==='physique'?'active':''}" onclick="saisieTab='physique';render()">Ventes physiques · hebdo</button>
-    <button class="chip ${saisieTab==='actus'?'active':''}" onclick="saisieTab='actus';render()">Actus à venir · continu</button>
+    <button class="chip ${saisieTab==='physique'?'active':''}" onclick="saisieTab='physique';editIdx=-1;render()">Ventes physiques · hebdo</button>
+    <button class="chip ${saisieTab==='actus'?'active':''}" onclick="saisieTab='actus';editIdx=-1;render()">Actus à venir · continu</button>
     <div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Historique des saisies')">Exporter <span class="ar">↗</span></button></div>
   </div></div>
   <section class="band"><div class="wrap">
     <div class="grid g-main">
-      <div class="card rv" style="padding:12px 24px">
-        <div class="kicker" style="padding:12px 0 6px">HISTORIQUE DES SAISIES</div>
-        <table class="data">
-          <tr><th>Type</th><th>Artiste</th><th>Rattachement</th><th>Valeur</th><th>Saisi le</th><th></th></tr>
-          ${SAISIES.filter(s => saisieTab === 'physique' ? s.type.startsWith('Physique') : s.type.startsWith('Actu')).map(s => `<tr>
-            <td><span class="badge b-manual">${s.type.split('— ')[1] || s.type}</span></td>
-            <td style="font-weight:700">${s.artiste}</td>
-            <td style="font-size:12.5px;color:var(--muted-foreground)">${s.ref}</td>
-            <td style="font-weight:800;font-variant-numeric:tabular-nums">${s.val}</td>
-            <td style="font-variant-numeric:tabular-nums;color:var(--muted-foreground)">${s.date}</td>
-            <td><span style="font-size:11px;font-weight:700;background:var(--muted);border-radius:9999px;padding:4px 9px">${s.par}</span></td>
-          </tr>`).join('')}
-        </table>
+      <div>
+        <div class="card rv" style="padding:12px 24px">
+          <div class="kicker" style="padding:12px 0 6px">HISTORIQUE DES SAISIES</div>
+          <table class="data">
+            <tr><th>Type</th><th>Artiste</th><th>Rattachement</th><th>Valeur</th><th>Semaine</th><th>Saisi le</th><th></th></tr>
+            ${rows.map(([s, i]) => `<tr${editIdx===i?' style="background:var(--surface)"':''}>
+              <td><span class="badge b-manual">${s.type.split('— ')[1] || s.type}</span></td>
+              <td style="font-weight:700">${s.artiste}</td>
+              <td style="font-size:12.5px;color:var(--muted-foreground)">${s.ref}${s.modif ? ' <span title="Modifié le ' + s.modif + '">✎</span>' : ''}</td>
+              <td style="font-weight:800;font-variant-numeric:tabular-nums">${s.val}</td>
+              <td style="font-variant-numeric:tabular-nums;font-weight:700">${s.sem}</td>
+              <td style="font-variant-numeric:tabular-nums;color:var(--muted-foreground)">${s.date}</td>
+              <td style="white-space:nowrap">
+                <span style="font-size:11px;font-weight:700;background:var(--muted);border-radius:9999px;padding:4px 9px">${s.par}</span>
+                <button class="lnk" style="margin-left:8px" onclick="editSaisie(${i})">Modifier</button>
+                <button class="lnk" style="margin-left:6px" onclick="delSaisie(${i})">Suppr.</button>
+              </td>
+            </tr>`).join('')}
+          </table>
+        </div>
+        <div class="note-line">ⓘ Toute modification conserve une trace (auteur + date) — l'historique reste auditable.</div>
       </div>
-      <div class="card rv">
-        <div class="kicker">NOUVELLE SAISIE — ${saisieTab === 'physique' ? 'PHYSIQUE' : 'ACTU'}</div>
-        <div style="margin-top:18px">
-          <div class="field"><label>Type</label><select id="f-type">${types.map(t => `<option>${t}</option>`).join('')}</select></div>
-          <div class="field"><label>Artiste</label><select id="f-artiste">${ARTISTS.map(a => `<option>${a.nom}</option>`).join('')}</select></div>
-          <div class="fgrid">
-            <div class="field"><label>Rattachement</label><input id="f-ref" placeholder="${saisieTab === 'physique' ? 'Album, enseigne…' : 'Média, campagne…'}"></div>
-            <div class="field"><label>${saisieTab === 'physique' ? 'Unités / valeur' : 'Date / budget'}</label><input id="f-val" placeholder="${saisieTab === 'physique' ? 'ex : 1 200 unités' : 'ex : 12/09/2026'}"></div>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:6px">
-            <button class="btn btn-dark btn-sm" onclick="addSaisie()">Enregistrer</button>
-            <button class="btn btn-outline btn-sm" onclick="toast('📥&nbsp; Import CSV — simulation')">Importer CSV</button>
+      <div>
+        ${completude()}
+        <div class="card rv">
+          <div class="kicker">${editIdx >= 0 ? 'MODIFIER LA SAISIE' : 'NOUVELLE SAISIE'} — ${saisieTab === 'physique' ? 'PHYSIQUE' : 'ACTU'}</div>
+          <div style="margin-top:18px">
+            <div class="fgrid">
+              <div class="field"><label>Type</label><select id="f-type">${types.map(t => `<option>${t}</option>`).join('')}</select></div>
+              <div class="field"><label>Semaine concernée</label><select id="f-sem">${SEM_OPTS.map(s => `<option${s === 'S' + SEMAINE.num ? ' selected' : ''}>${s}</option>`).join('')}</select></div>
+            </div>
+            <div class="field"><label>Artiste</label><select id="f-artiste" onchange="renderRattach()">${ARTISTS.map(a => `<option>${a.nom}</option>`).join('')}</select></div>
+            <div class="field"><label>Rattachement — projet / titre</label><div id="f-rattach-wrap">${rattachHtml(first)}</div></div>
+            <div class="fgrid">
+              <div class="field"><label>${saisieTab === 'physique' ? 'Quantité' : 'Budget (€)'}</label><input id="f-val" type="number" inputmode="numeric" min="0" step="1" placeholder="${saisieTab === 'physique' ? '1200' : '8000'}"></div>
+              <div class="field"><label>Unité</label><select id="f-unit">${(saisieTab === 'physique' ? ['unités distribuées','unités vendues'] : ['€ (budget)','date (JJ/MM/AAAA)']).map(u => `<option>${u}</option>`).join('')}</select></div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;align-items:center">
+              <button class="btn btn-dark btn-sm" onclick="addSaisie()">${editIdx >= 0 ? 'Mettre à jour' : 'Enregistrer'}</button>
+              ${editIdx >= 0 ? `<button class="btn btn-outline btn-sm" onclick="editIdx=-1;render()">Annuler</button>` : `<button class="btn btn-outline btn-sm" onclick="toast('📥&nbsp; Import CSV — simulation')">Importer CSV</button>`}
+              <button class="lnk" onclick="toast('⬇&nbsp; Gabarit CSV téléchargé — <b>gabarit-saisie-${saisieTab}.csv</b>')">Télécharger le gabarit CSV</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div></section>`;
 }
+function editSaisie(i){
+  editIdx = i; render();
+  const s = SAISIES[i];
+  const art = $('#f-artiste'); if (art) { art.value = s.artiste; renderRattach(); }
+  const sem = $('#f-sem'); if (sem) sem.value = s.sem;
+  const val = $('#f-val'); if (val) val.value = parseInt(String(s.val).replace(/\D/g,''), 10) || '';
+  toast(`✎&nbsp; Édition — <b>${s.artiste}</b>`);
+}
+function delSaisie(i){
+  const s = SAISIES[i];
+  SAISIES.splice(i, 1);
+  if (editIdx === i) editIdx = -1;
+  toast(`🗑&nbsp; Saisie supprimée — <b>${s.artiste}</b> (trace conservée)`);
+  render();
+}
 function addSaisie(){
   const type = (saisieTab === 'physique' ? 'Physique — ' : 'Actu — ') + $('#f-type').value.split(' (')[0];
-  SAISIES.unshift({ type, artiste:$('#f-artiste').value, ref:$('#f-ref').value || '—', val:$('#f-val').value || '—', date:'31/07/2026', par:'MC' });
-  toast(`✓&nbsp; Saisie enregistrée — <b>${$('#f-artiste').value}</b>`);
+  const rat = $('#f-rattach').value;
+  const ref = rat === '__autre' ? ($('#f-ref-other').value || '—') : rat;
+  const n = parseInt($('#f-val').value, 10);
+  if (isNaN(n)) { toast('⚠&nbsp; Valeur numérique requise'); return; }
+  const val = n.toLocaleString('fr-FR') + ' ' + $('#f-unit').value.split(' (')[0];
+  const rec = { type, artiste:$('#f-artiste').value, ref, val, sem:$('#f-sem').value, date:'31/07/2026', par:'MC' };
+  if (editIdx >= 0) { rec.modif = '31/07/2026 · MC'; SAISIES[editIdx] = rec; editIdx = -1; toast(`✓&nbsp; Saisie mise à jour — <b>${rec.artiste}</b>`); }
+  else { SAISIES.unshift(rec); toast(`✓&nbsp; Saisie enregistrée — <b>${rec.artiste}</b> · ${rec.sem}`); }
   render();
 }
 
@@ -1133,9 +1346,9 @@ function observeSpy(){
   SECTIONS.forEach(([id2]) => { const el = document.getElementById('s-' + id2); if (el) spyObs.observe(el); });
 }
 function render(){
-  $('#nav-alert-count').textContent = ALERTES.length;
+  $('#nav-alert-count').textContent = ALERTES.filter(al => !alertDone[al.id]).length;
   const h = location.hash || '#/artistes';
-  const [, route, param] = h.split('/');
+  const [, route, param, anchor] = h.split('/');
   const app = $('#app');
   document.querySelectorAll('nav.main a').forEach(a => a.classList.toggle('active',
     a.dataset.r === route || (a.dataset.r === 'artistes' && (route === 'artiste' || route === 'titre'))));
@@ -1144,10 +1357,14 @@ function render(){
   else if (route === 'alertes') app.innerHTML = vAlertes();
   else if (route === 'saisie') app.innerHTML = vSaisie();
   else if (route === 'label') app.innerHTML = vLabel();
-  else { document.documentElement.style.setProperty('--accent', '#C8102E'); app.innerHTML = vArtistes(); }
+  else { spotId = null; document.documentElement.style.setProperty('--accent', '#C8102E'); app.innerHTML = vArtistes(); }
   window.scrollTo(0, 0);
   observeRv();
   observeSpy();
+  if (anchor) requestAnimationFrame(() => {
+    const el = document.getElementById(anchor);
+    if (el) { document.querySelectorAll('.rv:not(.in)').forEach(n => n.classList.add('in')); el.scrollIntoView({behavior:'smooth', block:'start'}); }
+  });
 }
 window.addEventListener('hashchange', render);
 render();

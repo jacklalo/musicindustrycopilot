@@ -156,12 +156,7 @@
   .dsp-inline .group-label{margin-right:2px}
   @media(max-width:760px){ .dsp-inline{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:14px} .dsp-inline::-webkit-scrollbar{display:none} .dsp-inline .chip{flex:none} }
   .af-reset{border-style:dashed}
-  .af-scope{border-bottom:1px solid var(--line);background:color-mix(in srgb, var(--accent) 5%, var(--background))}
-  .af-scope .wrap{display:flex;align-items:center;gap:8px;padding:10px 32px;font-size:12px;color:var(--muted-foreground);flex-wrap:wrap}
-  .af-scope b{color:var(--foreground);font-weight:700}
-  .af-scope .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block}
-  .af-scope .af-note{margin-left:auto;font-size:11.5px;opacity:.85}
-  @media(max-width:760px){ .af-scope .af-note{margin-left:0;width:100%} }
+  
 
   /* Tables */
   table.data{width:100%;border-collapse:collapse;font-size:14px}
@@ -565,7 +560,7 @@
     .chip-sm{height:30px;padding:0 12px}
     .btn{height:42px;padding:0 18px;font-size:13.5px}
     .btn-sm{height:34px;font-size:12px;padding:0 14px}
-    .af-scope .wrap{padding:9px 14px;font-size:11.5px}
+    
 
     /* Barre de filtres roster : recherche pleine largeur puis actions */
     .lab-filters .wrap{padding:12px 14px;gap:10px;flex-wrap:wrap}
@@ -1365,13 +1360,6 @@ function filtersBar(ctx, slim=false){
     ${slim ? '' : `<div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('${ctx}')">Exporter <span class="ar">↗</span></button></div>`}
   </div></div>`;
 }
-function afScope(a){
-  return `<div class="af-scope"><div class="wrap">
-    <span class="dot"></span>
-    <b>${AF.periode}</b> · <b>${AF.dsp === 'Tous' ? 'Tous DSP' : AF.dsp}</b> · <b>${AF.pays === 'Monde' ? 'Monde' : AF.pays}</b>
-    <span class="af-note">Streams recalculés selon période, DSP et pays${AF.pays === 'Monde' ? '' : ` · part ${AF.pays} : ${Math.round(paysShare(a)*100)}%`}${AF.dsp === 'Tous' ? '' : ` · part ${AF.dsp} : ${Math.round((dspMix(a)[AF.dsp] || 0))}%`} · audience : DSP et pays · Shazam : pays uniquement · physique &amp; radios : France, hors DSP.</span>
-  </div></div>`;
-}
 
 
 /* ================================================================
@@ -1674,7 +1662,6 @@ function vArtiste(id){
   </div></div>
 
   ${filtersBar('Dashboard ' + a.nom, true)}
-  ${afScope(a)}
 
   <section class="band"><div class="wrap">
 
@@ -1887,8 +1874,6 @@ function vTitre(isrc){
   </div>
 
   ${filtersBar(t.titre + ' ' + a.nom)}
-  ${afScope(a)}
-
 
   <section class="band"><div class="wrap">
     ${dspInline()}

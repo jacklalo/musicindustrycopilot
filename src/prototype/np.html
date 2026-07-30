@@ -2471,7 +2471,28 @@ function micLogin(ev){
   if (typeof toast === 'function') toast('Bienvenue sur #MIC mock');
   return false;
 }
+function profToggle(ev){
+  if (ev) ev.stopPropagation();
+  const m = document.getElementById('prof-menu'), a = document.getElementById('prof-av');
+  if (!m) return;
+  const on = m.classList.toggle('show');
+  if (a) a.classList.toggle('on', on);
+}
+function profClose(){
+  const m = document.getElementById('prof-menu'), a = document.getElementById('prof-av');
+  if (m) m.classList.remove('show');
+  if (a) a.classList.remove('on');
+}
+function profAct(label){
+  profClose();
+  if (label === 'Aide & raccourcis' && typeof openSearch === 'function') { openSearch(); return; }
+  toast(`<b>${label}</b>&nbsp; disponible prochainement`);
+}
+document.addEventListener('click', e => { if (!e.target.closest('.prof')) profClose(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') profClose(); });
+
 function micLogout(){
+
   try { sessionStorage.removeItem('mic_auth'); } catch(e){}
   micAuth = false;
   location.hash = '#/intro';

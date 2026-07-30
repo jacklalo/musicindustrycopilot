@@ -804,7 +804,8 @@ function periodSeries(a, entity){
     values = weekly.map(v => v * 1000);
     labels = Array.from({length:12},(_,i) => `S${SEMAINE.num-11+i}`);
   }
-  const factor = paysShare(a) * dspShare(entity.cadence ? entity : (a.titres && a.titres[0]));
+  const dspFactor = AF.dsp === 'Tous' ? 1 : (entity.cadence ? dspShare(entity) : ((dspMix(a)[AF.dsp] || 0) / 100));
+  const factor = paysShare(a) * dspFactor;
   return { values:values.map(v => Math.round(v*factor)), labels, total:Math.round(values.reduce((s,v)=>s+v,0)*factor) };
 }
 function periodDelta(entity){
@@ -1162,10 +1163,14 @@ function vArtiste(id){
   const AUD = audience(a);
   const MIX = dspMix(a);
   const shz = v => perDay(v, a);
+  const artistSeries = periodSeries(a, a);
+  const artistPeriodDelta = periodDelta(a);
+  const leadSeries = periodSeries(a, t0);
+  const leadPeriodDelta = periodDelta(t0);
 
   const summary = (() => {
     const p = [];
-    p.push(`${a.delta >= 0 ? 'Progression' : 'Repli'} hebdo de <b>${a.delta > 0 ? '+' : ''}${a.delta}%</b> des streams`);
+    p.push(`${artistPeriodDelta >= 0 ? 'Progression' : 'Repli'} sur ${P.lab} de <b>${artistPeriodDelta > 0 ? '+' : ''}${artistPeriodDelta}%</b> des streams`);
     if (Math.abs(t0.delta) >= SEUILS.streaming) p.push(`« ${t0.titre} » ${t0.delta > 0 ? 'dépasse le seuil d\'alerte' : 'sous le seuil'} (${t0.delta > 0 ? '+' : ''}${t0.delta}%)`);
     if (t0.shazamJour > SEUILS.shazam) p.push(`Shazam au-dessus du seuil (${t0.shazamJour}/j)`);
     if (scoreOk && spotifyScope) p.push(`Score Spotify <b>${a.score}</b> > 50`);
@@ -1188,7 +1193,7 @@ function vArtiste(id){
   </div></section>
 
   <div class="kpi-band">
-    <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(sc(a.streams))} <span class="cmp">${deltaHtml(a.delta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(artistSeries.total)} <span class="cmp">${deltaHtml(artistPeriodDelta)}</span></div></div>
     <div class="kpi rv"><div class="lab">Auditeurs mensuels · ${AUD.lab}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(AUD.val)} <span class="cmp">${deltaHtml(AUD.delta)}</span>${AUD.est ? '<span class="cmp" style="color:var(--muted-foreground)"> est.</span>' : ''}</div></div>
     ${spotifyScope
       ? `<div class="kpi rv"><div class="lab">Score Spotify /100</div><div class="val" style="${scoreOk ? 'color:var(--accent)' : ''}">${a.score} <span class="cmp" style="color:var(--muted-foreground)">${scoreOk ? '> seuil 50' : 'S' + (SEMAINE.num-1) + ' : ' + a.scorePrev}</span></div></div>`
@@ -1217,14 +1222,14 @@ function vArtiste(id){
     <div id="s-titres" style="scroll-margin-top:130px;margin-top:56px">
       <h2 class="h-sect rv">Titres<span style="color:var(--accent)">.</span> <small>classés par streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays} · cliquer pour le drill-down ISRC/UPC</small></h2>
       <div class="lb rv">
-        ${[...tl].sort((x,y) => sc(y.streamsHebdo, y) - sc(x.streamsHebdo, x)).map((t,i,arr) => { const sj = shz(t.shazamJour); const flag = sj > SEUILS.shazam; return `
+        ${[...tl].sort((x,y) => periodSeries(a,y).total - periodSeries(a,x).total).map((t,i,arr) => { const sj = shz(t.shazamJour); const flag = sj > SEUILS.shazam; const ts = periodSeries(a,t); const td = periodDelta(t); return `
         <a class="lb-row lb-t" style="--acc:${a.accent}" href="#/titre/${t.isrc}">
-          <span class="lb-rank">${String(i+1).padStart(2,'0')}<small class="${t.delta > 0 ? 'rk-up' : t.delta < 0 ? 'rk-dn' : 'rk-eq'}">${t.delta > 0 ? '↑' : t.delta < 0 ? '↓' : '—'} ${Math.abs(t.delta)}%</small></span>
+          <span class="lb-rank">${String(i+1).padStart(2,'0')}<small class="${td > 0 ? 'rk-up' : td < 0 ? 'rk-dn' : 'rk-eq'}">${td > 0 ? '↑' : td < 0 ? '↓' : '—'} ${Math.abs(td)}%</small></span>
           <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${U(TIMGS[t.isrc] || '')}" loading="lazy" alt="" onerror="this.remove()"></span>
           <span class="lb-name"><b>${t.titre}</b><span>${t.projet} · <span class="mono">${t.isrc}</span></span></span>
-          <span class="hm">${sparkMini(t.cadence.map(v => Math.round(v * F(t))), a.accent)}</span>
+          <span class="hm">${sparkMini(ts.values, a.accent)}</span>
           <span class="lb-val hm"><b style="${flag ? 'color:var(--pop)' : ''}">${sj}${flag ? ' ⚑' : ''}</b><span>Shazam /j${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</span></span>
-          <span class="lb-val"><b>${fmt(sc(t.streamsHebdo, t))}</b><span>streams ${P.lab} · ${momBadgeTxt(t.delta)}</span></span>
+          <span class="lb-val"><b>${fmt(ts.total)}</b><span>streams ${P.lab} · ${momBadgeTxt(td)}</span></span>
           <span class="go hm">↗</span>
         </a>`; }).join('')}
         <div class="lb-foot">Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j${AF.dsp === 'Tous' ? '' : ` · volumes isolés sur ${AF.dsp}`}.</div>
@@ -1236,12 +1241,12 @@ function vArtiste(id){
       <p class="h-sub">Comparaison semaine N vs N-1 · ${AF.dsp === 'Tous' ? 'Spotify, Apple, Deezer, Amazon' : AF.dsp} · ${AF.pays === 'Monde' ? 'Monde' : AF.pays} · ${P.lab}.</p>
       <div class="grid g-main">
         <div class="card hov rv">
-          <div class="kicker">MOMENTUM · 8 ${AF.periode === '12 sem' ? 'PÉRIODES' : 'SEMAINES'} · ${t0.titre.toUpperCase()}</div>
+          <div class="kicker">MOMENTUM · ${leadSeries.labels.length} ${AF.periode === '7 j' ? 'JOURS' : 'SEMAINES'} · ${t0.titre.toUpperCase()}</div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 4px">
-            <span class="num-xl">${fmt(sc(t0.streamsHebdo))}</span>
-            ${momBadge(t0.delta)}
+            <span class="num-xl">${fmt(leadSeries.total)}</span>
+            ${momBadge(leadPeriodDelta)}
           </div>
-          ${sparkline(t0.cadence.map(v => Math.round(v * F(t0))), a.accent)}
+          ${barsWeekly(leadSeries.values, a.accent, leadSeries.labels)}
         </div>
         <div style="display:grid;gap:16px">
           <div class="card hov rv">

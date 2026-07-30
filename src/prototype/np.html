@@ -1020,7 +1020,7 @@ function rosterRows(){
   const head = `<div class="lb-head lb-a">
     <span>Rang</span><span></span>
     ${th('alertes','Artiste · alertes')}
-    ${th('shazam','8 semaines / Shazam')}
+    ${th('streams','8 semaines / Streams')}
     ${th('streams','Streams S' + SEMAINE.num, 'r')}
     <span></span>
   </div>`;
@@ -1028,11 +1028,13 @@ function rosterRows(){
     const rank = all.indexOf(a) + 1;
     const nA = alertsOf(a.id).length;
     const col = a.delta >= SEUILS.streaming ? 'var(--up)' : a.delta <= -SEUILS.streaming ? 'var(--down)' : a.delta > 0 ? 'var(--up)' : a.delta < 0 ? 'var(--down)' : 'var(--stable)';
+    const serie = serieOf(a);
+    const lastW = serie[serie.length - 1] || 0;
     return `<a class="lb-row lb-a" style="--acc:${a.accent}" href="#/artiste/${a.id}" onmouseenter="setSpot('${a.id}')">
       <span class="lb-rank">${String(rank).padStart(2,'0')}</span>
       <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${IMGS[a.id]}" loading="lazy" alt="" onerror="this.remove()"></span>
       <span class="lb-name"><b>${a.nom}${nA ? `<span class="flagpill" title="${nA} alerte(s) active(s)">⚑ ${nA}</span>` : ''}</b><span>${a.label} · ${a.genre}${a.special ? ' · ⚑' : ''}</span></span>
-      <span class="lb-gauge hm" title="Trajectoire streams — 8 dernières semaines">${sparkMini(serieOf(a), a.accent, 118, 34)}<span class="glab" style="margin:4px 0 0">${shazamOf(a)} shazams/j</span></span>
+      <span class="lb-gauge hm" title="Trajectoire streams — 8 dernières semaines">${sparkMini(serie, a.accent, 118, 34)}<span class="glab" style="margin:4px 0 0">${fmt(lastW)} streams / sem</span></span>
       <span class="lb-val"><b>${fmt(a.streams)}</b><span class="sub-d" style="color:${col}" title="Évolution du volume de streams, S${SEMAINE.num} vs S${SEMAINE.num-1}">${a.delta > 0 ? '▲ +' : a.delta < 0 ? '▼ ' : '— '}${a.delta}% <span style="color:var(--muted-foreground);font-weight:600">vs S${SEMAINE.num-1}</span></span></span>
       <span class="go hm">↗</span>
     </a>`;

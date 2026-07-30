@@ -1143,10 +1143,10 @@ function vArtiste(id){
 
   <div class="kpi-band">
     <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(sc(a.streams))} <span class="cmp">${deltaHtml(a.delta)}</span></div></div>
-    <div class="kpi rv"><div class="lab">Auditeurs mensuels · Spotify${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.listeners * geo))} <span class="cmp">${deltaHtml(a.listenersDelta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Auditeurs mensuels · ${AUD.lab}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(AUD.val)} <span class="cmp">${deltaHtml(AUD.delta)}</span>${AUD.est ? '<span class="cmp" style="color:var(--muted-foreground)"> est.</span>' : ''}</div></div>
     ${spotifyScope
       ? `<div class="kpi rv"><div class="lab">Score Spotify /100</div><div class="val" style="${scoreOk ? 'color:var(--accent)' : ''}">${a.score} <span class="cmp" style="color:var(--muted-foreground)">${scoreOk ? '> seuil 50' : 'S' + (SEMAINE.num-1) + ' : ' + a.scorePrev}</span></div></div>`
-      : `<div class="kpi rv"><div class="lab">Part ${AF.dsp}</div><div class="val">${Math.round((t0.dsp && t0.dsp[AF.dsp]) || 0)}% <span class="cmp" style="color:var(--muted-foreground)">des streams du titre</span></div></div>`}
+      : `<div class="kpi rv"><div class="lab">Part ${AF.dsp}</div><div class="val">${Math.round(MIX[AF.dsp] || 0)}% <span class="cmp" style="color:var(--muted-foreground)">des streams de l'artiste</span></div></div>`}
     <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(a.social.ig + a.social.tt)} <span class="cmp">${deltaHtml(a.social.igD)}</span></div></div>
   </div>
 

@@ -1734,12 +1734,9 @@ const CRIT = {
 };
 const critOf = al => al.crit || 'info';
 function vAlertes(){
-  const cats = ['Toutes','STREAMING','SHAZAM','PLAYLIST ÉDITO','SCORE SPOTIFY'];
   document.documentElement.style.setProperty('--accent', '#C8102E');
   const list = ALERTES
-    .filter(al => alertFilter === 'Toutes' || al.cat === alertFilter)
     .filter(al => alertCrit === 'Toutes' || critOf(al) === alertCrit)
-    .filter(al => !alertMine || MES_ARTISTES.includes(al.artiste))
     .sort((x, y) => CRIT[critOf(x)].o - CRIT[critOf(y)].o);
   const today = list.filter(al => /h$/.test(al.time) || al.time === "aujourd'hui");
   const week = list.filter(al => !today.includes(al));

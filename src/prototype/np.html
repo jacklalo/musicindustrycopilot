@@ -948,7 +948,7 @@ function afScope(a){
 /* ================================================================
    VUE — ACCUEIL / ARTISTES
 ================================================================ */
-let labelFilter = 'Tous', rosterQuery = '', sortKey = 'streams', spotId = null;
+let rosterQuery = '', sortKey = 'streams', spotId = null;
 const MES_ARTISTES = ['zazie','hina','jeremy-frerot'];
 const alertDone = {};
 let heroOpen = true;
@@ -1145,7 +1145,7 @@ function setSpot(id){
 }
 function rosterRows(){
   const all = ranked();
-  const list = sorted().filter(a => (labelFilter === 'Tous' || a.label === labelFilter) && a.nom.toLowerCase().includes(rosterQuery.toLowerCase()));
+  const list = sorted().filter(a => a.nom.toLowerCase().includes(rosterQuery.toLowerCase()));
   const th = (k, lab, cls='') => `<button class="${cls} ${sortKey===k?'on':''}" onclick="setSort('${k}')">${lab}${sortKey===k?' ↓':''}</button>`;
   const head = `<div class="lb-head lb-a">
     <span>Rang</span><span></span>

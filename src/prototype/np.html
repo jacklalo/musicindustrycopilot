@@ -1492,7 +1492,7 @@ function vArtiste(id){
     ${ph(IMGS[a.id], a.accent, '', `<span class="track-chip"><span class="dot"></span>${t0.titre.toUpperCase()}</span>`)}
   </div></section>
 
-  <div class="kpi-band">
+  <div class="kpi-band kpi-float">
     <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(artistSeries.total)} <span class="cmp">${deltaHtml(artistPeriodDelta)}</span></div></div>
     <div class="kpi rv"><div class="lab">Auditeurs mensuels · ${AUD.lab}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(AUD.val)} <span class="cmp">${deltaHtml(AUD.delta)}</span>${AUD.est ? '<span class="cmp" style="color:var(--muted-foreground)"> est.</span>' : ''}</div></div>
     ${spotifyScope
@@ -1711,7 +1711,7 @@ function vTitre(isrc){
     ${ph(U(TIMGS[t.isrc] || ''), a.accent, '', `<span class="track-chip"><span class="dot"></span>${a.nom.toUpperCase()}</span>`)}
   </div></section>
 
-  <div class="kpi-band">
+  <div class="kpi-band kpi-float">
     <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(SERIES.total)} <span class="cmp">${deltaHtml(PERIOD_DELTA)}</span></div></div>
     <div class="kpi rv"><div class="lab">Shazam / jour${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val" style="${shazAlert ? 'color:var(--accent)' : ''}">${sj} <span class="cmp" style="color:var(--muted-foreground)">seuil ${SEUILS.shazam}${shazAlert ? ' ⚑' : ''}</span></div></div>
     <div class="kpi rv"><div class="lab">Playlists édito${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}</div><div class="val">${plList.length}</div></div>

@@ -325,6 +325,55 @@
   .hero-toggle{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);background:none;border:1px solid rgba(255,255,255,.25);border-radius:9999px;padding:7px 14px;cursor:pointer;transition:.2s;font-family:var(--font)}
   .hero-toggle:hover{color:#fff;border-color:#fff}
   .hero-compact .hero-toggle{margin-left:auto}
+
+  /* ===== Hero sombre unifié — page Artistes ===== */
+  .lab-hero{color:#fff;background:linear-gradient(135deg,#1B1D22 0%,#0A0A0B 62%);position:relative;overflow:hidden}
+  .lab-hero::after{content:"";position:absolute;inset:0;background:radial-gradient(600px 320px at 82% 8%, rgba(200,16,46,.22), transparent 70%);pointer-events:none}
+  .lab-hero > *{position:relative;z-index:1}
+  .lab-hero .top{padding:40px 32px 26px;display:grid;grid-template-columns:1.25fr .75fr;gap:44px;align-items:center}
+  .lab-hero.slim .top{padding:20px 32px 16px;grid-template-columns:1fr}
+  .lab-hero .kicker{margin:0 0 16px;color:rgba(255,255,255,.55)}
+  .lab-hero h1{font-size:clamp(38px,5.4vw,72px);font-weight:800;letter-spacing:-.045em;line-height:.94}
+  .lab-hero.slim h1{font-size:24px;letter-spacing:-.03em}
+  .lab-hero .lead{color:rgba(255,255,255,.66);font-size:14.5px;max-width:470px;margin-top:14px;line-height:1.5}
+  .lab-hero .actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+  .lab-hero .head-row{display:flex;align-items:flex-start;gap:16px}
+  .lab-hero .head-row .hero-toggle{margin-left:auto;flex:none}
+
+  .lab-hero .kpis{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12)}
+  .lab-hero .kpi{padding:22px 32px;border-left:1px solid rgba(255,255,255,.1);background:none;transition:background .25s}
+  .lab-hero .kpi:first-child{border-left:none}
+  .lab-hero .kpi:hover{background:rgba(255,255,255,.045)}
+  .lab-hero .kpi .lab{color:rgba(255,255,255,.5);margin-bottom:8px}
+  .lab-hero .kpi .val{font-size:30px;color:#fff}
+  .lab-hero .kpi .cmp{color:rgba(255,255,255,.55)!important}
+
+  .lab-hero .toolbar{display:flex;align-items:center;gap:10px;padding:16px 32px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1)}
+  .lab-hero .toolbar .group-label{color:rgba(255,255,255,.45)}
+  .lab-hero .toolbar .right{margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .lab-hero .toolbar .sync{color:rgba(255,255,255,.45)}
+  .lab-hero .chip{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.8)}
+  .lab-hero .chip:hover{background:rgba(255,255,255,.13);color:#fff}
+  .lab-hero .chip.active{background:#fff;border-color:#fff;color:#0A0A0B}
+  .lab-hero .hero-input{font-family:var(--font);font-size:13px;border:1px solid rgba(255,255,255,.2);border-radius:9999px;padding:9px 17px;outline:none;background:rgba(255,255,255,.06);color:#fff;width:210px;transition:.2s}
+  .lab-hero .hero-input::placeholder{color:rgba(255,255,255,.42)}
+  .lab-hero .hero-input:focus{border-color:#fff;background:rgba(255,255,255,.1)}
+  .lab-hero .btn-light{background:#fff;color:#0A0A0B}
+
+  .lab-hero .changed{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-card);margin:22px 32px 30px;padding:18px 22px;backdrop-filter:blur(8px)}
+  .lab-hero .changed .kicker{margin:0;color:rgba(255,255,255,.5)}
+  .lab-hero .changed li{color:rgba(255,255,255,.85)}
+  .lab-hero .changed a{color:#fff}
+  @media(max-width:960px){
+    .lab-hero .top{grid-template-columns:1fr;padding:28px 20px 20px;gap:24px}
+    .lab-hero .kpis{grid-template-columns:1fr 1fr}
+    .lab-hero .kpi{padding:16px 20px}
+    .lab-hero .kpi .val{font-size:24px}
+    .lab-hero .toolbar{padding:14px 20px}
+    .lab-hero .toolbar .right{margin-left:0;width:100%}
+    .lab-hero .hero-input{flex:1;width:auto;min-width:0}
+    .lab-hero .changed{margin:18px 20px 24px}
+  }
   .changed{border:1px solid var(--line);border-radius:var(--radius-card);background:var(--card);padding:18px 22px;margin-bottom:18px}
   .changed ul{list-style:none;display:grid;gap:10px;margin-top:12px;padding:0}
   .changed li{display:flex;gap:10px;align-items:flex-start;font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.4}

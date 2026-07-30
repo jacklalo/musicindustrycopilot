@@ -788,7 +788,7 @@ function resetFilters(){
 const afChips = (key, vals) => vals.map(p =>
   `<button class="chip chip-sm ${AF[key] === p ? 'active' : ''}" aria-pressed="${AF[key] === p}" onclick="setFilter('${key}', ${JSON.stringify(p).replace(/"/g, '&quot;')})">${p}</button>`).join('');
 
-function filtersBar(ctx, slim=false, titres=null){
+function filtersBar(ctx, slim=false){
   return `<div class="filters"><div class="wrap">
     <span class="group-label">Période</span>
     ${afChips('periode', ['7 j','28 j','12 sem'])}

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>#NP Pilotage — MVP V1 · Dashboard Artiste</title>
+<title>#NP Pilotage MVP V1 · Dashboard Artiste</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
@@ -113,7 +113,7 @@
   .delta{font-weight:700;font-size:14px}
   .delta.pos{color:var(--up)}.delta.neg{color:var(--down)}.delta.flat{color:var(--stable)}
 
-  /* KPI band — gros chiffres bold */
+  /* KPI band gros chiffres bold */
   .kpi-band{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line);background:var(--card)}
   .kpi{padding:30px 40px;border-left:1px solid var(--line);transition:background .25s}
   .kpi:hover{background:var(--surface)}
@@ -167,7 +167,7 @@
   .cover-ph img{transition:transform .5s}
   tr.click:hover .cover-ph img{transform:scale(1.12)}
 
-  /* Tuiles stat — chiffres bold */
+  /* Tuiles stat chiffres bold */
   .tile{border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;background:var(--card);transition:box-shadow .25s, transform .25s}
   .tile:hover{box-shadow:0 14px 40px -20px rgba(0,0,0,.22);transform:translateY(-2px)}
   .tile .lab{font-size:9.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:8px}
@@ -215,7 +215,7 @@
   .artist-card .st b{font-size:20px;font-weight:800;letter-spacing:-.02em;display:block;line-height:1.1}
   .artist-card .st span{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-foreground)}
 
-  /* Hero accueil — stack photos inclinées */
+  /* Hero accueil stack photos inclinées */
   .stack{position:relative;height:420px}
   .stack .ph{position:absolute;border-radius:22px;box-shadow:0 40px 80px -20px rgba(0,0,0,.55);transition:transform .5s cubic-bezier(.2,.7,.2,1)}
   .stack .s1{width:62%;aspect-ratio:.9;right:6%;top:0;transform:rotate(4deg);z-index:2}
@@ -332,7 +332,7 @@
   .hero-toggle:hover{color:#fff;border-color:#fff}
   .hero-compact .hero-toggle{margin-left:auto}
 
-  /* ===== Hero dégradé — page Artistes / Top roster ===== */
+  /* ===== Hero dégradé page Artistes / Top roster ===== */
   .lab-hero{color:#fff;background:linear-gradient(135deg,#C8102E 0%,#0B0B0B 72%);position:relative;overflow:hidden}
   .lab-hero .wrap{padding:46px 32px;display:grid;grid-template-columns:1.2fr .8fr;gap:44px;align-items:center;min-height:420px}
   .lab-hero .kicker{margin:0 0 18px;color:rgba(255,255,255,.55);letter-spacing:.22em}
@@ -350,14 +350,14 @@
   .lab-hero.slim .kicker{margin:0}
   .lab-hero.slim .hero-toggle{margin-left:auto}
 
-  /* Barre de filtres claire — page Artistes */
+  /* Barre de filtres claire page Artistes */
   .lab-filters{background:var(--background);border-bottom:1px solid var(--line)}
   .lab-filters .wrap{display:flex;align-items:center;gap:10px;padding:14px 32px;flex-wrap:wrap}
   .lab-filters .right{margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .lab-filters .hero-input{font-family:var(--font);font-size:13px;border:1px solid var(--line);border-radius:9999px;padding:9px 17px;outline:none;background:var(--card);color:var(--foreground);width:210px;transition:.2s}
   .lab-filters .hero-input:focus{border-color:var(--ink)}
 
-  /* Digest « ce qui a changé » — carte blanche */
+  /* Digest « ce qui a changé » carte blanche */
   .changed-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-card);padding:24px 28px;margin-bottom:26px;position:relative;overflow:hidden}
   .changed-card::before{content:"";position:absolute;inset:0;background:color-mix(in srgb, var(--pop) 4%, transparent);pointer-events:none}
   .changed-card > *{position:relative;z-index:1}
@@ -488,7 +488,7 @@
   .ask-src span{font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-foreground);border:1px solid var(--line);border-radius:9999px;padding:3px 9px}
 
   /* =========================================================
-     MOBILE — marges fines, UX app-like
+     MOBILE marges fines, UX app-like
      ========================================================= */
   .tabbar{display:none}
   .m-only{display:none}
@@ -748,7 +748,7 @@
 <footer class="site">
   <div class="wrap">
     <span><span class="np">#MIC</span>&nbsp;&nbsp;for label 6&amp;7 · MVP V1 · PROTOTYPE</span>
-    <span>6&amp;7 — HASHTAG · 2026</span>
+    <span>6&amp;7 HASHTAG · 2026</span>
   </div>
 </footer>
 
@@ -764,17 +764,17 @@
 
 <script>
 const SEMAINE = { num: 31, du: 'ven 24/07', au: 'ven 31/07/2026' };
-const SEUILS = { streaming: 20, shazam: 300, score: 50 }; // §8.3 — fixes V1
+const SEUILS = { streaming: 20, shazam: 300, score: 50 }; // §8.3 fixes V1
 
 const ARTISTS = [
   { id:'zazie', nom:'Zazie', label:'6&7', genre:'Pop · Chanson', ville:'Paris, FR', accent:'#C8102E',
     bio:"Autrice-compositrice icône de la pop francophone, retour attendu avec un single épuré.",
     streams:2900000, delta:12.4, listeners:3100000, listenersDelta:4.1, score:62, scorePrev:57,
     social:{ig:1600000,igD:1.8,tt:420000,ttD:6.2,posts:14,ugc:241000,ugcD:38},
-    demo:{f:58,age:'25-44 (61%)',pays:[['France',72],['Belgique',9],['Suisse',6],['Canada',5]],shift:'Progression Bruxelles (+82% streams) & Lyon — audience stable en âge.'},
+    demo:{f:58,age:'25-44 (61%)',pays:[['France',72],['Belgique',9],['Suisse',6],['Canada',5]],shift:'Progression Bruxelles (+82% streams) & Lyon audience stable en âge.'},
     physique:{mep:12500,d2c:1840,magasins:6200},
     radio:{rang:4, rangPrev:7, diffusions:[['NRJ',48],['RTL2',41],['France Inter',22],['Europe 2',19],['Chérie FM',17]]},
-    actus:[['Interview','Quotidien — TMC','04/08/2026'],['Sortie single','« Peu Importe » (radio edit)','21/08/2026'],['Campagne','Meta + TikTok Ads — 15 k€','25/08/2026']],
+    actus:[['Interview','Quotidien TMC','04/08/2026'],['Sortie single','« Peu Importe » (radio edit)','21/08/2026'],['Campagne','Meta + TikTok Ads 15 k€','25/08/2026']],
     titres:[
       { isrc:'FR-Z03-26-00101', upc:'3700187679101', titre:'Peu Importe', projet:'Single', sortie:'2026',
         streamsHebdo:412000, delta:24.1, shazamJour:186, playlists:[['Hits France','Spotify','Entrée · S31',3,'#12'],['Nouveautés Pop','Deezer','S29',14,'#8'],['A-List Pop','Apple Music','S30',8,'#21']],
@@ -793,10 +793,10 @@ const ARTISTS = [
     demo:{f:64,age:'25-34 (44%)',pays:[['France',81],['Belgique',7],['Suisse',5],['Canada',3]],shift:'Percée Toulouse & Nantes. Légère féminisation de l\'audience.'},
     physique:{mep:8200,d2c:960,magasins:4100},
     radio:{rang:2, rangPrev:3, diffusions:[['RTL2',52],['NRJ',44],['Europe 2',31],['Virgin Radio',26],['Chérie FM',21]]},
-    actus:[['Interview','France Inter — matinale','06/08/2026'],['Sortie','EP acoustique','11/09/2026']],
+    actus:[['Interview','France Inter matinale','06/08/2026'],['Sortie','EP acoustique','11/09/2026']],
     titres:[
       { isrc:'FR-6V8-26-00214', upc:'3700187679210', titre:'Un homme', projet:'Album « Frerot »', sortie:'2026',
-        streamsHebdo:520000, delta:22.8, shazamJour:97, playlists:[['Playlist >100K user','Spotify','S31 (hors MVP — à arbitrer)',1,'—'],['Hits France','Spotify','S28',22,'#28']],
+        streamsHebdo:520000, delta:22.8, shazamJour:97, playlists:[['Playlist >100K user','Spotify','S31 (hors MVP à arbitrer)',1,''],['Hits France','Spotify','S28',22,'#28']],
         cadence:[298,310,325,352,371,398,424,520], dsp:{Spotify:61,Apple:14,Deezer:17,Amazon:8}, sources:{actives:58,passives:42} },
       { isrc:'FR-6V8-25-00187', upc:'3700187679198', titre:'Un homme ça pleure pas', projet:'Album « Frerot »', sortie:'2025',
         streamsHebdo:130000, delta:8.1, shazamJour:44, playlists:[['Pop FR','Deezer','S22',63,'#15']],
@@ -809,27 +809,27 @@ const ARTISTS = [
     demo:{f:41,age:'25-34 (39%)',pays:[['France',77],['Belgique',10],['Allemagne',4],['Suisse',4]],shift:'Audience stable, cœur 25-34. Frémissement Belgique.'},
     physique:{mep:5400,d2c:2210,magasins:2600},
     radio:{rang:9, rangPrev:8, diffusions:[['OÜI FM',33],['Virgin Radio',24],['RTL2',18],['Mouv\'',9],['France Inter',7]]},
-    actus:[['Live','L\'Olympia — ouverture billetterie','09/07/2026'],['Sync','Piste pub TV — à confirmer','—']],
+    actus:[['Live','L\'Olympia ouverture billetterie','09/07/2026'],['Sync','Piste pub TV à confirmer','']],
     titres:[
       { isrc:'FR-SYN-26-00092', upc:'3700187679302', titre:'Silence', projet:'Single', sortie:'2026',
-        streamsHebdo:240000, delta:8.6, shazamJour:58, playlists:[['Rock FR','Deezer','Sortie · S31',0,'—'],['New Rock','Spotify','S27',29,'#34']],
+        streamsHebdo:240000, delta:8.6, shazamJour:58, playlists:[['Rock FR','Deezer','Sortie · S31',0,''],['New Rock','Spotify','S27',29,'#34']],
         cadence:[198,204,210,215,221,225,232,240], dsp:{Spotify:54,Apple:12,Deezer:23,Amazon:11}, sources:{actives:47,passives:53} },
     ]},
   { id:'hina', nom:'Hina', label:'6&7', genre:'Pop', ville:'Paris, FR', accent:'#ED2362',
-    bio:"Nouvelle scène pop française — « Fantaisie » explose sur TikTok.",
+    bio:"Nouvelle scène pop française « Fantaisie » explose sur TikTok.",
     streams:820000, delta:34.2, listeners:640000, listenersDelta:11.8, score:44, scorePrev:38,
     social:{ig:220000,igD:9.4,tt:480000,ttD:21.5,posts:22,ugc:240000,ugcD:96},
     demo:{f:71,age:'18-29 (67%)',pays:[['France',69],['Belgique',11],['Maroc',6],['Suisse',4]],shift:'Explosion 18-24 · ligne urbaine Paris/Lyon/Marseille. Nouvelles villes : Lille, Bruxelles.'},
     physique:{mep:900,d2c:340,magasins:410},
     radio:{rang:18, rangPrev:26, diffusions:[['NRJ',12],['Fun Radio',9],['Skyrock',7],['Europe 2',4],['Virgin Radio',3]]},
-    actus:[['Sortie','EP « Fantaisie » — 4 titres','18/09/2026'],['Campagne','Activation créateurs TikTok — 8 k€','05/08/2026']],
+    actus:[['Sortie','EP « Fantaisie » 4 titres','18/09/2026'],['Campagne','Activation créateurs TikTok 8 k€','05/08/2026']],
     titres:[
       { isrc:'FR-6V8-26-00301', upc:'3700187679455', titre:'Fantaisie', projet:'Single', sortie:'2026',
         streamsHebdo:310000, delta:34.2, shazamJour:412, playlists:[['Viral France','Spotify','Entrée · S30',9,'#4'],['Nouveautés Pop','Deezer','S30',10,'#6']],
         cadence:[88,96,110,132,158,189,231,310], dsp:{Spotify:63,Apple:11,Deezer:15,Amazon:11}, sources:{actives:78,passives:22} },
     ]},
   { id:'virgile-martini', nom:'Virgile Martini', label:'Syndicate Records', genre:'Pop alternative', ville:'Paris, FR', accent:'#1E5BFF',
-    bio:"Profil emerging — taux d'ajout en playlists en forte hausse.",
+    bio:"Profil emerging taux d'ajout en playlists en forte hausse.",
     streams:610000, delta:33.7, listeners:520000, listenersDelta:9.2, score:38, scorePrev:33,
     social:{ig:88000,igD:5.1,tt:130000,ttD:14.2,posts:11,ugc:52000,ugcD:41},
     demo:{f:54,age:'18-29 (58%)',pays:[['France',74],['Belgique',8],['Suisse',6],['Québec',5]],shift:'Découverte forte via playlists édito. Audience jeune en construction.'},
@@ -842,27 +842,27 @@ const ARTISTS = [
         cadence:[52,58,64,71,80,92,108,145], dsp:{Spotify:66,Apple:13,Deezer:12,Amazon:9}, sources:{actives:81,passives:19} },
     ]},
   { id:'krisy', nom:'Krisy', label:'Syndicate Records', genre:'Rap', ville:'Paris, FR', accent:'#4B2D7A',
-    bio:"Plume rap mélodique — catalogue solide, cycle entre deux projets.",
+    bio:"Plume rap mélodique catalogue solide, cycle entre deux projets.",
     streams:1500000, delta:-21.3, listeners:1200000, listenersDelta:-3.4, score:47, scorePrev:49,
     social:{ig:350000,igD:0.4,tt:210000,ttD:-1.2,posts:3,ugc:18000,ugcD:-8},
-    demo:{f:38,age:'18-29 (62%)',pays:[['France',80],['Belgique',9],['Suisse',4],['Maroc',3]],shift:'Vieillissement léger du cœur d\'audience — repli post-projet classique.'},
+    demo:{f:38,age:'18-29 (62%)',pays:[['France',80],['Belgique',9],['Suisse',4],['Maroc',3]],shift:'Vieillissement léger du cœur d\'audience repli post-projet classique.'},
     physique:{mep:2100,d2c:520,magasins:900},
     radio:{rang:22, rangPrev:19, diffusions:[['Skyrock',21],['Mouv\'',14],['Générations',11],['Fun Radio',3],['NRJ',2]]},
-    actus:[['Sortie','Mixtape — date à caler','Q4 2026']],
+    actus:[['Sortie','Mixtape date à caler','Q4 2026']],
     titres:[
       { isrc:'FR-SYN-25-00076', upc:'3700187679610', titre:'Rituel', projet:'Album « Rituel »', sortie:'2025',
-        streamsHebdo:190000, delta:-21.3, shazamJour:22, playlists:[['Rap FR','Spotify','Sortie · S31',0,'—']],
+        streamsHebdo:190000, delta:-21.3, shazamJour:22, playlists:[['Rap FR','Spotify','Sortie · S31',0,'']],
         cadence:[310,298,285,271,262,254,241,190], dsp:{Spotify:59,Apple:10,Deezer:21,Amazon:10}, sources:{actives:24,passives:76} },
     ]},
   { id:'laura-ferre', nom:'Laura Ferré', label:'6&7', genre:'Chanson · Pop', ville:'Paris, FR', accent:'#B08D2F',
-    bio:"Co-exploitation avec PlayTwo — données récupérées via accès Believe Backstage individuel.",
+    bio:"Co-exploitation avec PlayTwo données récupérées via accès Believe Backstage individuel.",
     special:'Accès Believe individuel · co-exploitation PlayTwo',
     streams:310000, delta:5.4, listeners:280000, listenersDelta:1.9, score:36, scorePrev:35,
     social:{ig:96000,igD:1.1,tt:41000,ttD:2.8,posts:7,ugc:9000,ugcD:3},
     demo:{f:66,age:'35-54 (48%)',pays:[['France',88],['Belgique',5],['Suisse',4]],shift:'Audience fidèle, plus âgée que la moyenne roster.'},
     physique:{mep:1600,d2c:240,magasins:1100},
     radio:{rang:15, rangPrev:15, diffusions:[['France Bleu',18],['RTL',12],['Europe 1',8],['Chérie FM',6],['Nostalgie',5]]},
-    actus:[['Média','France 3 — émission régionale','12/08/2026']],
+    actus:[['Média','France 3 émission régionale','12/08/2026']],
     titres:[
       { isrc:'FR-PT2-26-00033', upc:'3700187679705', titre:'Soleil bleu', projet:'Album « Vanille »', sortie:'2026',
         streamsHebdo:52000, delta:5.4, shazamJour:9, playlists:[['Chanson douce','Deezer','S26',38,'#27']],
@@ -870,7 +870,7 @@ const ARTISTS = [
     ]},
 ];
 
-/* Alertes générées par le moteur de règles (§8.3 — seuils fixes) */
+/* Alertes générées par le moteur de règles (§8.3 seuils fixes) */
 const ALERTES = [
   { id:'a1', cat:'STREAMING', color:'#16A34A', ic:'↑', niveau:'titre', artiste:'jeremy-frerot', crit:'opp',
     link:'#/titre/FR-6V8-26-00214',
@@ -887,7 +887,7 @@ const ALERTES = [
   { id:'a4', cat:'SHAZAM', color:'#ED2362', ic:'✳', niveau:'titre', artiste:'hina', crit:'opp',
     link:'#/titre/FR-6V8-26-00301',
     txt:'Hina · « Fantaisie » : 412 Shazams/jour',
-    rule:'Règle : > 300/jour (seuil à confirmer : 500 évoqué — Q2 client)', time:'hier', ts:'jeu. 30/07/2026 · 06:02 CET' },
+    rule:'Règle : > 300/jour (seuil à confirmer : 500 évoqué Q2 client)', time:'hier', ts:'jeu. 30/07/2026 · 06:02 CET' },
   { id:'a5', cat:'PLAYLIST ÉDITO', color:'#1E5BFF', ic:'▸', niveau:'titre', artiste:'zazie', crit:'opp',
     link:'#/titre/FR-Z03-26-00101',
     txt:'Zazie · « Peu Importe » : entrée playlist « Hits France » (Spotify, #12)',
@@ -898,26 +898,26 @@ const ALERTES = [
     rule:'Règle : sortie de playlist éditoriale', time:'hier', ts:'jeu. 30/07/2026 · 05:48 CET' },
   { id:'a7', cat:'SCORE SPOTIFY', color:'#4B2D7A', ic:'★', niveau:'artiste', artiste:'zazie', crit:'info',
     link:'#/artiste/zazie/s-streaming',
-    txt:'Zazie : Score Spotify 62/100 — au-dessus du seuil',
+    txt:'Zazie : Score Spotify 62/100 au-dessus du seuil',
     rule:'Règle : popularity > 50', time:'ven. dernier', ts:'ven. 24/07/2026 · 06:00 CET' },
   { id:'a8', cat:'SCORE SPOTIFY', color:'#4B2D7A', ic:'★', niveau:'artiste', artiste:'jeremy-frerot', crit:'info',
     link:'#/artiste/jeremy-frerot/s-streaming',
-    txt:'Jérémy Frerot : Score Spotify 58/100 — au-dessus du seuil',
+    txt:'Jérémy Frerot : Score Spotify 58/100 au-dessus du seuil',
     rule:'Règle : popularity > 50', time:'ven. dernier', ts:'ven. 24/07/2026 · 06:00 CET' },
 ];
 
-/* Saisies manuelles (historisées comme les données auto — §7.5) */
+/* Saisies manuelles (historisées comme les données auto §7.5) */
 let SAISIES = [
-  { type:'Physique — Mise en place', artiste:'Zazie', ref:'Album « Zest of » (UPC 3700187679095)', val:'12 500 unités distribuées', sem:'S31', date:'25/07/2026', par:'MC', src:'FORMULAIRE' },
-  { type:'Physique — Magasins', artiste:'Jérémy Frerot', ref:'FNAC (national)', val:'2 300 unités vendues', sem:'S30', date:'25/07/2026', par:'MC', src:'CSV' },
-  { type:'Physique — D2C', artiste:'Skip the Use', ref:'Shop officiel (merch + vinyle)', val:'2 210 unités vendues', sem:'S31', date:'24/07/2026', par:'AL', src:'TEXTE' },
-  { type:'Actu — Date média', artiste:'Zazie', ref:'Quotidien (TMC) — interview', val:'04/08/2026', sem:'S31', date:'22/07/2026', par:'MC', src:'FORMULAIRE' },
-  { type:'Actu — Lancement pub', artiste:'Hina', ref:'Activation créateurs TikTok', val:'8 000 €', sem:'S31', date:'21/07/2026', par:'AL', src:'TEXTE' },
-  { type:'Actu — Sortie prévue', artiste:'Hina', ref:'EP « Fantaisie » — 4 titres', val:'18/09/2026', sem:'S30', date:'18/07/2026', par:'MC', src:'FORMULAIRE' },
+  { type:'Physique Mise en place', artiste:'Zazie', ref:'Album « Zest of » (UPC 3700187679095)', val:'12 500 unités distribuées', sem:'S31', date:'25/07/2026', par:'MC', src:'FORMULAIRE' },
+  { type:'Physique Magasins', artiste:'Jérémy Frerot', ref:'FNAC (national)', val:'2 300 unités vendues', sem:'S30', date:'25/07/2026', par:'MC', src:'CSV' },
+  { type:'Physique D2C', artiste:'Skip the Use', ref:'Shop officiel (merch + vinyle)', val:'2 210 unités vendues', sem:'S31', date:'24/07/2026', par:'AL', src:'TEXTE' },
+  { type:'Actu Date média', artiste:'Zazie', ref:'Quotidien (TMC) interview', val:'04/08/2026', sem:'S31', date:'22/07/2026', par:'MC', src:'FORMULAIRE' },
+  { type:'Actu Lancement pub', artiste:'Hina', ref:'Activation créateurs TikTok', val:'8 000 €', sem:'S31', date:'21/07/2026', par:'AL', src:'TEXTE' },
+  { type:'Actu Sortie prévue', artiste:'Hina', ref:'EP « Fantaisie » 4 titres', val:'18/09/2026', sem:'S30', date:'18/07/2026', par:'MC', src:'FORMULAIRE' },
 ];
 
 /* ================================================================
-   IMAGES — Unsplash (duotone via blend avec l'accent artiste)
+   IMAGES Unsplash (duotone via blend avec l'accent artiste)
 ================================================================ */
 const U = id => `https://images.unsplash.com/${id}?q=80&w=900&auto=format&fit=crop`;
 const IMGS = {
@@ -941,15 +941,15 @@ const TIMGS = {
   'FR-SYN-25-00076':'photo-1571330735066-03aaa9429d89',
   'FR-PT2-26-00033':'photo-1511671782779-c97d3d27a1d4',
 };
-/* Engagements & posts les plus forts (onglet 0 — Artiste/Post) */
+/* Engagements & posts les plus forts (onglet 0 Artiste/Post) */
 const TOPPOSTS = {
-  'zazie':          { plat:'Instagram', type:'Reel', txt:'Teaser « Peu Importe » — extrait studio', eng:184000, engD:41 },
-  'jeremy-frerot':  { plat:'Instagram', type:'Post', txt:'Annonce Zénith Métropole — Nantes', eng:96000, engD:18 },
-  'skip-the-use':   { plat:'Instagram', type:'Reel', txt:'Répétitions Olympia — backstage', eng:44000, engD:9 },
-  'hina':           { plat:'TikTok', type:'Vidéo', txt:'Trend « Fantaisie » — duo créateurs', eng:412000, engD:96 },
+  'zazie':          { plat:'Instagram', type:'Reel', txt:'Teaser « Peu Importe » extrait studio', eng:184000, engD:41 },
+  'jeremy-frerot':  { plat:'Instagram', type:'Post', txt:'Annonce Zénith Métropole Nantes', eng:96000, engD:18 },
+  'skip-the-use':   { plat:'Instagram', type:'Reel', txt:'Répétitions Olympia backstage', eng:44000, engD:9 },
+  'hina':           { plat:'TikTok', type:'Vidéo', txt:'Trend « Fantaisie » duo créateurs', eng:412000, engD:96 },
   'virgile-martini':{ plat:'TikTok', type:'Vidéo', txt:'Session live « Nuit blanche »', eng:78000, engD:52 },
-  'krisy':          { plat:'Instagram', type:'Story', txt:'Teasing mixtape — extrait 20s', eng:31000, engD:-6 },
-  'laura-ferre':    { plat:'Instagram', type:'Post', txt:'Coulisses France 3 — annonce', eng:12000, engD:4 },
+  'krisy':          { plat:'Instagram', type:'Story', txt:'Teasing mixtape extrait 20s', eng:31000, engD:-6 },
+  'laura-ferre':    { plat:'Instagram', type:'Post', txt:'Coulisses France 3 annonce', eng:12000, engD:4 },
 };
 
 const ph = (src, acc, cls='', inner='') =>
@@ -1018,8 +1018,8 @@ function openExport(ctx){
   $('#modal').innerHTML = `
     <div class="m-head"><div class="lab">EXPORT</div><b>Partager « ${ctx} »</b></div>
     <div class="m-body">
-      <div class="opt" onclick="closeOverlay();toast('📄&nbsp; PDF de synthèse généré — <b>${ctx}</b> (S${SEMAINE.num})')"><span class="ic">📄</span><div><b>PDF de synthèse</b><span>Format uniforme — management, partenaires, artistes</span></div></div>
-      <div class="opt" onclick="closeOverlay();toast('🖼&nbsp; Capture image enregistrée — <b>${ctx}</b>')"><span class="ic">🖼</span><div><b>Capture image de la vue</b><span>Screenshot partageable de l'écran courant</span></div></div>
+      <div class="opt" onclick="closeOverlay();toast('📄&nbsp; PDF de synthèse généré <b>${ctx}</b> (S${SEMAINE.num})')"><span class="ic">📄</span><div><b>PDF de synthèse</b><span>Format uniforme management, partenaires, artistes</span></div></div>
+      <div class="opt" onclick="closeOverlay();toast('🖼&nbsp; Capture image enregistrée <b>${ctx}</b>')"><span class="ic">🖼</span><div><b>Capture image de la vue</b><span>Screenshot partageable de l'écran courant</span></div></div>
       <div style="font-size:11px;color:var(--muted-foreground);margin-top:4px">PPT éditable & CSV : hors V1 (après ateliers).</div>
     </div>`;
   $('#overlay').classList.add('show');
@@ -1189,7 +1189,7 @@ function afScope(a){
 
 
 /* ================================================================
-   VUE — ACCUEIL / ARTISTES
+   VUE ACCUEIL / ARTISTES
 ================================================================ */
 let rosterQuery = '', sortKey = 'streams', spotId = null;
 const MES_ARTISTES = ['zazie','hina','jeremy-frerot'];
@@ -1228,7 +1228,7 @@ function whatChanged(){
   const pl = ALERTES.filter(al => al.cat === 'PLAYLIST ÉDITO').length;
   const f = [];
   f.push([`<i style="color:var(--up);background:rgba(22,163,74,.1)">▲</i>`, `<b>${mover.nom}</b> est le plus fort mouvement de la semaine : <b>+${mover.delta}%</b> de streams (S${SEMAINE.num} vs S${SEMAINE.num-1}). <a href="#/artiste/${mover.id}">Ouvrir ↗</a>`]);
-  if (drop.delta < 0) f.push([`<i style="color:var(--down);background:rgba(234,88,12,.1)">▼</i>`, `<b>${drop.nom}</b> recule de <b>${drop.delta}%</b> — seuil d'alerte ${Math.abs(drop.delta) >= SEUILS.streaming ? 'franchi' : 'non franchi'}. <a href="#/artiste/${drop.id}">Ouvrir ↗</a>`]);
+  if (drop.delta < 0) f.push([`<i style="color:var(--down);background:rgba(234,88,12,.1)">▼</i>`, `<b>${drop.nom}</b> recule de <b>${drop.delta}%</b> seuil d'alerte ${Math.abs(drop.delta) >= SEUILS.streaming ? 'franchi' : 'non franchi'}. <a href="#/artiste/${drop.id}">Ouvrir ↗</a>`]);
   f.push([`<i style="color:#C8102E;background:rgba(200,16,46,.1)">⚑</i>`, `<b>${shaz.t.shazamJour} Shazams/jour</b> sur « ${shaz.t.titre} » (${shaz.a.nom}) et <b>${pl} mouvement${pl>1?'s':''} de playlist édito</b> depuis vendredi. <a href="#/alertes">Voir les alertes ↗</a>`]);
   return `<div class="changed-card rv">
     <div class="kicker"><span class="dot"></span>CE QUI A CHANGÉ DEPUIS VENDREDI · S${SEMAINE.num}</div>
@@ -1247,7 +1247,7 @@ const ASKS = [
   { q: 'Qui recule et pourquoi ?', run(){
       const l = [...ARTISTS].sort((x,y) => x.delta - y.delta).filter(a => a.delta < 0).slice(0,4);
       if (!l.length) return { txt: 'Aucun artiste du roster n\'est en recul cette semaine.', cards: [], src: ['Believe'] };
-      return { txt: `<b>${l.length} artiste${l.length>1?'s':''}</b> en repli cette semaine. Le plus marqué : <b>${l[0].nom}</b> à <b>${l[0].delta}%</b> — ${Math.abs(l[0].delta) >= SEUILS.streaming ? 'seuil d\'alerte franchi, arbitrage à prévoir' : 'sous le seuil d\'alerte, à surveiller'}.`,
+      return { txt: `<b>${l.length} artiste${l.length>1?'s':''}</b> en repli cette semaine. Le plus marqué : <b>${l[0].nom}</b> à <b>${l[0].delta}%</b> ${Math.abs(l[0].delta) >= SEUILS.streaming ? 'seuil d\'alerte franchi, arbitrage à prévoir' : 'sous le seuil d\'alerte, à surveiller'}.`,
         cards: l.map(a => askCard(a, a.delta+'%', 'var(--down)', `${fmt(a.streams)} streams · ${a.label}`)),
         src: ['Believe', 'Spotify'] };
     }},
@@ -1278,7 +1278,7 @@ function askRun(q){
     ASKS.find(x => q.toLowerCase().split(/\s+/).filter(w => w.length > 4).some(w => x.q.toLowerCase().includes(w)));
   const a = artist(q.toLowerCase().trim()) || ARTISTS.find(a => q.toLowerCase().includes(a.nom.toLowerCase()));
   let res;
-  if (a) res = { txt: `<b>${a.nom}</b> (${a.label}) — <b>${fmt(a.streams)} streams</b> sur S${SEMAINE.num}, ${(a.delta>0?'+':'')+a.delta}% vs S${SEMAINE.num-1}, ${shazamOf(a)} Shazams/jour cumulés. <a href="#/artiste/${a.id}">Ouvrir la fiche ↗</a>`,
+  if (a) res = { txt: `<b>${a.nom}</b> (${a.label}) <b>${fmt(a.streams)} streams</b> sur S${SEMAINE.num}, ${(a.delta>0?'+':'')+a.delta}% vs S${SEMAINE.num-1}, ${shazamOf(a)} Shazams/jour cumulés. <a href="#/artiste/${a.id}">Ouvrir la fiche ↗</a>`,
     cards: [askCard(a, (a.delta>0?'+':'')+a.delta+'%', a.delta>=0?'var(--up)':'var(--down)', `${fmt(a.streams)} streams · ${a.genre}`)], src: ['Believe', 'Spotify', 'Shazam'] };
   else if (found) res = found.run();
   else res = ASKS[4].run();
@@ -1296,7 +1296,7 @@ function vHome(){
   return `<div class="ask-wrap">
     <div class="ask-mark">#NP INTELLIGENCE</div>
     <h1 class="ask-h1">Posez n'importe quelle question.</h1>
-    <p class="ask-sub">Streaming, Shazam, alertes, saisies — la donnée du roster, en une phrase.</p>
+    <p class="ask-sub">Streaming, Shazam, alertes, saisies la donnée du roster, en une phrase.</p>
     <form class="ask-bar" onsubmit="return askSubmit(event)">
       <input id="ask-input" autocomplete="off" placeholder="Ex : quel artiste accélère cette semaine ?" value="${a ? a.q.replace(/"/g,'&quot;') : ''}">
       <button class="ask-send" type="submit" aria-label="Envoyer">↑</button>
@@ -1326,7 +1326,7 @@ function labelHero(){
             <button class="hero-toggle" onclick="toggleHero()">Réduire ▴</button>
           </div>
           <h1 class="rv in">Top roster<span style="color:#C8102E">.</span></h1>
-          <p class="lead">Le classement streaming de la semaine — un rang, un chiffre, une tendance, puis la vue 360° de chaque artiste.</p>
+          <p class="lead">Le classement streaming de la semaine un rang, un chiffre, une tendance, puis la vue 360° de chaque artiste.</p>
           <div class="actions">
             <button class="btn btn-light" onclick="openExport('Synthèse roster S${SEMAINE.num}')">Exporter la synthèse <span class="ar">↗</span></button>
             <a class="btn btn-outline-w" href="#/alertes">⚑ ${ALERTES.length} alertes cette semaine</a>
@@ -1405,8 +1405,8 @@ function rosterRows(){
       <span class="lb-rank">${String(rank).padStart(2,'0')}</span>
       <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${IMGS[a.id]}" loading="lazy" alt="" onerror="this.remove()"></span>
       <span class="lb-name"><b>${a.nom}${nA ? `<span class="flagpill" title="${nA} alerte(s) active(s)">⚑ ${nA}</span>` : ''}</b><span>${a.label} · ${a.genre}${a.special ? ' · ⚑' : ''}</span></span>
-      <span class="lb-gauge hm" title="Trajectoire streams — 8 dernières semaines">${sparkMini(serie, a.accent, 118, 34)}<span class="glab" style="margin:4px 0 0">${fmt(lastW)} streams / sem</span></span>
-      <span class="lb-val"><b>${fmt(a.streams)}</b><span class="sub-d" style="color:${col}" title="Évolution du volume de streams, S${SEMAINE.num} vs S${SEMAINE.num-1}">${a.delta > 0 ? '▲ +' : a.delta < 0 ? '▼ ' : '— '}${a.delta}% <span style="color:var(--muted-foreground);font-weight:600">vs S${SEMAINE.num-1}</span></span></span>
+      <span class="lb-gauge hm" title="Trajectoire streams 8 dernières semaines">${sparkMini(serie, a.accent, 118, 34)}<span class="glab" style="margin:4px 0 0">${fmt(lastW)} streams / sem</span></span>
+      <span class="lb-val"><b>${fmt(a.streams)}</b><span class="sub-d" style="color:${col}" title="Évolution du volume de streams, S${SEMAINE.num} vs S${SEMAINE.num-1}">${a.delta > 0 ? '▲ +' : a.delta < 0 ? '▼ ' : ' '}${a.delta}% <span style="color:var(--muted-foreground);font-weight:600">vs S${SEMAINE.num-1}</span></span></span>
       <span class="go hm">↗</span>
     </a>`;
   }).join('') || '<div class="empty">Aucun artiste ne correspond.</div>';
@@ -1428,7 +1428,7 @@ function spotlight(a){
       </div>
       <div class="kicker" style="letter-spacing:.18em;margin-bottom:6px">VÉLOCITÉ · ${t0.titre.toUpperCase()} · 8 SEM</div>
       ${sparkline(t0.cadence, a.accent, 400, 110)}
-      ${alerts.length ? `<div style="margin:12px 0 2px;display:grid;gap:6px">${alerts.slice(0,2).map(al => `<a href="${al.link || ('#/artiste/' + a.id)}" style="font-size:12.5px;font-weight:700;color:${CRIT[critOf(al)].c};text-decoration:none">⚑ ${al.cat} — ${al.txt.split(' : ')[1] || al.txt}</a>`).join('')}</div>` : ''}
+      ${alerts.length ? `<div style="margin:12px 0 2px;display:grid;gap:6px">${alerts.slice(0,2).map(al => `<a href="${al.link || ('#/artiste/' + a.id)}" style="font-size:12.5px;font-weight:700;color:${CRIT[critOf(al)].c};text-decoration:none">⚑ ${al.cat} ${al.txt.split(' : ')[1] || al.txt}</a>`).join('')}</div>` : ''}
       <a class="btn btn-dark" style="width:100%;justify-content:center;margin-top:14px" href="#/artiste/${a.id}">Ouvrir la fiche artiste <span class="ar">↗</span></a>
     </div>
   </div>`;
@@ -1436,7 +1436,7 @@ function spotlight(a){
 function renderRosterOnly(){ $('#roster-grid').innerHTML = rosterRows(); }
 
 /* ================================================================
-   VUE — DASHBOARD ARTISTE (§7.1)
+   VUE DASHBOARD ARTISTE (§7.1)
 ================================================================ */
 const SECTIONS = [['synthese','Synthèse'],['titres','Titres'],['streaming','Streaming'],['social','Social'],['demo','Démographie'],['physique','Physique'],['radio','Radios'],['actus','Actus']];
 function vArtiste(id){
@@ -1518,7 +1518,7 @@ function vArtiste(id){
       <div class="lb rv">
         ${[...tl].sort((x,y) => periodSeries(a,y).total - periodSeries(a,x).total).map((t,i,arr) => { const sj = shz(t.shazamJour); const flag = sj > SEUILS.shazam; const ts = periodSeries(a,t); const td = periodDelta(t); return `
         <a class="lb-row lb-t" style="--acc:${a.accent}" href="#/titre/${t.isrc}">
-          <span class="lb-rank">${String(i+1).padStart(2,'0')}<small class="${td > 0 ? 'rk-up' : td < 0 ? 'rk-dn' : 'rk-eq'}">${td > 0 ? '↑' : td < 0 ? '↓' : '—'} ${Math.abs(td)}%</small></span>
+          <span class="lb-rank">${String(i+1).padStart(2,'0')}<small class="${td > 0 ? 'rk-up' : td < 0 ? 'rk-dn' : 'rk-eq'}">${td > 0 ? '↑' : td < 0 ? '↓' : ''} ${Math.abs(td)}%</small></span>
           <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${U(TIMGS[t.isrc] || '')}" loading="lazy" alt="" onerror="this.remove()"></span>
           <span class="lb-name"><b>${t.titre}</b><span>${t.projet} · <span class="mono">${t.isrc}</span></span></span>
           <span class="hm">${sparkMini(ts.values, a.accent)}</span>
@@ -1580,7 +1580,7 @@ function vArtiste(id){
         </div>
         <div class="lb-val" style="text-align:right"><b style="font-size:32px">${fmt(tp.eng)}</b><span>engagements · ${momBadgeTxt(tp.engD)}</span></div>
       </div>` : ''; })()}
-      <div class="note-line">Social listening qualitatif (sentiment, feats) : NLP — V2.</div>
+      <div class="note-line">Social listening qualitatif (sentiment, feats) : NLP V2.</div>
     </div>
 
     <div id="s-demo" style="scroll-margin-top:130px;margin-top:56px">
@@ -1609,16 +1609,16 @@ function vArtiste(id){
       <div id="s-physique" style="scroll-margin-top:130px">
         <h2 class="h-sect rv">Physique<span style="color:var(--accent)">.</span> <small><span class="badge b-manual">SAISIE MANUELLE</span> · ${P.lab}</small></h2>
         <div class="grid g3" style="gap:13px">
-          <div class="tile rv"><div class="lab">Mise en place</div><div class="val">${a.physique.mep ? fmt(Math.round(a.physique.mep * P.mult)) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">unités · ${P.lab}</div></div>
-          <div class="tile rv"><div class="lab">dont D2C</div><div class="val">${a.physique.d2c ? fmt(Math.round(a.physique.d2c * P.mult)) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">Shopify</div></div>
-          <div class="tile rv"><div class="lab">dont magasins</div><div class="val">${a.physique.magasins ? fmt(Math.round(a.physique.magasins * P.mult)) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">FNAC, Cultura…</div></div>
+          <div class="tile rv"><div class="lab">Mise en place</div><div class="val">${a.physique.mep ? fmt(Math.round(a.physique.mep * P.mult)) : ''}</div><div class="cmp" style="color:var(--muted-foreground)">unités · ${P.lab}</div></div>
+          <div class="tile rv"><div class="lab">dont D2C</div><div class="val">${a.physique.d2c ? fmt(Math.round(a.physique.d2c * P.mult)) : ''}</div><div class="cmp" style="color:var(--muted-foreground)">Shopify</div></div>
+          <div class="tile rv"><div class="lab">dont magasins</div><div class="val">${a.physique.magasins ? fmt(Math.round(a.physique.magasins * P.mult)) : ''}</div><div class="cmp" style="color:var(--muted-foreground)">FNAC, Cultura…</div></div>
         </div>
         <div class="note-line"><a href="#/saisie" style="font-weight:700">Ouvrir la saisie ↗</a>&nbsp; Ventes physiques France · filtres DSP non applicables.</div>
       </div>
       <div id="s-radio" style="scroll-margin-top:130px">
         <h2 class="h-sect rv">Radios<span style="color:var(--accent)">.</span> <small>airplay FR · top 5 stations · ${P.lab}</small></h2>
         ${AF.pays !== 'Monde' && AF.pays !== 'FR'
-          ? `<div class="empty">Airplay suivi sur la France uniquement — aucune donnée pour le périmètre ${AF.pays}.</div>`
+          ? `<div class="empty">Airplay suivi sur la France uniquement aucune donnée pour le périmètre ${AF.pays}.</div>`
           : `<div class="lb rv">
           <div style="display:flex;align-items:baseline;gap:14px;padding:20px 28px;border-bottom:1px solid var(--line)">
             <span class="num-xl">#${a.radio.rang}</span>
@@ -1672,7 +1672,7 @@ function alertItem(al){
 }
 
 /* ================================================================
-   VUE — TITRE (§7.2)
+   VUE TITRE (§7.2)
 ================================================================ */
 function vTitre(isrc){
   const found = findTitre(isrc);
@@ -1698,7 +1698,7 @@ function vTitre(isrc){
       <h1 class="rv in" style="font-size:clamp(40px,5.5vw,72px)">${t.titre}</h1>
       <p style="font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.65);margin-top:12px">ISRC ${t.isrc} · UPC ${t.upc}</p>
       <div class="actions">
-        <button class="btn btn-light" onclick="openExport('${t.titre} — ${a.nom}')">Exporter <span class="ar">↗</span></button>
+        <button class="btn btn-light" onclick="openExport('${t.titre} ${a.nom}')">Exporter <span class="ar">↗</span></button>
         ${alerte ? `<span class="btn btn-outline-w" style="cursor:default">⚑ Alerte ± 20% déclenchée</span>` : ''}
       </div>
     </div>
@@ -1712,7 +1712,7 @@ function vTitre(isrc){
     <div class="kpi rv"><div class="lab">Sources actives${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}</div><div class="val">${SOURCES.actives}%${SOURCES.est ? ' <span class="cmp" style="color:var(--muted-foreground)">est.</span>' : ''}</div></div>
   </div>
 
-  ${filtersBar(t.titre + ' — ' + a.nom)}
+  ${filtersBar(t.titre + ' ' + a.nom)}
   ${afScope(a)}
 
 
@@ -1734,8 +1734,8 @@ function vTitre(isrc){
               <span class="lb-name"><b style="font-size:17px">${p}</b><span>${dsp}</span></span>
               <span>${(st+'').includes('Entrée') ? `<span class="badge b-outline-green">${st}</span>` : (st+'').includes('Sortie') ? `<span class="badge b-down">${st}</span>` : (st+'').includes('hors MVP') ? `<span class="badge b-manual">à arbitrer</span>` : `<span class="badge b-stable">depuis ${st}</span>`}</span>
               <span class="lb-gauge hm"><span class="track"><span class="fill" style="width:${j ? Math.min(100, j/140*100) : 3}%"></span></span></span>
-              <span class="lb-val"><b style="font-size:22px">${j || '—'}</b><span>jours</span></span>
-            </div>`).join('') : `<div class="empty">${AF.dsp === 'Tous' ? 'Aucune playlist active — la sortie a déclenché une alerte.' : 'Aucune playlist éditoriale ' + AF.dsp + ' sur ce titre.'}</div>`}
+              <span class="lb-val"><b style="font-size:22px">${j || ''}</b><span>jours</span></span>
+            </div>`).join('') : `<div class="empty">${AF.dsp === 'Tous' ? 'Aucune playlist active la sortie a déclenché une alerte.' : 'Aucune playlist éditoriale ' + AF.dsp + ' sur ce titre.'}</div>`}
           <div class="lb-foot">Règle §8.3 : chaque entrée ou sortie de playlist éditoriale déclenche une alerte.</div>
         </div>
       </div>
@@ -1762,7 +1762,7 @@ function vTitre(isrc){
 }
 
 /* ================================================================
-   VUE — CENTRE D'ALERTES (§7.3)
+   VUE CENTRE D'ALERTES (§7.3)
 ================================================================ */
 let alertCrit = 'Toutes';
 const CRIT = {
@@ -1797,7 +1797,7 @@ function vAlertes(){
   <section class="band"><div class="wrap">
     <div class="digest rv">
       <div class="kicker"><span class="dot"></span>DIGEST S${SEMAINE.num} · CE QUE DIT LE MOTEUR</div>
-      <div style="font-size:19px;font-weight:800;letter-spacing:-.025em;margin-top:10px">${nUp} hausse${nUp>1?'s':''} au-dessus du seuil, ${nDn} baisse${nDn>1?'s':''}, ${nPl} mouvement${nPl>1?'s':''} playlist — ${nNew} non traitée${nNew>1?'s':''}.</div>
+      <div style="font-size:19px;font-weight:800;letter-spacing:-.025em;margin-top:10px">${nUp} hausse${nUp>1?'s':''} au-dessus du seuil, ${nDn} baisse${nDn>1?'s':''}, ${nPl} mouvement${nPl>1?'s':''} playlist ${nNew} non traitée${nNew>1?'s':''}.</div>
       <div class="row">
         ${[['risk','à traiter'],['opp','opportunités'],['info','informations']].map(([k,l]) => `<div><b style="color:${CRIT[k].c}">${n(k)}</b><small>${l}</small></div>`).join('')}
         <div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">
@@ -1812,7 +1812,7 @@ function vAlertes(){
 function toggleDone(id){ alertDone[id] = !alertDone[id]; toast(alertDone[id] ? '✓&nbsp; Alerte marquée <b>traitée</b>' : '↩&nbsp; Alerte rouverte'); render(); }
 
 /* ================================================================
-   VUE — SAISIE MANUELLE (§7.5)
+   VUE SAISIE MANUELLE (§7.5)
 ================================================================ */
 let saisieTab = 'physique', editIdx = -1;
 const SEM_OPTS = ['S31','S30','S29','S28'];
@@ -1825,7 +1825,7 @@ let PROP = null, DUP = null;
 
 const typesOf = () => saisieTab === 'physique' ? TYPES_PHY : TYPES_ACT;
 const unitsOf = () => saisieTab === 'physique' ? UNITS_PHY : UNITS_ACT;
-const saiPrefix = () => saisieTab === 'physique' ? 'Physique — ' : 'Actu — ';
+const saiPrefix = () => saisieTab === 'physique' ? 'Physique ' : 'Actu ';
 
 function projetsDe(nom){
   const a = ARTISTS.find(x => x.nom === nom);
@@ -1833,14 +1833,14 @@ function projetsDe(nom){
   const out = [];
   const seen = new Set();
   a.titres.forEach(t => {
-    if (!seen.has(t.projet)) { seen.add(t.projet); out.push([`${t.projet} — UPC ${t.upc}`, `${t.projet} (UPC ${t.upc})`]); }
-    out.push([`Titre « ${t.titre} » — ISRC ${t.isrc}`, `« ${t.titre} » (ISRC ${t.isrc})`]);
+    if (!seen.has(t.projet)) { seen.add(t.projet); out.push([`${t.projet} UPC ${t.upc}`, `${t.projet} (UPC ${t.upc})`]); }
+    out.push([`Titre « ${t.titre} » ISRC ${t.isrc}`, `« ${t.titre} » (ISRC ${t.isrc})`]);
   });
   return out;
 }
 function rattachOptions(nom, sel=''){
   return projetsDe(nom).map(([lab,val]) => `<option value="${val}"${val===sel?' selected':''}>${lab}</option>`).join('')
-    + `<option value="__autre"${sel==='__autre'?' selected':''}>Autre — enseigne / réseau</option>`;
+    + `<option value="__autre"${sel==='__autre'?' selected':''}>Autre enseigne / réseau</option>`;
 }
 function renderRattach(){
   const el = $('#f-rattach-wrap'); if (!el) return;
@@ -1925,7 +1925,7 @@ function saiCsv(name = 'fnac_s31.csv'){
   setTimeout(() => { const el = $('#prop-card'); if (el) el.scrollIntoView({behavior:'smooth', block:'center'}); }, 60);
 }
 function saiPdf(name){ PROP = { kind:'pdf', file:name }; DUP = null; render(); }
-function saiReject(){ PROP = null; DUP = null; toast('✕&nbsp; Proposition rejetée — rien n\'a été intégré'); render(); }
+function saiReject(){ PROP = null; DUP = null; toast('✕&nbsp; Proposition rejetée rien n\'a été intégré'); render(); }
 
 function saiPropField(id){ const el = $('#' + id); return el ? el.value : ''; }
 function saiPropRattach(){
@@ -1937,7 +1937,7 @@ function saiValidate(){
   const qty = saiPropField('p-qty'), unit = saiPropField('p-unit'), sem = saiPropField('p-sem');
   let ref = saiPropField('p-rattach');
   if (!artiste || !type || !qty){ toast('⚠&nbsp; Complétez les champs « à préciser »'); PROP.miss = true; render(); return; }
-  if (ref === '__autre' || !ref) ref = PROP.ref || '—';
+  if (ref === '__autre' || !ref) ref = PROP.ref || '';
   const isDate = /date/.test(unit) || /\d{2}\/\d{2}/.test(qty);
   const num = isDate ? qty : (parseInt(String(qty).replace(/\D/g,''), 10) || 0).toLocaleString('fr-FR');
   const rec = { type: saiPrefix() + type, artiste, ref, val: isDate ? num : `${num} ${unit.split(' (')[0]}`, sem, date:'31/07/2026', par:'MC', src:'TEXTE' };
@@ -1947,7 +1947,7 @@ function saiCommit(rec){
   const idx = SAISIES.findIndex(s => s.type === rec.type && s.artiste === rec.artiste && s.sem === rec.sem);
   if (idx >= 0){ DUP = { rec, idx }; render(); return; }
   SAISIES.unshift(rec); PROP = null; DUP = null; saiText = '';
-  toast(`✓&nbsp; Intégré — <b>${rec.type.split('— ')[1]} · ${rec.artiste} · ${rec.sem}</b>`);
+  toast(`✓&nbsp; Intégré <b>${rec.type.split(' ')[1]} · ${rec.artiste} · ${rec.sem}</b>`);
   render();
 }
 function dupResolve(mode){
@@ -1957,7 +1957,7 @@ function dupResolve(mode){
   if (mode === 'remplacer'){ rec.modif = '31/07/2026 · MC'; SAISIES.splice(idx, 1); }
   SAISIES.unshift(rec);
   DUP = null; PROP = null; saiText = '';
-  toast(`✓&nbsp; Intégré — <b>${rec.type.split('— ')[1]} · ${rec.artiste} · ${rec.sem}</b>`);
+  toast(`✓&nbsp; Intégré <b>${rec.type.split(' ')[1]} · ${rec.artiste} · ${rec.sem}</b>`);
   render();
 }
 function csvToggle(i){ PROP.rows[i].sel = !PROP.rows[i].sel; render(); }
@@ -1972,12 +1972,12 @@ function csvValidate(){
   if (!rows.length){ toast('⚠&nbsp; Aucune ligne valide sélectionnée'); return; }
   const file = PROP.file;
   rows.slice().reverse().forEach(r => SAISIES.unshift({
-    type:'Physique — ' + r.type, artiste:r.artiste, ref:r.ref,
+    type:'Physique ' + r.type, artiste:r.artiste, ref:r.ref,
     val:`${r.qty.toLocaleString('fr-FR')} unités vendues`, sem:r.sem,
     date:'31/07/2026', par:'MC', src:'CSV', file,
   }));
   PROP = null;
-  toast(`✓&nbsp; Intégré — <b>${rows.length} ligne${rows.length>1?'s':''} de ${file}</b>`);
+  toast(`✓&nbsp; Intégré <b>${rows.length} ligne${rows.length>1?'s':''} de ${file}</b>`);
   render();
 }
 function csvRejectSel(){
@@ -1992,8 +1992,8 @@ function propCard(){
   if (!PROP) return '';
   if (PROP.kind === 'pdf') return `
     <div class="card prop" id="prop-card" style="background:var(--surface)">
-      <div class="p-head"><span class="badge" style="background:var(--muted);color:var(--muted-foreground)">V2</span><b>File d'attente PDF — extraction automatique en V2</b></div>
-      <div style="font-size:13px;color:var(--muted-foreground)">📄 ${PROP.file} — le fichier est conservé, aucune donnée n'est intégrée automatiquement.</div>
+      <div class="p-head"><span class="badge" style="background:var(--muted);color:var(--muted-foreground)">V2</span><b>File d'attente PDF extraction automatique en V2</b></div>
+      <div style="font-size:13px;color:var(--muted-foreground)">📄 ${PROP.file} le fichier est conservé, aucune donnée n'est intégrée automatiquement.</div>
       <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
         <button class="btn btn-dark btn-sm" onclick="panelOpen=true;render()">Saisir manuellement depuis ce fichier</button>
         <button class="btn btn-outline btn-sm" onclick="saiReject()">Retirer</button>
@@ -2005,7 +2005,7 @@ function propCard(){
     return `
     <div class="card prop" id="prop-card">
       <div class="p-head"><span class="badge" style="background:var(--muted);color:var(--muted-foreground)">CSV</span>
-        <b>${PROP.file} — ${PROP.rows.length} lignes reconnues${warn ? ` · ${warn} avertissement` : ''}</b></div>
+        <b>${PROP.file} ${PROP.rows.length} lignes reconnues${warn ? ` · ${warn} avertissement` : ''}</b></div>
       <div style="overflow:auto">
       <table class="csv-t">
         <tr><th></th><th>Artiste</th><th>Type</th><th>Rattachement</th><th>Quantité</th><th>Semaine</th></tr>
@@ -2037,7 +2037,7 @@ function propCard(){
         <option value="">À préciser</option>${ARTISTS.map(a => `<option${a.nom===PROP.artiste?' selected':''}>${a.nom}</option>`).join('')}</select></div>
       <div class="field"><label>Semaine</label><select id="p-sem">${SEM_OPTS.map(s => `<option${s===PROP.sem?' selected':''}>${s}</option>`).join('')}</select></div>
     </div>
-    <div class="field"><label>Rattachement — projet / titre</label>
+    <div class="field"><label>Rattachement projet / titre</label>
       <select id="p-rattach">${PROP.artiste ? rattachOptions(PROP.artiste, PROP.ref) : '<option value="">À préciser</option>'}</select></div>
     <div class="fgrid">
       <div class="field${miss('qty')}"><label>${PROP.isDate ? 'Date' : (saisieTab === 'physique' ? 'Quantité' : 'Valeur')}</label>
@@ -2055,7 +2055,7 @@ function propCard(){
 function dupBanner(){
   if (!DUP) return '';
   const r = DUP.rec;
-  return `<div class="dup"><b>Une valeur existe déjà pour ${r.type.split('— ')[1]} · ${r.artiste} · ${r.sem}</b>
+  return `<div class="dup"><b>Une valeur existe déjà pour ${r.type.split(' ')[1]} · ${r.artiste} · ${r.sem}</b>
     <span style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap">
       <button class="btn btn-dark btn-sm" onclick="dupResolve('remplacer')">Remplacer</button>
       <button class="btn btn-outline btn-sm" onclick="dupResolve('deux')">Conserver les deux</button>
@@ -2080,7 +2080,7 @@ function sidePanel(){
   if (!panelOpen) return '';
   const first = editIdx >= 0 ? SAISIES[editIdx].artiste : ARTISTS[0].nom;
   return `<aside class="sidepanel">
-    <div style="display:flex;align-items:center"><div class="kicker">${editIdx >= 0 ? 'MODIFIER LA SAISIE' : 'SAISIE DÉTAILLÉE'} — ${saisieTab === 'physique' ? 'PHYSIQUE' : 'ACTU'}</div>
+    <div style="display:flex;align-items:center"><div class="kicker">${editIdx >= 0 ? 'MODIFIER LA SAISIE' : 'SAISIE DÉTAILLÉE'} ${saisieTab === 'physique' ? 'PHYSIQUE' : 'ACTU'}</div>
       <button class="lnk" style="margin-left:auto" onclick="panelOpen=false;editIdx=-1;render()">Fermer ✕</button></div>
     <div style="margin-top:20px">
       <div class="fgrid">
@@ -2088,7 +2088,7 @@ function sidePanel(){
         <div class="field"><label>Semaine concernée</label><select id="f-sem">${SEM_OPTS.map(s => `<option${s === 'S' + SEMAINE.num ? ' selected' : ''}>${s}</option>`).join('')}</select></div>
       </div>
       <div class="field"><label>Artiste</label><select id="f-artiste" onchange="renderRattach()">${ARTISTS.map(a => `<option${a.nom===first?' selected':''}>${a.nom}</option>`).join('')}</select></div>
-      <div class="field"><label>Rattachement — projet / titre (UPC / ISRC)</label><div id="f-rattach-wrap">${rattachHtml(first)}</div></div>
+      <div class="field"><label>Rattachement projet / titre (UPC / ISRC)</label><div id="f-rattach-wrap">${rattachHtml(first)}</div></div>
       <div class="fgrid">
         <div class="field"><label>${saisieTab === 'physique' ? 'Quantité' : 'Valeur'}</label><input id="f-val" class="big" placeholder="${saisieTab === 'physique' ? '1200' : '8000'}"></div>
         <div class="field"><label>Unité</label><select id="f-unit">${unitsOf().map(u => `<option>${u}</option>`).join('')}</select></div>
@@ -2111,7 +2111,7 @@ function vSaisie(){
     : ['Interview Zazie TMC 04/08','Campagne pub Hina 8 000 € S31','Sortie prévue EP Hina 18/09/2026'];
   return `
   <section class="sai-band"><div class="wrap">
-    <div class="kicker"><span class="dot"></span>DONNÉES NON-API — SAISIE MANUELLE</div>
+    <div class="kicker"><span class="dot"></span>DONNÉES NON-API SAISIE MANUELLE</div>
   </div></section>
   <div class="sai-tools"><div class="wrap">
     <button class="chip ${saisieTab==='physique'?'active':''}" onclick="saisieTab='physique';PROP=null;DUP=null;editIdx=-1;render()">Ventes physiques · hebdo</button>
@@ -2124,7 +2124,7 @@ function vSaisie(){
         <div class="drop" id="sai-drop" ondragover="saiDrag(event,true)" ondragleave="saiDrag(event,false)" ondrop="saiDrop(event)">
           <div class="drop-head" onclick="saiPick()" style="cursor:pointer">
             <span class="ic">⇪</span>
-            <div><b>Déposez un CSV ou un PDF — ou cliquez pour parcourir</b>
+            <div><b>Déposez un CSV ou un PDF ou cliquez pour parcourir</b>
             <span>Rien n'entre en base sans validation : chaque ligne passe par une proposition.</span></div>
           </div>
           <input type="file" id="sai-file" accept=".csv,.pdf" style="display:none" onchange="saiFile(this)">
@@ -2136,7 +2136,7 @@ function vSaisie(){
         <div class="sai-ex">
           ${ex.map(e => `<button class="ex" onclick="saiExample(&quot;${e}&quot;)">${e}</button>`).join('')}
           <button class="lnk" onclick="saiCsv()">Simuler un import CSV</button>
-          <button class="lnk" onclick="toast('⬇&nbsp; Gabarit CSV téléchargé — <b>gabarit-saisie-${saisieTab}.csv</b>')">Télécharger le gabarit CSV</button>
+          <button class="lnk" onclick="toast('⬇&nbsp; Gabarit CSV téléchargé <b>gabarit-saisie-${saisieTab}.csv</b>')">Télécharger le gabarit CSV</button>
           <button class="lnk" onclick="panelOpen=true;render()">Saisie détaillée</button>
         </div>
         ${propCard()}
@@ -2152,26 +2152,26 @@ function editSaisie(i){
   const art = $('#f-artiste'); if (art) { art.value = s.artiste; renderRattach(); }
   const sem = $('#f-sem'); if (sem) sem.value = s.sem;
   const val = $('#f-val'); if (val) val.value = parseInt(String(s.val).replace(/\D/g,''), 10) || '';
-  toast(`✎&nbsp; Édition — <b>${s.artiste}</b>`);
+  toast(`✎&nbsp; Édition <b>${s.artiste}</b>`);
 }
 function delSaisie(i){
   const s = SAISIES[i];
   SAISIES.splice(i, 1);
   if (editIdx === i) { editIdx = -1; panelOpen = false; }
-  toast(`🗑&nbsp; Saisie supprimée — <b>${s.artiste}</b> (trace conservée)`);
+  toast(`🗑&nbsp; Saisie supprimée <b>${s.artiste}</b> (trace conservée)`);
   render();
 }
 function addSaisie(){
   const type = saiPrefix() + $('#f-type').value;
   const rat = $('#f-rattach').value;
-  const ref = rat === '__autre' ? ($('#f-ref-other').value || '—') : rat;
+  const ref = rat === '__autre' ? ($('#f-ref-other').value || '') : rat;
   const raw = $('#f-val').value.trim();
   const isDate = /\d{2}\/\d{2}/.test(raw);
   const n = parseInt(raw.replace(/\D/g,''), 10);
   if (!isDate && isNaN(n)) { toast('⚠&nbsp; Valeur requise'); return; }
   const val = isDate ? raw : n.toLocaleString('fr-FR') + ' ' + $('#f-unit').value.split(' (')[0];
   const rec = { type, artiste:$('#f-artiste').value, ref, val, sem:$('#f-sem').value, date:'31/07/2026', par:'MC', src:'FORMULAIRE' };
-  if (editIdx >= 0) { rec.modif = '31/07/2026 · MC'; SAISIES[editIdx] = rec; editIdx = -1; panelOpen = false; toast(`✓&nbsp; Saisie mise à jour — <b>${rec.artiste}</b>`); render(); return; }
+  if (editIdx >= 0) { rec.modif = '31/07/2026 · MC'; SAISIES[editIdx] = rec; editIdx = -1; panelOpen = false; toast(`✓&nbsp; Saisie mise à jour <b>${rec.artiste}</b>`); render(); return; }
   panelOpen = false;
   saiCommit(rec);
 }
@@ -2227,7 +2227,7 @@ function vIntro(){
       <div class="intro-card">
         <a class="intro-logo" href="#/intro"><img src="/__l5e/assets-v1/edc626b7-3a66-45a2-946d-aedc2393da1e/MIC_LOGO.svg" alt="MIC"></a>
         <h1>Music Industry Copilot</h1>
-        <p class="sub">Streaming, Shazam, alertes et saisies — toute la donnée du roster 6&amp;7 en un seul endroit.</p>
+        <p class="sub">Streaming, Shazam, alertes et saisies toute la donnée du roster 6&amp;7 en un seul endroit.</p>
         <form class="intro-form" onsubmit="return micLogin(event)">
           <input type="email" placeholder="Adresse e-mail" value="marie.c@6et7.fr" autocomplete="email">
           <input type="password" placeholder="Mot de passe" value="••••••••" autocomplete="current-password">
@@ -2235,7 +2235,7 @@ function vIntro(){
         </form>
         <button class="intro-alt" onclick="micLogin()">Continuer en mode démo →</button>
       </div>
-      <div class="intro-mention"><b>#MIC</b> — Music Industry Copilot · pour le label 6&amp;7</div>
+      <div class="intro-mention"><b>#MIC</b> Music Industry Copilot · pour le label 6&amp;7</div>
     </div>
   </section>`;
 }

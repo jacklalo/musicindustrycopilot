@@ -757,8 +757,8 @@ const syncHtml = `<span class="sync"><span class="ok"></span>S${SEMAINE.num} · 
 
 const PERIODES = { '7 j': {mult:1, lab:'7 j', pts:8}, '28 j': {mult:3.7, lab:'28 j', pts:8}, '12 sem': {mult:11.4, lab:'12 sem', pts:8} };
 const PAYS_FALLBACK = { Monde:100, FR:62, BE:7, CH:5 };
-const AF = { periode:'7 j', dsp:'Tous', pays:'Monde', titre:'Tous' };
-const afDefault = () => AF.periode === '7 j' && AF.dsp === 'Tous' && AF.pays === 'Monde' && AF.titre === 'Tous';
+const AF = { periode:'7 j', dsp:'Tous', pays:'Monde' };
+const afDefault = () => AF.periode === '7 j' && AF.dsp === 'Tous' && AF.pays === 'Monde';
 
 function paysShare(a){
   if (AF.pays === 'Monde') return 1;
@@ -778,10 +778,10 @@ function setFilter(key, val){
   const y = window.scrollY;
   render();
   window.scrollTo(0, y);
-  toast(`Périmètre : <b>${AF.periode} · ${AF.dsp === 'Tous' ? 'tous DSP' : AF.dsp} · ${AF.pays}${AF.titre === 'Tous' ? '' : ' · ' + AF.titre}</b>`);
+  toast(`Périmètre : <b>${AF.periode} · ${AF.dsp === 'Tous' ? 'tous DSP' : AF.dsp} · ${AF.pays}</b>`);
 }
 function resetFilters(){
-  AF.periode = '7 j'; AF.dsp = 'Tous'; AF.pays = 'Monde'; AF.titre = 'Tous';
+  AF.periode = '7 j'; AF.dsp = 'Tous'; AF.pays = 'Monde';
   const y = window.scrollY; render(); window.scrollTo(0, y);
   toast('Filtres réinitialisés');
 }

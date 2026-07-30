@@ -1454,7 +1454,7 @@ function observeSpy(){
 }
 function render(){
   $('#nav-alert-count').textContent = ALERTES.filter(al => !alertDone[al.id]).length;
-  const h = location.hash || '#/artistes';
+  const h = location.hash || '#/home';
   const [, route, param, anchor] = h.split('/');
   const app = $('#app');
   document.querySelectorAll('nav.main a').forEach(a => a.classList.toggle('active',

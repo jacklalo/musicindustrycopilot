@@ -798,9 +798,6 @@ function filtersBar(ctx, slim=false){
     <span class="sep"></span>
     <span class="group-label">Pays</span>
     ${afChips('pays', ['Monde','FR','BE','CH'])}
-    ${titres ? `<span class="sep"></span>
-    <span class="group-label">Titre / Projet</span>
-    ${afChips('titre', ['Tous', ...titres])}` : ''}
     ${afDefault() ? '' : `<button class="chip chip-sm af-reset" onclick="resetFilters()">Réinitialiser ✕</button>`}
     ${slim ? '' : `<div class="right">${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('${ctx}')">Exporter <span class="ar">↗</span></button></div>`}
   </div></div>`;

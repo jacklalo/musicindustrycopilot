@@ -1332,7 +1332,13 @@ function vTitre(isrc){
   const {a, t} = found;
   document.documentElement.style.setProperty('--accent', a.accent);
   const alerte = Math.abs(t.delta) >= SEUILS.streaming;
-  const shazAlert = t.shazamJour > SEUILS.shazam;
+  const P = PERIODES[AF.periode];
+  const geo = paysShare(a);
+  const F = P.mult * geo * dspShare(t);
+  const scT = v => Math.round((v || 0) * F);
+  const sj = perDay(t.shazamJour, a);
+  const shazAlert = sj > SEUILS.shazam;
+  const plList = t.playlists.filter(([p,dsp]) => AF.dsp === 'Tous' || (dsp + '').toLowerCase().includes(AF.dsp.toLowerCase()));
   return `
   <section class="a-hero"><div class="wrap" style="padding-top:40px;padding-bottom:44px">
     <div>

@@ -1304,12 +1304,10 @@ function labelHero(){
   const shaz = ARTISTS.reduce((s,a) => s + shazamOf(a), 0);
   const soc = ARTISTS.reduce((s,a) => s + a.social.ig + a.social.tt, 0);
   const n1 = ranked()[0];
-  const hero = heroOpen
-    ? `<section class="lab-hero"><div class="wrap">
+  const hero = `<section class="lab-hero"><div class="wrap">
         <div>
           <div class="head-row">
             <div class="kicker"><span class="dot"></span>LABEL 6&7 · ${ARTISTS.length} ARTISTES · S${SEMAINE.num} (${SEMAINE.du} → ${SEMAINE.au})</div>
-            <button class="hero-toggle" onclick="toggleHero()">Réduire ▴</button>
           </div>
           <h1 class="rv in">Top roster<span style="color:#C8102E">.</span></h1>
           <p class="lead">Le classement streaming de la semaine un rang, un chiffre, une tendance, puis la vue 360° de chaque artiste.</p>
@@ -1321,11 +1319,6 @@ function labelHero(){
         <a href="#/artiste/${n1.id}" style="display:block" title="${n1.nom}">
           ${ph(IMGS[n1.id], n1.accent, '', `<span class="track-chip"><span class="dot"></span>N°1 · ${n1.nom.toUpperCase()}</span>`)}
         </a>
-      </div></section>`
-    : `<section class="lab-hero slim"><div class="wrap">
-        <div class="kicker"><span class="dot"></span>LABEL 6&7 · S${SEMAINE.num}</div>
-        <h1>Top roster<span style="color:#C8102E">.</span></h1>
-        <button class="hero-toggle" onclick="toggleHero()">Déplier ▾</button>
       </div></section>`;
   return `${hero}
   ${labelKpis(tot, dLab, lis, shaz, soc)}

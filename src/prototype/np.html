@@ -1188,17 +1188,9 @@ function afScope(a){
 let rosterQuery = '', sortKey = 'streams', spotId = null;
 const MES_ARTISTES = ['zazie','hina','jeremy-frerot'];
 const alertDone = {};
-let heroOpen = true;
-try { heroOpen = !localStorage.getItem('np_seen'); localStorage.setItem('np_seen', '1'); } catch (e) {}
-function toggleHero(){ heroOpen = !heroOpen; render(); }
 function hero(short, kicker, title, lead, extra=''){
-  if (!heroOpen) return `<section class="hero-compact"><div class="wrap">
-    <div class="kicker"><span class="dot"></span>${kicker.split(' · ')[0]}</div>
-    <h1>${short}</h1>
-    <button class="hero-toggle" onclick="toggleHero()">Déplier ▾</button>
-  </div></section>`;
   return `<section class="band dark" style="padding:60px 0"><div class="wrap">
-    <div style="display:flex;align-items:flex-start"><div class="kicker"><span class="dot"></span>${kicker}</div><button class="hero-toggle" style="margin-left:auto" onclick="toggleHero()">Réduire ▴</button></div>
+    <div class="kicker"><span class="dot"></span>${kicker}</div>
     <h1 class="display rv in" style="font-size:clamp(46px,6.5vw,92px);margin:18px 0 18px">${title}</h1>
     <p class="lead">${lead}</p>${extra}
   </div></section>`;

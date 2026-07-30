@@ -345,7 +345,36 @@
   .comp-row .st.ko{background:rgba(234,88,12,.12);color:#EA580C}
   .lnk{font-size:11.5px;font-weight:700;color:var(--muted-foreground);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:var(--font);padding:0}
   .lnk:hover{color:var(--ink)}
+
+  /* ===== Accueil / Ask ===== */
+  .ask-wrap{max-width:780px;margin:0 auto;padding:clamp(48px,9vh,110px) 24px 90px}
+  .ask-mark{font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-foreground);text-align:center}
+  .ask-h1{font-family:var(--font);font-size:clamp(28px,4.4vw,44px);font-weight:800;letter-spacing:-.035em;text-align:center;margin:16px 0 8px;line-height:1.05}
+  .ask-sub{text-align:center;color:var(--muted-foreground);font-size:14.5px;margin-bottom:30px}
+  .ask-bar{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:12px 12px 12px 18px;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:border-color .2s,box-shadow .2s}
+  .ask-bar:focus-within{border-color:var(--ink);box-shadow:0 6px 24px rgba(0,0,0,.07)}
+  .ask-bar input{flex:1;min-width:0;border:none;outline:none;background:none;font-family:var(--font);font-size:15.5px;font-weight:500;color:var(--ink)}
+  .ask-bar input::placeholder{color:var(--muted-foreground)}
+  .ask-send{flex:none;width:38px;height:38px;border-radius:11px;border:none;background:var(--ink);color:#fff;font-size:16px;cursor:pointer;transition:.2s}
+  .ask-send:hover{opacity:.85}
+  .ask-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
+  .ask-tag{font-family:var(--font);font-size:12.5px;font-weight:600;color:var(--muted-foreground);background:var(--card);border:1px solid var(--line);border-radius:9999px;padding:8px 14px;cursor:pointer;transition:.2s}
+  .ask-tag:hover{color:var(--ink);border-color:var(--ink);background:var(--muted)}
+  .ask-answer{margin-top:34px;border:1px solid var(--line);border-radius:var(--radius-card);background:var(--card);padding:22px;overflow:hidden}
+  .ask-q{font-size:15px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+  .ask-txt{font-size:14px;line-height:1.6;color:var(--muted-foreground);word-break:break-word}
+  .ask-cards{display:grid;grid-template-columns:1fr;gap:8px;margin-top:16px}
+  @media(min-width:640px){.ask-cards{grid-template-columns:1fr 1fr}}
+  .ask-card{display:flex;align-items:center;gap:12px;min-width:0;border:1px solid var(--line);border-radius:14px;padding:10px 12px;cursor:pointer;background:var(--surface);transition:.2s;text-decoration:none;color:inherit}
+  .ask-card:hover{background:var(--muted);border-color:var(--ink)}
+  .ask-card .txt{min-width:0}
+  .ask-card b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ask-card span{display:block;font-size:11.5px;color:var(--muted-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ask-card .val{margin-left:auto;flex:none;font-size:13px;font-weight:800}
+  .ask-src{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
+  .ask-src span{font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-foreground);border:1px solid var(--line);border-radius:9999px;padding:3px 9px}
 </style>
+
 </head>
 <body>
 

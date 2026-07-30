@@ -1146,6 +1146,10 @@ function pdfArtiste(id){
     <table class="pdf-tbl"><thead><tr><th>Plateforme</th><th class="num">Part</th><th class="num">Streams estimés</th></tr></thead><tbody>
       ${Object.entries(t0.dsp).map(([k,v]) => `<tr><td>${k}</td><td class="num">${v}%</td><td class="num">${fmt(Math.round(t0.streamsHebdo * v / 100))}</td></tr>`).join('')}
     </tbody></table>
+    ${pdfFoot(a.nom + ' · 1/2')}
+  </div>
+  <div class="pdfpage">
+    ${pdfHead(`Dashboard artiste · Semaine ${SEMAINE.num}`, 'Audience & lecture.', `${a.nom} · suite de la synthèse hebdomadaire.`)}
     <div class="pdf-sec">Audience & social</div>
     <table class="pdf-tbl"><thead><tr><th>Indicateur</th><th class="num">Valeur</th><th class="num">Évol.</th></tr></thead><tbody>
       <tr><td>Instagram</td><td class="num">${fmt(a.social.ig)}</td><td class="num">${pdfD(a.social.igD)}</td></tr>
@@ -1162,7 +1166,7 @@ function pdfArtiste(id){
       ${als.length ? `<li>${als.length} alerte${als.length>1?'s':''} active${als.length>1?'s':''} : ${als.map(x => x.txt).join(' ; ')}.</li>` : '<li>Aucune alerte active cette semaine.</li>'}
       ${a.actus.length ? `<li>À venir : ${a.actus.map(([t,d,dt]) => `${t} ${d}${dt ? ` (${dt})` : ''}`).join(' ; ')}.</li>` : ''}
     </ul>
-    ${pdfFoot(a.nom)}
+    ${pdfFoot(a.nom + ' · 2/2')}
   </div>`;
 }
 function openPdf(kind, id, ctx){

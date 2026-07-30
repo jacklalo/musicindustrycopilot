@@ -1265,17 +1265,19 @@ function vArtiste(id){
 
     <div class="grid g2" style="margin-top:56px">
       <div id="s-physique" style="scroll-margin-top:130px">
-        <h2 class="h-sect rv">Physique<span style="color:var(--accent)">.</span> <small><span class="badge b-manual">SAISIE MANUELLE</span></small></h2>
+        <h2 class="h-sect rv">Physique<span style="color:var(--accent)">.</span> <small><span class="badge b-manual">SAISIE MANUELLE</span> · ${P.lab}</small></h2>
         <div class="grid g3" style="gap:13px">
-          <div class="tile rv"><div class="lab">Mise en place</div><div class="val">${a.physique.mep ? fmt(a.physique.mep) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">unités</div></div>
-          <div class="tile rv"><div class="lab">dont D2C</div><div class="val">${a.physique.d2c ? fmt(a.physique.d2c) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">Shopify</div></div>
-          <div class="tile rv"><div class="lab">dont magasins</div><div class="val">${a.physique.magasins ? fmt(a.physique.magasins) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">FNAC, Cultura…</div></div>
+          <div class="tile rv"><div class="lab">Mise en place</div><div class="val">${a.physique.mep ? fmt(Math.round(a.physique.mep * P.mult)) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">unités · ${P.lab}</div></div>
+          <div class="tile rv"><div class="lab">dont D2C</div><div class="val">${a.physique.d2c ? fmt(Math.round(a.physique.d2c * P.mult)) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">Shopify</div></div>
+          <div class="tile rv"><div class="lab">dont magasins</div><div class="val">${a.physique.magasins ? fmt(Math.round(a.physique.magasins * P.mult)) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">FNAC, Cultura…</div></div>
         </div>
-        <div class="note-line"><a href="#/saisie" style="font-weight:700">Ouvrir la saisie ↗</a>&nbsp; Données historisées comme les données automatisées.</div>
+        <div class="note-line"><a href="#/saisie" style="font-weight:700">Ouvrir la saisie ↗</a>&nbsp; Ventes physiques France · filtres DSP non applicables.</div>
       </div>
       <div id="s-radio" style="scroll-margin-top:130px">
-        <h2 class="h-sect rv">Radios<span style="color:var(--accent)">.</span> <small>airplay · top 5 stations</small></h2>
-        <div class="lb rv">
+        <h2 class="h-sect rv">Radios<span style="color:var(--accent)">.</span> <small>airplay FR · top 5 stations · ${P.lab}</small></h2>
+        ${AF.pays !== 'Monde' && AF.pays !== 'FR'
+          ? `<div class="empty">Airplay suivi sur la France uniquement — aucune donnée pour le périmètre ${AF.pays}.</div>`
+          : `<div class="lb rv">
           <div style="display:flex;align-items:baseline;gap:14px;padding:20px 28px;border-bottom:1px solid var(--line)">
             <span class="num-xl">#${a.radio.rang}</span>
             <span style="font-size:13px;color:var(--muted-foreground)">classement airplay FR</span>
@@ -1285,9 +1287,9 @@ function vArtiste(id){
             <span class="lb-rank" style="font-size:20px">${String(i+1).padStart(2,'0')}</span>
             <span class="lb-name"><b style="font-size:16px">${s}</b></span>
             <span class="lb-gauge"><span class="track"><span class="fill" style="width:${n/a.radio.diffusions[0][1]*100}%"></span></span></span>
-            <span class="lb-val"><b style="font-size:22px">${n}</b><span>diff. / 7j</span></span>
+            <span class="lb-val"><b style="font-size:22px">${Math.round(n * P.mult)}</b><span>diff. / ${P.lab}</span></span>
           </div>`).join('')}
-        </div>
+        </div>`}
       </div>
     </div>
 

@@ -1130,7 +1130,7 @@ function vArtiste(id){
     </div>
 
     <div id="s-titres" style="scroll-margin-top:130px;margin-top:56px">
-      <h2 class="h-sect rv">Titres<span style="color:var(--accent)">.</span> <small>${AF.titre === 'Tous' ? 'classés par streams' : '1 titre filtré'} · cliquer pour le drill-down ISRC/UPC</small></h2>
+      <h2 class="h-sect rv">Titres<span style="color:var(--accent)">.</span> <small>classés par streams · cliquer pour le drill-down ISRC/UPC</small></h2>
       <div class="lb rv">
         ${[...tl].sort((x,y) => y.streamsHebdo - x.streamsHebdo).map((t,i,arr) => `
         <a class="lb-row lb-t" style="--acc:${a.accent}" href="#/titre/${t.isrc}">
@@ -1142,7 +1142,7 @@ function vArtiste(id){
           <span class="lb-val"><b>${fmt(sc(t.streamsHebdo, t))}</b><span>streams ${P.lab} · ${momBadgeTxt(t.delta)}</span></span>
           <span class="go hm">↗</span>
         </a>`).join('')}
-        <div class="lb-foot">${AF.titre === 'Tous' ? '' : `Filtre titre actif — <a href="#" onclick="event.preventDefault();setFilter('titre','Tous')" style="font-weight:700">voir tous les titres</a>. `}Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j.</div>
+        <div class="lb-foot">Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j.</div>
       </div>
     </div>
 

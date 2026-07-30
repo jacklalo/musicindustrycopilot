@@ -1051,8 +1051,8 @@ function vArtiste(id){
   </div></section>
 
   <div class="kpi-band">
-    <div class="kpi rv"><div class="lab">Streams hebdo</div><div class="val">${fmt(a.streams)} <span class="cmp">${deltaHtml(a.delta)}</span></div></div>
-    <div class="kpi rv"><div class="lab">Auditeurs mensuels</div><div class="val">${fmt(a.listeners)} <span class="cmp">${deltaHtml(a.listenersDelta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(sc(tl.reduce((s,t) => s + t.streamsHebdo, 0)))} <span class="cmp">${deltaHtml(a.delta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Auditeurs mensuels${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.listeners * geo))} <span class="cmp">${deltaHtml(a.listenersDelta)}</span></div></div>
     <div class="kpi rv"><div class="lab">Score Spotify /100</div><div class="val" style="${scoreOk ? 'color:var(--accent)' : ''}">${a.score} <span class="cmp" style="color:var(--muted-foreground)">${scoreOk ? '> seuil 50' : 'S' + (SEMAINE.num-1) + ' : ' + a.scorePrev}</span></div></div>
     <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(a.social.ig + a.social.tt)} <span class="cmp">${deltaHtml(a.social.igD)}</span></div></div>
   </div>

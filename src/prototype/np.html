@@ -984,10 +984,10 @@ function whatChanged(){
   const shaz = ARTISTS.flatMap(a => a.titres.map(t => ({a,t}))).sort((x,y) => y.t.shazamJour - x.t.shazamJour)[0];
   const pl = ALERTES.filter(al => al.cat === 'PLAYLIST ÉDITO').length;
   const f = [];
-  f.push([`<i style="color:var(--up)">▲</i>`, `<b>${mover.nom}</b> est le plus fort mouvement de la semaine : <b>+${mover.delta}%</b> de streams (S${SEMAINE.num} vs S${SEMAINE.num-1}). <a href="#/artiste/${mover.id}">Ouvrir ↗</a>`]);
-  if (drop.delta < 0) f.push([`<i style="color:var(--down)">▼</i>`, `<b>${drop.nom}</b> recule de <b>${drop.delta}%</b> — seuil d'alerte ${Math.abs(drop.delta) >= SEUILS.streaming ? 'franchi' : 'non franchi'}. <a href="#/artiste/${drop.id}">Ouvrir ↗</a>`]);
-  f.push([`<i>⚑</i>`, `<b>${shaz.t.shazamJour} Shazams/jour</b> sur « ${shaz.t.titre} » (${shaz.a.nom}) et <b>${pl} mouvement${pl>1?'s':''} de playlist édito</b> depuis vendredi. <a href="#/alertes">Voir les alertes ↗</a>`]);
-  return `<div class="changed rv">
+  f.push([`<i style="color:var(--up);background:rgba(22,163,74,.1)">▲</i>`, `<b>${mover.nom}</b> est le plus fort mouvement de la semaine : <b>+${mover.delta}%</b> de streams (S${SEMAINE.num} vs S${SEMAINE.num-1}). <a href="#/artiste/${mover.id}">Ouvrir ↗</a>`]);
+  if (drop.delta < 0) f.push([`<i style="color:var(--down);background:rgba(234,88,12,.1)">▼</i>`, `<b>${drop.nom}</b> recule de <b>${drop.delta}%</b> — seuil d'alerte ${Math.abs(drop.delta) >= SEUILS.streaming ? 'franchi' : 'non franchi'}. <a href="#/artiste/${drop.id}">Ouvrir ↗</a>`]);
+  f.push([`<i style="color:#C8102E;background:rgba(200,16,46,.1)">⚑</i>`, `<b>${shaz.t.shazamJour} Shazams/jour</b> sur « ${shaz.t.titre} » (${shaz.a.nom}) et <b>${pl} mouvement${pl>1?'s':''} de playlist édito</b> depuis vendredi. <a href="#/alertes">Voir les alertes ↗</a>`]);
+  return `<div class="changed-card rv">
     <div class="kicker"><span class="dot"></span>CE QUI A CHANGÉ DEPUIS VENDREDI · S${SEMAINE.num}</div>
     <ul>${f.map(([i, t]) => `<li>${i}<span>${t}</span></li>`).join('')}</ul>
   </div>`;
@@ -1123,6 +1123,7 @@ function vArtistes(){
   return `
   ${labelHero()}
   <section class="band"><div class="wrap">
+    ${whatChanged()}
     <h2 class="h-sect rv">Leaderboard<span style="color:var(--pop)">.</span> <small>streams hebdo · S${SEMAINE.num} vs S${SEMAINE.num-1}</small></h2>
     <p class="h-sub">Trajectoire sur 8 semaines, alertes actives signalées sur la ligne. Cliquer une ligne ouvre le dashboard artiste.</p>
     <div class="grid g-main" style="align-items:start">

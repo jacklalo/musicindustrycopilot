@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>#NP Pilotage MVP V1 · Dashboard Artiste</title>
+<title>#MIC mock · Music Industry Copilot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
@@ -729,7 +729,7 @@
 
 <header class="site">
   <div class="wrap">
-    <a class="brand" href="#/intro" title="Écran d'accueil #MIC"><img class="logo-mic" src="/__l5e/assets-v1/edc626b7-3a66-45a2-946d-aedc2393da1e/MIC_LOGO.svg" alt="MIC"></a>
+    <a class="brand" href="#/intro" title="Écran d'accueil #MIC mock"><img class="logo-mic" src="/__l5e/assets-v1/edc626b7-3a66-45a2-946d-aedc2393da1e/MIC_LOGO.svg" alt="MIC"></a>
     <nav class="main" id="nav">
       <a href="#/home" data-r="home">Accueil</a>
       <a href="#/artistes" data-r="artistes">Artistes</a>
@@ -747,7 +747,7 @@
 
 <footer class="site">
   <div class="wrap">
-    <span><span class="np">#MIC</span>&nbsp;&nbsp;for label 6&amp;7 · MVP V1 · PROTOTYPE</span>
+    <span><span class="np">#MIC mock</span>&nbsp;&nbsp;for label 6&amp;7 · MVP V1 · PROTOTYPE</span>
     <span>6&amp;7 HASHTAG · 2026</span>
   </div>
 </footer>
@@ -2206,7 +2206,7 @@ function micLogin(ev){
   micAuth = true;
   location.hash = '#/home';
   render();
-  if (typeof toast === 'function') toast('Bienvenue sur #MIC');
+  if (typeof toast === 'function') toast('Bienvenue sur #MIC mock');
   return false;
 }
 function micLogout(){
@@ -2229,13 +2229,13 @@ function vIntro(){
         <h1>Music Industry Copilot</h1>
         <p class="sub">Streaming, Shazam, alertes et saisies, toute la donnée du roster 6&amp;7 en un seul endroit.</p>
         <form class="intro-form" onsubmit="return micLogin(event)">
-          <input type="email" placeholder="Adresse e-mail" value="marie.c@6et7.fr" autocomplete="email">
+          <input type="email" placeholder="Adresse e-mail" value="margot.charrie@6et7.fr" autocomplete="email">
           <input type="password" placeholder="Mot de passe" value="••••••••" autocomplete="current-password">
           <button class="intro-cta" type="submit">Connexion</button>
         </form>
         <button class="intro-alt" onclick="micLogin()">Continuer en mode démo →</button>
       </div>
-      <div class="intro-mention"><b>#MIC</b> Music Industry Copilot · pour le label 6&amp;7</div>
+      <div class="intro-mention"><b>#MIC mock</b> Music Industry Copilot · pour le label 6&amp;7</div>
     </div>
   </section>`;
 }

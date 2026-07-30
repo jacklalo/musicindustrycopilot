@@ -146,6 +146,9 @@
   .filters .sep{width:1px;height:22px;background:var(--line);margin:0 6px}
   .filters .right{margin-left:auto;display:flex;align-items:center;gap:12px}
   .filters .chip.active{box-shadow:0 1px 0 rgba(0,0,0,.06)}
+  .dsp-inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+  .dsp-inline .group-label{margin-right:2px}
+  @media(max-width:760px){ .dsp-inline{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:14px} .dsp-inline::-webkit-scrollbar{display:none} .dsp-inline .chip{flex:none} }
   .af-reset{border-style:dashed}
   .af-scope{border-bottom:1px solid var(--line);background:color-mix(in srgb, var(--accent) 5%, var(--background))}
   .af-scope .wrap{display:flex;align-items:center;gap:8px;padding:10px 32px;font-size:12px;color:var(--muted-foreground);flex-wrap:wrap}
@@ -1159,13 +1162,18 @@ function resetFilters(){
 const afChips = (key, vals) => vals.map(p =>
   `<button class="chip chip-sm ${AF[key] === p ? 'active' : ''}" aria-pressed="${AF[key] === p}" onclick="setFilter('${key}', ${JSON.stringify(p).replace(/"/g, '&quot;')})">${p}</button>`).join('');
 
+/** Filtre DSP contextuel, affiché uniquement dans la section Streaming. */
+function dspInline(){
+  return `<div class="dsp-inline">
+    <span class="group-label">DSP</span>
+    ${afChips('dsp', ['Tous','Spotify','Apple','Deezer','Amazon'])}
+  </div>`;
+}
+
 function filtersBar(ctx, slim=false){
   return `<div class="filters"><div class="wrap">
     <span class="group-label">Période</span>
     ${afChips('periode', ['1 sem','1 mois','3 mois'])}
-    <span class="sep"></span>
-    <span class="group-label">DSP</span>
-    ${afChips('dsp', ['Tous','Spotify','Apple','Deezer','Amazon'])}
     <span class="sep"></span>
     <span class="group-label">Pays</span>
     ${afChips('pays', ['Monde','FR','BE','CH'])}
@@ -1514,6 +1522,7 @@ function vArtiste(id){
     <div id="s-streaming" style="scroll-margin-top:130px;margin-top:56px">
       <h2 class="h-sect rv">Streaming<span style="color:var(--accent)">.</span> <small>${AF.dsp === 'Tous' ? 'streams globaux' : 'streams ' + AF.dsp} · sources · seuil ± 20%</small></h2>
       <p class="h-sub">Comparaison semaine N vs N-1 · ${AF.dsp === 'Tous' ? 'Spotify, Apple, Deezer, Amazon' : AF.dsp} · ${AF.pays === 'Monde' ? 'Monde' : AF.pays} · ${P.lab}.</p>
+      ${dspInline()}
       <div class="grid g-main">
         <div class="card hov rv">
           <div class="kicker">MOMENTUM · ${leadSeries.labels.length} ${AF.periode === '1 sem' ? 'JOURS' : 'SEMAINES'} · ${t0.titre.toUpperCase()}</div>
@@ -1698,6 +1707,7 @@ function vTitre(isrc){
 
 
   <section class="band"><div class="wrap">
+    ${dspInline()}
     <div class="grid g-main">
       <div style="display:grid;gap:18px">
         <div class="card hov rv">

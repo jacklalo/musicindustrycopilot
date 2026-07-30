@@ -772,6 +772,40 @@ function dspShare(t){
 /** Facteur appliqué aux volumes de streams selon les filtres actifs. */
 function afFactor(a, t){ return PERIODES[AF.periode].mult * paysShare(a) * dspShare(t || (a && a.titres[0])); }
 
+/* ---- Cohérence des métriques non-streaming avec les filtres ---- */
+const DSP_AUD_DELTA = { Spotify:0, Apple:-1.1, Deezer:0.8, Amazon:-1.9 };
+/** Mix DSP moyen de l'artiste (pondéré par les streams de ses titres). */
+function dspMix(a){
+  const mix = {}; let tot = 0;
+  (a && a.titres || []).forEach(t => {
+    const w = t.streamsHebdo || 1; tot += w;
+    Object.entries(t.dsp || {}).forEach(([d,p]) => { mix[d] = (mix[d] || 0) + p * w; });
+  });
+  Object.keys(mix).forEach(d => mix[d] = mix[d] / (tot || 1));
+  return Object.keys(mix).length ? mix : { Spotify:100 };
+}
+/**
+ * Auditeurs mensuels estimés sur le périmètre courant.
+ * Base = auditeurs Spotify réels ; les autres DSP sont estimés via le mix de streams.
+ * (métrique mensuelle : indépendante de la période, mais sensible au DSP et au pays)
+ */
+function audience(a){
+  const mix = dspMix(a);
+  const sp = (mix.Spotify || 100) / 100;
+  const base = (a.listeners || 0) / (sp || 1);      // audience toutes plateformes (reach brut)
+  const geo = paysShare(a);
+  if (AF.dsp === 'Tous') return { val: Math.round(base * 0.86 * geo), delta: a.listenersDelta, lab: 'Tous DSP', est: true };
+  if (AF.dsp === 'Spotify') return { val: Math.round(a.listeners * geo), delta: a.listenersDelta, lab: 'Spotify', est: false };
+  const share = (mix[AF.dsp] || 0) / 100;
+  return {
+    val: Math.round(base * share * geo),
+    delta: Math.round((a.listenersDelta + (DSP_AUD_DELTA[AF.dsp] || 0)) * 10) / 10,
+    lab: AF.dsp, est: true,
+  };
+}
+/** Volumes journaliers (Shazam, diffusions) : sensibles au pays, pas au DSP. */
+const perDay = (v, a) => Math.max(1, Math.round((v || 0) * paysShare(a)));
+
 function setFilter(key, val){
   if (AF[key] === val) return;
   AF[key] = val;

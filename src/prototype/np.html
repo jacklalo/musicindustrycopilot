@@ -182,6 +182,9 @@
   .a-hero .actions{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
   .a-hero .ph{border-radius:var(--radius-card);aspect-ratio:1/1;max-height:400px;width:100%;box-shadow:0 40px 90px -30px rgba(0,0,0,.6)}
   .a-hero .ph:hover img{transform:scale(1.045)}
+  .hero-collage{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .hero-collage .ph{border-radius:var(--radius-card);aspect-ratio:1/1;width:100%;box-shadow:0 30px 70px -30px rgba(0,0,0,.6);display:block}
+  .hero-collage .ph:hover img{transform:scale(1.06)}
   .track-chip{position:absolute;left:14px;bottom:14px;z-index:2;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);color:#fff;border-radius:9999px;padding:7px 14px;font-size:10.5px;font-weight:700;letter-spacing:.14em;display:flex;align-items:center;gap:7px}
   .track-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--pop)}
 
@@ -844,16 +847,49 @@ function vHome(){
     </div>` : ''}
   </div>`;
 }
+function labelHero(){
+  const tot = ARTISTS.reduce((s,a) => s + a.streams, 0);
+  const totPrev = ARTISTS.reduce((s,a) => s + a.streams / (1 + a.delta/100), 0);
+  const dLab = Math.round((tot/totPrev - 1) * 1000) / 10;
+  const lis = ARTISTS.reduce((s,a) => s + a.listeners, 0);
+  const shaz = ARTISTS.reduce((s,a) => s + shazamOf(a), 0);
+  const soc = ARTISTS.reduce((s,a) => s + a.social.ig + a.social.tt, 0);
+  const top = ranked().slice(0,4);
+  if (!heroOpen) return `<section class="hero-compact"><div class="wrap">
+    <div class="kicker"><span class="dot"></span>LABEL 6&7 · S${SEMAINE.num}</div>
+    <h1>TOP ROSTER</h1>
+    <button class="hero-toggle" onclick="toggleHero()">Déplier ▾</button>
+  </div></section>
+  ${labelKpis(tot, dLab, lis, shaz, soc)}`;
+  return `<section class="a-hero" style="--accent:#C8102E"><div class="wrap">
+    <div>
+      <div style="display:flex;align-items:flex-start"><div class="meta" style="margin-top:0">LABEL 6&7 · ${ARTISTS.length} ARTISTES · S${SEMAINE.num} (${SEMAINE.du} → ${SEMAINE.au})</div><button class="hero-toggle" style="margin-left:auto" onclick="toggleHero()">Réduire ▴</button></div>
+      <h1 class="rv in">Top <em style="font-style:italic;font-weight:400">roster</em>.</h1>
+      <p>Le classement streaming de la semaine, du premier coup d'œil au détail : un rang, un chiffre, une tendance — puis la vue 360° de chaque artiste.</p>
+      <div class="actions">
+        <a class="btn btn-light" href="#/alertes">⚑ ${ALERTES.length} alertes cette semaine</a>
+        <a class="btn btn-outline-w" href="#/saisie">Saisie manuelle <span class="ar">↗</span></a>
+      </div>
+    </div>
+    <div class="hero-collage">
+      ${top.map((a,i) => `<a class="ph" style="--acc:${a.accent}" href="#/artiste/${a.id}" title="${a.nom}"><img src="${IMGS[a.id]}" loading="lazy" alt="" onerror="this.remove()"></a>`).join('')}
+    </div>
+  </div></section>
+  ${labelKpis(tot, dLab, lis, shaz, soc)}`;
+}
+function labelKpis(tot, dLab, lis, shaz, soc){
+  return `<div class="kpi-band">
+    <div class="kpi rv"><div class="lab">Streams hebdo cumulés</div><div class="val">${fmt(tot)} <span class="cmp">${deltaHtml(dLab)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Auditeurs mensuels cumulés</div><div class="val">${fmt(lis)} <span class="cmp" style="color:var(--muted-foreground)">${ARTISTS.length} artistes</span></div></div>
+    <div class="kpi rv"><div class="lab">Shazams / jour</div><div class="val">${fmt(shaz)} <span class="cmp" style="color:var(--muted-foreground)">seuil ${SEUILS.shazam}/titre</span></div></div>
+    <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(soc)} <span class="cmp" style="color:var(--muted-foreground)">IG + TikTok</span></div></div>
+  </div>`;
+}
 function vArtistes(){
 
   const spot = spotArtist();
   return `
-  ${hero('TOP ROSTER', `LABEL 6&7 · ${ARTISTS.length} ARTISTES · S${SEMAINE.num}`, 'Top <em>roster</em>.',
-    "Le classement streaming de la semaine, du premier coup d'œil au détail : un rang, un chiffre, une tendance — puis la vue 360° de chaque artiste.",
-    `<div style="display:flex;gap:12px;margin-top:28px;flex-wrap:wrap">
-      <a class="btn btn-light" href="#/alertes">⚑ ${ALERTES.length} alertes cette semaine</a>
-      <a class="btn btn-outline-w" href="#/saisie">Saisie manuelle <span class="ar">↗</span></a>
-    </div>`)}
+  ${labelHero()}
   <div class="filters"><div class="wrap">
     <span class="group-label">Label</span>
     ${['Tous','6&7'].map(l => `<button class="chip ${labelFilter===l?'active':''}" onclick="labelFilter='${l.replace(/'/g,"\\'")}';render()">${l === 'Tous' ? 'Tous les labels' : l}</button>`).join('')}

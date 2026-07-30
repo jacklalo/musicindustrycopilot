@@ -840,7 +840,7 @@ function afScope(a){
   return `<div class="af-scope"><div class="wrap">
     <span class="dot"></span>
     <b>${AF.periode}</b> · <b>${AF.dsp === 'Tous' ? 'Tous DSP' : AF.dsp}</b> · <b>${AF.pays === 'Monde' ? 'Monde' : AF.pays}</b>
-    <span class="af-note">Volumes recalculés sur ce périmètre${AF.pays === 'Monde' ? '' : ` (part ${AF.pays} : ${Math.round(paysShare(a)*100)}%)`}.</span>
+    <span class="af-note">Streams, Shazam et audiences recalculés sur ce périmètre${AF.pays === 'Monde' ? '' : ` · part ${AF.pays} : ${Math.round(paysShare(a)*100)}%`}${AF.dsp === 'Tous' ? '' : ` · part ${AF.dsp} : ${Math.round((dspMix(a)[AF.dsp] || 0))}%`} · physique &amp; radios : France, hors filtre DSP.</span>
   </div></div>`;
 }
 

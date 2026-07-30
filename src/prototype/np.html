@@ -695,7 +695,6 @@
 
       <a href="#/alertes" data-r="alertes">Alertes <span class="count" id="nav-alert-count"></span></a>
       <a href="#/saisie" data-r="saisie">Saisie</a>
-      <a href="#/label" data-r="label">Label <span class="p2">PHASE 2</span></a>
     </nav>
     <div class="hdr-actions">
       <div class="search-pill" onclick="openSearch()">🔍 Rechercher <kbd>⌘K</kbd></div>
@@ -718,7 +717,6 @@
   <a href="#/artistes" data-r="artistes"><span class="ic">♪</span>Artistes</a>
   <a href="#/alertes" data-r="alertes"><span class="ic">⚑</span>Alertes<span class="count" data-alert-count></span></a>
   <a href="#/saisie" data-r="saisie"><span class="ic">✚</span>Saisie</a>
-  <a href="#/label" data-r="label"><span class="ic">▦</span>Label</a>
 </nav>
 
 <div id="toast"></div>
@@ -2138,25 +2136,6 @@ function addSaisie(){
   saiCommit(rec);
 }
 
-/* ================================================================
-   VUE — LABEL / MANAGEMENT (placeholder Phase 2)
-================================================================ */
-function vLabel(){
-  document.documentElement.style.setProperty('--accent', '#C8102E');
-  return `
-  <section class="band dark" style="padding:60px 0"><div class="wrap">
-    <div class="kicker"><span class="dot"></span>ESPACE RÉSERVÉ · PHASE 2</div>
-    <h1 class="display rv in" style="font-size:clamp(46px,6.5vw,92px);margin:18px 0 18px">Label / <em>Management</em>.</h1>
-    <p class="lead">Prévu dans la navigation dès la V1 pour accueillir sans refonte la vision consolidée.</p>
-  </div></section>
-  <section class="band"><div class="wrap">
-    <div class="grid g3">
-      <div class="placeholder-box rv"><div class="kicker" style="justify-content:center;margin-bottom:12px">PHASE 2</div><b style="font-size:19px;color:var(--foreground)">Dashboard Label</b><p style="font-size:13.5px;margin-top:8px">KPI globaux, agrégation artiste → titre, comparaison inter-artistes.</p></div>
-      <div class="placeholder-box rv"><div class="kicker" style="justify-content:center;margin-bottom:12px">PHASE 2</div><b style="font-size:19px;color:var(--foreground)">Dashboard Management</b><p style="font-size:13.5px;margin-top:8px">Artistes multi-distributeurs, multi-tenant.</p></div>
-      <div class="placeholder-box rv"><div class="kicker" style="justify-content:center;margin-bottom:12px">V2+</div><b style="font-size:19px;color:var(--foreground)">Couche intelligence</b><p style="font-size:13.5px;margin-top:8px">Requêtes en langage naturel, recommandations, alertes adaptatives.</p></div>
-    </div>
-  </div></section>`;
-}
 
 /* ================================================================
    ROUTEUR + RÉVÉLATION AU SCROLL + SCROLL-SPY
@@ -2192,7 +2171,6 @@ function render(){
   else if (route === 'titre' && param) app.innerHTML = vTitre(param);
   else if (route === 'alertes') app.innerHTML = vAlertes();
   else if (route === 'saisie') app.innerHTML = vSaisie();
-  else if (route === 'label') app.innerHTML = vLabel();
   else { spotId = null; document.documentElement.style.setProperty('--accent', '#C8102E'); app.innerHTML = vArtistes(); }
   if (route === 'home' && askState) requestAnimationFrame(() => {
     const el = app.querySelector('.ask-answer');

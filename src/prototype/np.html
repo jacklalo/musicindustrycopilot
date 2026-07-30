@@ -345,15 +345,46 @@
   .comp-row .st.ko{background:rgba(234,88,12,.12);color:#EA580C}
   .lnk{font-size:11.5px;font-weight:700;color:var(--muted-foreground);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:var(--font);padding:0}
   .lnk:hover{color:var(--ink)}
+
+  /* ===== Accueil / Ask ===== */
+  .ask-wrap{max-width:780px;margin:0 auto;padding:clamp(48px,9vh,110px) 24px 90px}
+  .ask-mark{font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-foreground);text-align:center}
+  .ask-h1{font-family:var(--font);font-size:clamp(28px,4.4vw,44px);font-weight:800;letter-spacing:-.035em;text-align:center;margin:16px 0 8px;line-height:1.05}
+  .ask-sub{text-align:center;color:var(--muted-foreground);font-size:14.5px;margin-bottom:30px}
+  .ask-bar{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:12px 12px 12px 18px;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:border-color .2s,box-shadow .2s}
+  .ask-bar:focus-within{border-color:var(--ink);box-shadow:0 6px 24px rgba(0,0,0,.07)}
+  .ask-bar input{flex:1;min-width:0;border:none;outline:none;background:none;font-family:var(--font);font-size:15.5px;font-weight:500;color:var(--ink)}
+  .ask-bar input::placeholder{color:var(--muted-foreground)}
+  .ask-send{flex:none;width:38px;height:38px;border-radius:11px;border:none;background:var(--ink);color:#fff;font-size:16px;cursor:pointer;transition:.2s}
+  .ask-send:hover{opacity:.85}
+  .ask-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
+  .ask-tag{font-family:var(--font);font-size:12.5px;font-weight:600;color:var(--muted-foreground);background:var(--card);border:1px solid var(--line);border-radius:9999px;padding:8px 14px;cursor:pointer;transition:.2s}
+  .ask-tag:hover{color:var(--ink);border-color:var(--ink);background:var(--muted)}
+  .ask-answer{margin-top:34px;border:1px solid var(--line);border-radius:var(--radius-card);background:var(--card);padding:22px;overflow:hidden}
+  .ask-q{font-size:15px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+  .ask-txt{font-size:14px;line-height:1.6;color:var(--muted-foreground);word-break:break-word}
+  .ask-cards{display:grid;grid-template-columns:1fr;gap:8px;margin-top:16px}
+  @media(min-width:640px){.ask-cards{grid-template-columns:1fr 1fr}}
+  .ask-card{display:flex;align-items:center;gap:12px;min-width:0;border:1px solid var(--line);border-radius:14px;padding:10px 12px;cursor:pointer;background:var(--surface);transition:.2s;text-decoration:none;color:inherit}
+  .ask-card:hover{background:var(--muted);border-color:var(--ink)}
+  .ask-card .txt{min-width:0}
+  .ask-card b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ask-card span{display:block;font-size:11.5px;color:var(--muted-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ask-card .val{margin-left:auto;flex:none;font-size:13px;font-weight:800}
+  .ask-src{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
+  .ask-src span{font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-foreground);border:1px solid var(--line);border-radius:9999px;padding:3px 9px}
 </style>
+
 </head>
 <body>
 
 <header class="site">
   <div class="wrap">
-    <a class="brand" href="#/artistes"><span class="np">#NP</span><span class="sub">PILOTAGE</span></a>
+    <a class="brand" href="#/home"><span class="np">#NP</span><span class="sub">PILOTAGE</span></a>
     <nav class="main" id="nav">
+      <a href="#/home" data-r="home">Accueil</a>
       <a href="#/artistes" data-r="artistes">Artistes</a>
+
       <a href="#/alertes" data-r="alertes">Alertes <span class="count" id="nav-alert-count"></span></a>
       <a href="#/saisie" data-r="saisie">Saisie</a>
       <a href="#/label" data-r="label">Label <span class="p2">PHASE 2</span></a>
@@ -737,7 +768,83 @@ function whatChanged(){
     <ul>${f.map(([i, t]) => `<li>${i}<span>${t}</span></li>`).join('')}</ul>
   </div>`;
 }
+/* ===== Accueil : question libre (RAG) ===== */
+const askCard = (a, val, color, detail) => `<a class="ask-card" href="#/artiste/${a.id}">${coverPh(a, a.titres[0].isrc)}<div class="txt"><b>${a.nom}</b><span>${detail}</span></div><span class="val" style="color:${color}">${val}</span></a>`;
+const ASKS = [
+  { q: 'Quel artiste accélère cette semaine ?', run(){
+      const l = [...ARTISTS].sort((x,y) => y.delta - x.delta).slice(0,4);
+      return { txt: `Sur la semaine ${SEMAINE.num} (${SEMAINE.du} → ${SEMAINE.au}), <b>${l[0].nom}</b> signe la plus forte accélération du roster avec <b>+${l[0].delta}%</b> de streams. Le seuil d'alerte interne est fixé à ±${SEUILS.streaming}%.`,
+        cards: l.map(a => askCard(a, (a.delta>0?'+':'')+a.delta+'%', a.delta>=0?'var(--up)':'var(--down)', `${fmt(a.streams)} streams · ${a.label}`)),
+        src: ['Spotify', 'Believe', 'Shazam'] };
+    }},
+  { q: 'Qui recule et pourquoi ?', run(){
+      const l = [...ARTISTS].sort((x,y) => x.delta - y.delta).filter(a => a.delta < 0).slice(0,4);
+      if (!l.length) return { txt: 'Aucun artiste du roster n\'est en recul cette semaine.', cards: [], src: ['Believe'] };
+      return { txt: `<b>${l.length} artiste${l.length>1?'s':''}</b> en repli cette semaine. Le plus marqué : <b>${l[0].nom}</b> à <b>${l[0].delta}%</b> — ${Math.abs(l[0].delta) >= SEUILS.streaming ? 'seuil d\'alerte franchi, arbitrage à prévoir' : 'sous le seuil d\'alerte, à surveiller'}.`,
+        cards: l.map(a => askCard(a, a.delta+'%', 'var(--down)', `${fmt(a.streams)} streams · ${a.label}`)),
+        src: ['Believe', 'Spotify'] };
+    }},
+  { q: 'Quel titre est le plus shazamé ?', run(){
+      const l = ARTISTS.flatMap(a => a.titres.map(t => ({a,t}))).sort((x,y) => y.t.shazamJour - x.t.shazamJour).slice(0,4);
+      return { txt: `« <b>${l[0].t.titre}</b> » (${l[0].a.nom}) domine les Shazams avec <b>${l[0].t.shazamJour}/jour</b>. Le seuil de détection virale est à ${SEUILS.shazam} Shazams/jour.`,
+        cards: l.map(({a,t}) => `<a class="ask-card" href="#/titre/${t.isrc}">${coverPh(a, t.isrc)}<div class="txt"><b>${t.titre}</b><span>${a.nom} · ${t.isrc}</span></div><span class="val" style="color:${t.shazamJour >= SEUILS.shazam ? 'var(--up)' : 'var(--ink)'}">${t.shazamJour}/j</span></a>`),
+        src: ['Shazam', 'TikTok'] };
+    }},
+  { q: 'Que dois-je traiter en priorité ?', run(){
+      const open = ALERTES.filter(al => !alertDone[al.id]);
+      const crit = open.filter(al => critOf(al) === 'critique');
+      return { txt: `<b>${open.length} alerte${open.length>1?'s':''} ouverte${open.length>1?'s':''}</b>, dont <b>${crit.length}</b> à traiter en priorité. <a href="#/alertes">Ouvrir le centre d'alertes ↗</a>`,
+        cards: open.slice(0,4).map(al => { const a = artist(al.artiste); return a ? askCard(a, al.cat, 'var(--muted-foreground)', al.txt ? String(al.txt).replace(/<[^>]+>/g,'').slice(0,60) : al.cat) : ''; }).filter(Boolean),
+        src: ['Alertes #NP'] };
+    }},
+  { q: 'Résume-moi la semaine du label', run(){
+      const top = ranked()[0], mover = [...ARTISTS].sort((x,y) => y.delta - x.delta)[0];
+      const tot = ARTISTS.reduce((s,a) => s + a.streams, 0);
+      return { txt: `Semaine ${SEMAINE.num} : <b>${fmt(tot)} streams</b> cumulés sur ${ARTISTS.length} artistes. <b>${top.nom}</b> reste en tête du roster, <b>${mover.nom}</b> est la plus forte progression (+${mover.delta}%).`,
+        cards: ranked().slice(0,4).map(a => askCard(a, fmt(a.streams), 'var(--ink)', `${(a.delta>0?'+':'')+a.delta}% · ${a.label}`)),
+        src: ['Believe', 'Spotify', 'Saisies #NP'] };
+    }},
+];
+let askState = null;
+function askRun(q){
+  const found = ASKS.find(x => x.q.toLowerCase() === q.toLowerCase()) ||
+    ASKS.find(x => q.toLowerCase().split(/\s+/).filter(w => w.length > 4).some(w => x.q.toLowerCase().includes(w)));
+  const a = artist(q.toLowerCase().trim()) || ARTISTS.find(a => q.toLowerCase().includes(a.nom.toLowerCase()));
+  let res;
+  if (a) res = { txt: `<b>${a.nom}</b> (${a.label}) — <b>${fmt(a.streams)} streams</b> sur S${SEMAINE.num}, ${(a.delta>0?'+':'')+a.delta}% vs S${SEMAINE.num-1}, ${shazamOf(a)} Shazams/jour cumulés. <a href="#/artiste/${a.id}">Ouvrir la fiche ↗</a>`,
+    cards: [askCard(a, (a.delta>0?'+':'')+a.delta+'%', a.delta>=0?'var(--up)':'var(--down)', `${fmt(a.streams)} streams · ${a.genre}`)], src: ['Believe', 'Spotify', 'Shazam'] };
+  else if (found) res = found.run();
+  else res = ASKS[4].run();
+  askState = { q, ...res };
+  render();
+}
+function askSubmit(e){
+  e.preventDefault();
+  const i = $('#ask-input');
+  if (i && i.value.trim()) askRun(i.value.trim());
+  return false;
+}
+function vHome(){
+  const a = askState;
+  return `<div class="ask-wrap">
+    <div class="ask-mark">#NP INTELLIGENCE</div>
+    <h1 class="ask-h1">Posez n'importe quelle question.</h1>
+    <p class="ask-sub">Streaming, Shazam, alertes, saisies — la donnée du roster, en une phrase.</p>
+    <form class="ask-bar" onsubmit="return askSubmit(event)">
+      <input id="ask-input" autocomplete="off" placeholder="Ex : quel artiste accélère cette semaine ?" value="${a ? a.q.replace(/"/g,'&quot;') : ''}">
+      <button class="ask-send" type="submit" aria-label="Envoyer">↑</button>
+    </form>
+    <div class="ask-tags">${ASKS.map(x => `<button class="ask-tag" onclick="askRun(${JSON.stringify(x.q).replace(/"/g,'&quot;')})">${x.q}</button>`).join('')}</div>
+    ${a ? `<div class="ask-answer">
+      <div class="ask-q">${a.q}</div>
+      <div class="ask-txt">${a.txt}</div>
+      ${a.cards.length ? `<div class="ask-cards">${a.cards.join('')}</div>` : ''}
+      <div class="ask-src">${a.src.map(s => `<span>${s}</span>`).join('')}</div>
+    </div>` : ''}
+  </div>`;
+}
 function vArtistes(){
+
   const spot = spotArtist();
   return `
   ${hero('TOP ROSTER', `LABELS 6&7 + SYNDICATE RECORDS · ${ARTISTS.length} ARTISTES · S${SEMAINE.num}`, 'Top <em>roster</em>.',
@@ -1347,17 +1454,23 @@ function observeSpy(){
 }
 function render(){
   $('#nav-alert-count').textContent = ALERTES.filter(al => !alertDone[al.id]).length;
-  const h = location.hash || '#/artistes';
+  const h = location.hash || '#/home';
   const [, route, param, anchor] = h.split('/');
   const app = $('#app');
   document.querySelectorAll('nav.main a').forEach(a => a.classList.toggle('active',
     a.dataset.r === route || (a.dataset.r === 'artistes' && (route === 'artiste' || route === 'titre'))));
-  if (route === 'artiste' && param) app.innerHTML = vArtiste(param);
+  if (route === 'home') app.innerHTML = vHome();
+  else if (route === 'artiste' && param) app.innerHTML = vArtiste(param);
   else if (route === 'titre' && param) app.innerHTML = vTitre(param);
   else if (route === 'alertes') app.innerHTML = vAlertes();
   else if (route === 'saisie') app.innerHTML = vSaisie();
   else if (route === 'label') app.innerHTML = vLabel();
   else { spotId = null; document.documentElement.style.setProperty('--accent', '#C8102E'); app.innerHTML = vArtistes(); }
+  if (route === 'home' && askState) requestAnimationFrame(() => {
+    const el = app.querySelector('.ask-answer');
+    if (el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  });
+
   window.scrollTo(0, 0);
   observeRv();
   observeSpy();

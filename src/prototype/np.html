@@ -1377,14 +1377,14 @@ function vTitre(isrc){
           ${barsWeekly(t.cadence.map(v => Math.round(v * F)), a.accent)}
         </div>
         <div class="lb rv">
-          <div class="kicker" style="padding:20px 28px 14px">PLAYLISTS ÉDITORIALES · ENTRÉES / SORTIES · RANKING</div>
-          ${t.playlists.length ? t.playlists.map(([p,dsp,st,j,r]) => `<div class="lb-row lb-p" style="--acc:${a.accent};cursor:default">
+          <div class="kicker" style="padding:20px 28px 14px">PLAYLISTS ÉDITORIALES · ENTRÉES / SORTIES · RANKING${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase()}</div>
+          ${plList.length ? plList.map(([p,dsp,st,j,r]) => `<div class="lb-row lb-p" style="--acc:${a.accent};cursor:default">
               <span class="lb-rank" style="font-size:24px;color:${(r+'').startsWith('#') ? 'var(--foreground)' : 'var(--muted-foreground)'}">${r}</span>
               <span class="lb-name"><b style="font-size:17px">${p}</b><span>${dsp}</span></span>
               <span>${(st+'').includes('Entrée') ? `<span class="badge b-outline-green">${st}</span>` : (st+'').includes('Sortie') ? `<span class="badge b-down">${st}</span>` : (st+'').includes('hors MVP') ? `<span class="badge b-manual">à arbitrer</span>` : `<span class="badge b-stable">depuis ${st}</span>`}</span>
               <span class="lb-gauge hm"><span class="track"><span class="fill" style="width:${j ? Math.min(100, j/140*100) : 3}%"></span></span></span>
               <span class="lb-val"><b style="font-size:22px">${j || '—'}</b><span>jours</span></span>
-            </div>`).join('') : `<div class="empty">Aucune playlist active — la sortie a déclenché une alerte.</div>`}
+            </div>`).join('') : `<div class="empty">${AF.dsp === 'Tous' ? 'Aucune playlist active — la sortie a déclenché une alerte.' : 'Aucune playlist éditoriale ' + AF.dsp + ' sur ce titre.'}</div>`}
           <div class="lb-foot">Règle §8.3 : chaque entrée ou sortie de playlist éditoriale déclenche une alerte.</div>
         </div>
       </div>

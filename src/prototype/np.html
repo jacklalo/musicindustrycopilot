@@ -772,6 +772,40 @@ function dspShare(t){
 /** Facteur appliqué aux volumes de streams selon les filtres actifs. */
 function afFactor(a, t){ return PERIODES[AF.periode].mult * paysShare(a) * dspShare(t || (a && a.titres[0])); }
 
+/* ---- Cohérence des métriques non-streaming avec les filtres ---- */
+const DSP_AUD_DELTA = { Spotify:0, Apple:-1.1, Deezer:0.8, Amazon:-1.9 };
+/** Mix DSP moyen de l'artiste (pondéré par les streams de ses titres). */
+function dspMix(a){
+  const mix = {}; let tot = 0;
+  (a && a.titres || []).forEach(t => {
+    const w = t.streamsHebdo || 1; tot += w;
+    Object.entries(t.dsp || {}).forEach(([d,p]) => { mix[d] = (mix[d] || 0) + p * w; });
+  });
+  Object.keys(mix).forEach(d => mix[d] = mix[d] / (tot || 1));
+  return Object.keys(mix).length ? mix : { Spotify:100 };
+}
+/**
+ * Auditeurs mensuels estimés sur le périmètre courant.
+ * Base = auditeurs Spotify réels ; les autres DSP sont estimés via le mix de streams.
+ * (métrique mensuelle : indépendante de la période, mais sensible au DSP et au pays)
+ */
+function audience(a){
+  const mix = dspMix(a);
+  const sp = (mix.Spotify || 100) / 100;
+  const base = (a.listeners || 0) / (sp || 1);      // audience toutes plateformes (reach brut)
+  const geo = paysShare(a);
+  if (AF.dsp === 'Tous') return { val: Math.round(base * 0.86 * geo), delta: a.listenersDelta, lab: 'Tous DSP', est: true };
+  if (AF.dsp === 'Spotify') return { val: Math.round(a.listeners * geo), delta: a.listenersDelta, lab: 'Spotify', est: false };
+  const share = (mix[AF.dsp] || 0) / 100;
+  return {
+    val: Math.round(base * share * geo),
+    delta: Math.round((a.listenersDelta + (DSP_AUD_DELTA[AF.dsp] || 0)) * 10) / 10,
+    lab: AF.dsp, est: true,
+  };
+}
+/** Volumes journaliers (Shazam, diffusions) : sensibles au pays, pas au DSP. */
+const perDay = (v, a) => Math.max(1, Math.round((v || 0) * paysShare(a)));
+
 function setFilter(key, val){
   if (AF[key] === val) return;
   AF[key] = val;
@@ -806,7 +840,7 @@ function afScope(a){
   return `<div class="af-scope"><div class="wrap">
     <span class="dot"></span>
     <b>${AF.periode}</b> · <b>${AF.dsp === 'Tous' ? 'Tous DSP' : AF.dsp}</b> · <b>${AF.pays === 'Monde' ? 'Monde' : AF.pays}</b>
-    <span class="af-note">Volumes recalculés sur ce périmètre${AF.pays === 'Monde' ? '' : ` (part ${AF.pays} : ${Math.round(paysShare(a)*100)}%)`}.</span>
+    <span class="af-note">Streams, Shazam et audiences recalculés sur ce périmètre${AF.pays === 'Monde' ? '' : ` · part ${AF.pays} : ${Math.round(paysShare(a)*100)}%`}${AF.dsp === 'Tous' ? '' : ` · part ${AF.dsp} : ${Math.round((dspMix(a)[AF.dsp] || 0))}%`} · physique &amp; radios : France, hors filtre DSP.</span>
   </div></div>`;
 }
 
@@ -1082,6 +1116,9 @@ function vArtiste(id){
   const sc = (v, t) => Math.round((v || 0) * F(t || t0));
   const scoreOk = a.score > SEUILS.score;
   const spotifyScope = AF.dsp === 'Tous' || AF.dsp === 'Spotify';
+  const AUD = audience(a);
+  const MIX = dspMix(a);
+  const shz = v => perDay(v, a);
 
   const summary = (() => {
     const p = [];
@@ -1109,11 +1146,11 @@ function vArtiste(id){
 
   <div class="kpi-band">
     <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(sc(a.streams))} <span class="cmp">${deltaHtml(a.delta)}</span></div></div>
-    <div class="kpi rv"><div class="lab">Auditeurs mensuels · Spotify${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.listeners * geo))} <span class="cmp">${deltaHtml(a.listenersDelta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Auditeurs mensuels · ${AUD.lab}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(AUD.val)} <span class="cmp">${deltaHtml(AUD.delta)}</span>${AUD.est ? '<span class="cmp" style="color:var(--muted-foreground)"> est.</span>' : ''}</div></div>
     ${spotifyScope
       ? `<div class="kpi rv"><div class="lab">Score Spotify /100</div><div class="val" style="${scoreOk ? 'color:var(--accent)' : ''}">${a.score} <span class="cmp" style="color:var(--muted-foreground)">${scoreOk ? '> seuil 50' : 'S' + (SEMAINE.num-1) + ' : ' + a.scorePrev}</span></div></div>`
-      : `<div class="kpi rv"><div class="lab">Part ${AF.dsp}</div><div class="val">${Math.round((t0.dsp && t0.dsp[AF.dsp]) || 0)}% <span class="cmp" style="color:var(--muted-foreground)">des streams du titre</span></div></div>`}
-    <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(a.social.ig + a.social.tt)} <span class="cmp">${deltaHtml(a.social.igD)}</span></div></div>
+      : `<div class="kpi rv"><div class="lab">Part ${AF.dsp}</div><div class="val">${Math.round(MIX[AF.dsp] || 0)}% <span class="cmp" style="color:var(--muted-foreground)">des streams de l'artiste</span></div></div>`}
+    <div class="kpi rv"><div class="lab">Audience sociale${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round((a.social.ig + a.social.tt) * geo))} <span class="cmp">${deltaHtml(a.social.igD)}</span></div></div>
   </div>
 
   <div class="subnav"><div class="wrap">
@@ -1135,19 +1172,19 @@ function vArtiste(id){
     </div>
 
     <div id="s-titres" style="scroll-margin-top:130px;margin-top:56px">
-      <h2 class="h-sect rv">Titres<span style="color:var(--accent)">.</span> <small>classés par streams · cliquer pour le drill-down ISRC/UPC</small></h2>
+      <h2 class="h-sect rv">Titres<span style="color:var(--accent)">.</span> <small>classés par streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays} · cliquer pour le drill-down ISRC/UPC</small></h2>
       <div class="lb rv">
-        ${[...tl].sort((x,y) => y.streamsHebdo - x.streamsHebdo).map((t,i,arr) => `
+        ${[...tl].sort((x,y) => sc(y.streamsHebdo, y) - sc(x.streamsHebdo, x)).map((t,i,arr) => { const sj = shz(t.shazamJour); const flag = sj > SEUILS.shazam; return `
         <a class="lb-row lb-t" style="--acc:${a.accent}" href="#/titre/${t.isrc}">
           <span class="lb-rank">${String(i+1).padStart(2,'0')}<small class="${t.delta > 0 ? 'rk-up' : t.delta < 0 ? 'rk-dn' : 'rk-eq'}">${t.delta > 0 ? '↑' : t.delta < 0 ? '↓' : '—'} ${Math.abs(t.delta)}%</small></span>
           <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${U(TIMGS[t.isrc] || '')}" loading="lazy" alt="" onerror="this.remove()"></span>
           <span class="lb-name"><b>${t.titre}</b><span>${t.projet} · <span class="mono">${t.isrc}</span></span></span>
-          <span class="hm">${sparkMini(t.cadence, a.accent)}</span>
-          <span class="lb-val hm"><b style="${t.shazamJour > SEUILS.shazam ? 'color:var(--pop)' : ''}">${t.shazamJour}${t.shazamJour > SEUILS.shazam ? ' ⚑' : ''}</b><span>Shazam /j</span></span>
+          <span class="hm">${sparkMini(t.cadence.map(v => Math.round(v * F(t))), a.accent)}</span>
+          <span class="lb-val hm"><b style="${flag ? 'color:var(--pop)' : ''}">${sj}${flag ? ' ⚑' : ''}</b><span>Shazam /j${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</span></span>
           <span class="lb-val"><b>${fmt(sc(t.streamsHebdo, t))}</b><span>streams ${P.lab} · ${momBadgeTxt(t.delta)}</span></span>
           <span class="go hm">↗</span>
-        </a>`).join('')}
-        <div class="lb-foot">Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j.</div>
+        </a>`; }).join('')}
+        <div class="lb-foot">Seuil d'alerte ± ${SEUILS.streaming}% (S vs S-1) · Shazam > ${SEUILS.shazam}/j${AF.dsp === 'Tous' ? '' : ` · volumes isolés sur ${AF.dsp}`}.</div>
       </div>
     </div>
 
@@ -1184,13 +1221,14 @@ function vArtiste(id){
     </div>
 
     <div id="s-social" style="scroll-margin-top:130px;margin-top:56px">
-      <h2 class="h-sect rv">Social<span style="color:var(--accent)">.</span> <small>following · prises de parole · UGC</small></h2>
+      <h2 class="h-sect rv">Social<span style="color:var(--accent)">.</span> <small>following · prises de parole · UGC${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</small></h2>
       <div class="grid g4">
-        <div class="tile rv"><div class="lab">Followers Instagram</div><div class="val">${fmt(a.social.ig)}</div><div class="cmp">${deltaHtml(a.social.igD)}</div></div>
-        <div class="tile rv"><div class="lab">Followers TikTok</div><div class="val">${fmt(a.social.tt)}</div><div class="cmp">${deltaHtml(a.social.ttD)}</div></div>
+        <div class="tile rv"><div class="lab">Followers Instagram${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.social.ig * geo))}</div><div class="cmp">${deltaHtml(a.social.igD)}</div></div>
+        <div class="tile rv"><div class="lab">Followers TikTok${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.social.tt * geo))}</div><div class="cmp">${deltaHtml(a.social.ttD)}</div></div>
         <div class="tile rv"><div class="lab">Prises de parole · 30 j</div><div class="val">${a.social.posts}</div><div class="cmp" style="color:var(--muted-foreground)">posts · stories · lives</div></div>
-        <div class="tile rv"><div class="lab">Vidéos UGC sticker son</div><div class="val">${fmt(a.social.ugc)}</div><div class="cmp">${deltaHtml(a.social.ugcD)}</div></div>
+        <div class="tile rv"><div class="lab">Vidéos UGC sticker son · ${P.lab}</div><div class="val">${fmt(Math.round(a.social.ugc * P.mult * geo))}</div><div class="cmp">${deltaHtml(a.social.ugcD)}</div></div>
       </div>
+      <div class="note-line">Périmètre social : ${AF.pays === 'Monde' ? 'monde' : 'part ' + AF.pays + ' estimée (' + Math.round(geo*100) + '%)'} · le filtre DSP ne s'applique pas aux réseaux sociaux.</div>
       ${(() => { const tp = TOPPOSTS[a.id]; return tp ? `
       <div class="card hov rv" style="margin-top:14px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
         <div style="flex:1;min-width:220px">
@@ -1227,17 +1265,19 @@ function vArtiste(id){
 
     <div class="grid g2" style="margin-top:56px">
       <div id="s-physique" style="scroll-margin-top:130px">
-        <h2 class="h-sect rv">Physique<span style="color:var(--accent)">.</span> <small><span class="badge b-manual">SAISIE MANUELLE</span></small></h2>
+        <h2 class="h-sect rv">Physique<span style="color:var(--accent)">.</span> <small><span class="badge b-manual">SAISIE MANUELLE</span> · ${P.lab}</small></h2>
         <div class="grid g3" style="gap:13px">
-          <div class="tile rv"><div class="lab">Mise en place</div><div class="val">${a.physique.mep ? fmt(a.physique.mep) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">unités</div></div>
-          <div class="tile rv"><div class="lab">dont D2C</div><div class="val">${a.physique.d2c ? fmt(a.physique.d2c) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">Shopify</div></div>
-          <div class="tile rv"><div class="lab">dont magasins</div><div class="val">${a.physique.magasins ? fmt(a.physique.magasins) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">FNAC, Cultura…</div></div>
+          <div class="tile rv"><div class="lab">Mise en place</div><div class="val">${a.physique.mep ? fmt(Math.round(a.physique.mep * P.mult)) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">unités · ${P.lab}</div></div>
+          <div class="tile rv"><div class="lab">dont D2C</div><div class="val">${a.physique.d2c ? fmt(Math.round(a.physique.d2c * P.mult)) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">Shopify</div></div>
+          <div class="tile rv"><div class="lab">dont magasins</div><div class="val">${a.physique.magasins ? fmt(Math.round(a.physique.magasins * P.mult)) : '—'}</div><div class="cmp" style="color:var(--muted-foreground)">FNAC, Cultura…</div></div>
         </div>
-        <div class="note-line"><a href="#/saisie" style="font-weight:700">Ouvrir la saisie ↗</a>&nbsp; Données historisées comme les données automatisées.</div>
+        <div class="note-line"><a href="#/saisie" style="font-weight:700">Ouvrir la saisie ↗</a>&nbsp; Ventes physiques France · filtres DSP non applicables.</div>
       </div>
       <div id="s-radio" style="scroll-margin-top:130px">
-        <h2 class="h-sect rv">Radios<span style="color:var(--accent)">.</span> <small>airplay · top 5 stations</small></h2>
-        <div class="lb rv">
+        <h2 class="h-sect rv">Radios<span style="color:var(--accent)">.</span> <small>airplay FR · top 5 stations · ${P.lab}</small></h2>
+        ${AF.pays !== 'Monde' && AF.pays !== 'FR'
+          ? `<div class="empty">Airplay suivi sur la France uniquement — aucune donnée pour le périmètre ${AF.pays}.</div>`
+          : `<div class="lb rv">
           <div style="display:flex;align-items:baseline;gap:14px;padding:20px 28px;border-bottom:1px solid var(--line)">
             <span class="num-xl">#${a.radio.rang}</span>
             <span style="font-size:13px;color:var(--muted-foreground)">classement airplay FR</span>
@@ -1247,9 +1287,9 @@ function vArtiste(id){
             <span class="lb-rank" style="font-size:20px">${String(i+1).padStart(2,'0')}</span>
             <span class="lb-name"><b style="font-size:16px">${s}</b></span>
             <span class="lb-gauge"><span class="track"><span class="fill" style="width:${n/a.radio.diffusions[0][1]*100}%"></span></span></span>
-            <span class="lb-val"><b style="font-size:22px">${n}</b><span>diff. / 7j</span></span>
+            <span class="lb-val"><b style="font-size:22px">${Math.round(n * P.mult)}</b><span>diff. / ${P.lab}</span></span>
           </div>`).join('')}
-        </div>
+        </div>`}
       </div>
     </div>
 
@@ -1292,7 +1332,13 @@ function vTitre(isrc){
   const {a, t} = found;
   document.documentElement.style.setProperty('--accent', a.accent);
   const alerte = Math.abs(t.delta) >= SEUILS.streaming;
-  const shazAlert = t.shazamJour > SEUILS.shazam;
+  const P = PERIODES[AF.periode];
+  const geo = paysShare(a);
+  const F = P.mult * geo * dspShare(t);
+  const scT = v => Math.round((v || 0) * F);
+  const sj = perDay(t.shazamJour, a);
+  const shazAlert = sj > SEUILS.shazam;
+  const plList = t.playlists.filter(([p,dsp]) => AF.dsp === 'Tous' || (dsp + '').toLowerCase().includes(AF.dsp.toLowerCase()));
   return `
   <section class="a-hero"><div class="wrap" style="padding-top:40px;padding-bottom:44px">
     <div>
@@ -1309,51 +1355,53 @@ function vTitre(isrc){
   </div></section>
 
   <div class="kpi-band">
-    <div class="kpi rv"><div class="lab">Streams S${SEMAINE.num}</div><div class="val">${fmt(t.streamsHebdo)} <span class="cmp">${deltaHtml(t.delta)}</span></div></div>
-    <div class="kpi rv"><div class="lab">Shazam / jour</div><div class="val" style="${shazAlert ? 'color:var(--accent)' : ''}">${t.shazamJour} <span class="cmp" style="color:var(--muted-foreground)">seuil ${SEUILS.shazam}${shazAlert ? ' ⚑' : ''}</span></div></div>
-    <div class="kpi rv"><div class="lab">Playlists édito</div><div class="val">${t.playlists.length}</div></div>
+    <div class="kpi rv"><div class="lab">Streams ${P.lab}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(scT(t.streamsHebdo))} <span class="cmp">${deltaHtml(t.delta)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Shazam / jour${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val" style="${shazAlert ? 'color:var(--accent)' : ''}">${sj} <span class="cmp" style="color:var(--muted-foreground)">seuil ${SEUILS.shazam}${shazAlert ? ' ⚑' : ''}</span></div></div>
+    <div class="kpi rv"><div class="lab">Playlists édito${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp}</div><div class="val">${plList.length}</div></div>
     <div class="kpi rv"><div class="lab">Sources actives</div><div class="val">${t.sources.actives}%</div></div>
   </div>
 
   ${filtersBar(t.titre + ' — ' + a.nom)}
+  ${afScope(a)}
+
 
   <section class="band"><div class="wrap">
     <div class="grid g-main">
       <div style="display:grid;gap:18px">
         <div class="card hov rv">
-          <div class="kicker">CADENCE HEBDO · 8 SEMAINES (VEN → VEN) · MILLIERS DE STREAMS</div>
+          <div class="kicker">CADENCE HEBDO · 8 ${AF.periode === '12 sem' ? 'PÉRIODES' : 'SEMAINES'} (VEN → VEN)${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase()}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 4px">
-            <span class="num-xl">${fmt(t.streamsHebdo)}</span>
+            <span class="num-xl">${fmt(scT(t.streamsHebdo))}</span>
             ${momBadge(t.delta)}
           </div>
-          ${barsWeekly(t.cadence, a.accent)}
+          ${barsWeekly(t.cadence.map(v => Math.round(v * F)), a.accent)}
         </div>
         <div class="lb rv">
-          <div class="kicker" style="padding:20px 28px 14px">PLAYLISTS ÉDITORIALES · ENTRÉES / SORTIES · RANKING</div>
-          ${t.playlists.length ? t.playlists.map(([p,dsp,st,j,r]) => `<div class="lb-row lb-p" style="--acc:${a.accent};cursor:default">
+          <div class="kicker" style="padding:20px 28px 14px">PLAYLISTS ÉDITORIALES · ENTRÉES / SORTIES · RANKING${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase()}</div>
+          ${plList.length ? plList.map(([p,dsp,st,j,r]) => `<div class="lb-row lb-p" style="--acc:${a.accent};cursor:default">
               <span class="lb-rank" style="font-size:24px;color:${(r+'').startsWith('#') ? 'var(--foreground)' : 'var(--muted-foreground)'}">${r}</span>
               <span class="lb-name"><b style="font-size:17px">${p}</b><span>${dsp}</span></span>
               <span>${(st+'').includes('Entrée') ? `<span class="badge b-outline-green">${st}</span>` : (st+'').includes('Sortie') ? `<span class="badge b-down">${st}</span>` : (st+'').includes('hors MVP') ? `<span class="badge b-manual">à arbitrer</span>` : `<span class="badge b-stable">depuis ${st}</span>`}</span>
               <span class="lb-gauge hm"><span class="track"><span class="fill" style="width:${j ? Math.min(100, j/140*100) : 3}%"></span></span></span>
               <span class="lb-val"><b style="font-size:22px">${j || '—'}</b><span>jours</span></span>
-            </div>`).join('') : `<div class="empty">Aucune playlist active — la sortie a déclenché une alerte.</div>`}
+            </div>`).join('') : `<div class="empty">${AF.dsp === 'Tous' ? 'Aucune playlist active — la sortie a déclenché une alerte.' : 'Aucune playlist éditoriale ' + AF.dsp + ' sur ce titre.'}</div>`}
           <div class="lb-foot">Règle §8.3 : chaque entrée ou sortie de playlist éditoriale déclenche une alerte.</div>
         </div>
       </div>
       <div style="display:grid;gap:16px">
         <div class="card hov rv">
-          <div class="kicker">STREAMS PAR DSP</div>
+          <div class="kicker">STREAMS PAR DSP${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase() + ' ISOLÉ'}</div>
           <div style="margin-top:14px">
-            ${Object.entries(t.dsp).map(([d,p]) => `<div class="brow"><div class="btop"><b>${d}</b><span>${p}% · ${fmt(Math.round(t.streamsHebdo*p/100))}</span></div><div class="track"><span class="fill" style="width:${p}%"></span></div></div>`).join('')}
+            ${Object.entries(t.dsp).map(([d,p]) => `<div class="brow" style="opacity:${AF.dsp === 'Tous' || AF.dsp === d ? 1 : .32};cursor:pointer" onclick="setFilter('dsp','${AF.dsp === d ? 'Tous' : d}')"><div class="btop"><b>${d}</b><span>${p}% · ${fmt(Math.round(t.streamsHebdo*p/100*P.mult*geo))}</span></div><div class="track"><span class="fill" style="width:${p}%"></span></div></div>`).join('')}
           </div>
         </div>
         <div class="card hov rv">
-          <div class="kicker">SHAZAM FOCUS · GÉO</div>
+          <div class="kicker">SHAZAM FOCUS · GÉO${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div>
           <div style="display:flex;align-items:baseline;gap:10px;margin:12px 0 6px">
-            <span class="num-xl" style="${shazAlert ? 'color:var(--accent)' : ''}">${t.shazamJour}</span>
+            <span class="num-xl" style="${shazAlert ? 'color:var(--accent)' : ''}">${sj}</span>
             <span style="font-size:13px;color:var(--muted-foreground)">/ jour</span>
           </div>
-          <div class="track" style="margin:10px 0 6px"><span class="fill" style="width:${Math.min(100, t.shazamJour/(SEUILS.shazam*1.6)*100)}%"></span></div>
+          <div class="track" style="margin:10px 0 6px"><span class="fill" style="width:${Math.min(100, sj/(SEUILS.shazam*1.6)*100)}%"></span></div>
           <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted-foreground)"><span>0</span><span>seuil ${SEUILS.shazam}/j *</span></div>
           <div class="note-line">* 300 ou 500/j : à confirmer avec le client.</div>
         </div>

@@ -857,7 +857,7 @@ function vArtistes(){
     </div>`)}
   <div class="filters"><div class="wrap">
     <span class="group-label">Label</span>
-    ${['Tous','6&7','Syndicate Records'].map(l => `<button class="chip ${labelFilter===l?'active':''}" onclick="labelFilter='${l.replace(/'/g,"\\'")}';render()">${l === 'Tous' ? 'Tous les labels' : l}</button>`).join('')}
+    ${['Tous','6&7'].map(l => `<button class="chip ${labelFilter===l?'active':''}" onclick="labelFilter='${l.replace(/'/g,"\\'")}';render()">${l === 'Tous' ? 'Tous les labels' : l}</button>`).join('')}
     <div class="right">
       <input placeholder="Filtrer le roster..." value="${rosterQuery}" oninput="rosterQuery=this.value;renderRosterOnly()" style="font-family:var(--font);font-size:13px;border:1px solid var(--line);border-radius:9999px;padding:9px 17px;outline:none;background:var(--card);width:210px">
       ${syncHtml}<button class="btn btn-dark btn-sm" onclick="openExport('Leaderboard roster S${SEMAINE.num}')">Exporter <span class="ar">↗</span></button>

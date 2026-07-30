@@ -1150,7 +1150,7 @@ function vArtiste(id){
     ${spotifyScope
       ? `<div class="kpi rv"><div class="lab">Score Spotify /100</div><div class="val" style="${scoreOk ? 'color:var(--accent)' : ''}">${a.score} <span class="cmp" style="color:var(--muted-foreground)">${scoreOk ? '> seuil 50' : 'S' + (SEMAINE.num-1) + ' : ' + a.scorePrev}</span></div></div>`
       : `<div class="kpi rv"><div class="lab">Part ${AF.dsp}</div><div class="val">${Math.round(MIX[AF.dsp] || 0)}% <span class="cmp" style="color:var(--muted-foreground)">des streams de l'artiste</span></div></div>`}
-    <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(a.social.ig + a.social.tt)} <span class="cmp">${deltaHtml(a.social.igD)}</span></div></div>
+    <div class="kpi rv"><div class="lab">Audience sociale${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round((a.social.ig + a.social.tt) * geo))} <span class="cmp">${deltaHtml(a.social.igD)}</span></div></div>
   </div>
 
   <div class="subnav"><div class="wrap">

@@ -755,10 +755,10 @@ document.addEventListener('keydown', e => {
 
 const syncHtml = `<span class="sync"><span class="ok"></span>S${SEMAINE.num} · VEN→VEN</span><span class="sync" title="Délai de reporting Believe 48–72h (§8.2)"><span class="warn"></span>BELIEVE J-3</span>`;
 
-const PERIODES = { '7 j': {mult:1, lab:'7 j', pts:7}, '28 j': {mult:4, lab:'28 j', pts:4}, '12 sem': {mult:12, lab:'12 sem', pts:12} };
+const PERIODES = { '1 sem': {mult:1, lab:'1 sem', pts:7}, '1 mois': {mult:4, lab:'1 mois', pts:4}, '3 mois': {mult:12, lab:'3 mois', pts:12} };
 const PAYS_FALLBACK = { Monde:100, FR:62, BE:7, CH:5 };
-const AF = { periode:'7 j', dsp:'Tous', pays:'Monde' };
-const afDefault = () => AF.periode === '7 j' && AF.dsp === 'Tous' && AF.pays === 'Monde';
+const AF = { periode:'1 sem', dsp:'Tous', pays:'Monde' };
+const afDefault = () => AF.periode === '1 sem' && AF.dsp === 'Tous' && AF.pays === 'Monde';
 
 function paysShare(a){
   if (AF.pays === 'Monde') return 1;
@@ -790,14 +790,14 @@ function weeklyHistory(entity){
 function periodSeries(a, entity){
   const weekly = weeklyHistory(entity);
   let values, labels;
-  if(AF.periode === '7 j'){
+  if(AF.periode === '1 sem'){
     const latest = weekly[weekly.length-1] * 1000;
     const trend = Math.max(-.18, Math.min(.18, (entity.delta || a.delta || 0) / 100));
     const weights = [.135,.14,.125,.14,.145,.15,.165].map((v,i) => v * (1 + trend * (i-3)/3));
     const sum = weights.reduce((s,v) => s+v,0);
     values = weights.map(v => latest * v / sum);
     labels = ['Ven','Sam','Dim','Lun','Mar','Mer','Jeu'];
-  } else if(AF.periode === '28 j'){
+  } else if(AF.periode === '1 mois'){
     values = weekly.slice(-4).map(v => v * 1000);
     labels = Array.from({length:4},(_,i) => `S${SEMAINE.num-3+i}`);
   } else {
@@ -810,9 +810,9 @@ function periodSeries(a, entity){
 }
 function periodDelta(entity){
   const w = weeklyHistory(entity);
-  if(AF.periode === '7 j') return entity.delta || 0;
+  if(AF.periode === '1 sem') return entity.delta || 0;
   const recent = w.slice(-4).reduce((s,v)=>s+v,0);
-  const prior = AF.periode === '28 j' ? w.slice(-8,-4).reduce((s,v)=>s+v,0) : w.slice(0,4).reduce((s,v)=>s+v,0);
+  const prior = AF.periode === '1 mois' ? w.slice(-8,-4).reduce((s,v)=>s+v,0) : w.slice(0,4).reduce((s,v)=>s+v,0);
   return prior ? Math.round((recent/prior-1)*1000)/10 : entity.delta || 0;
 }
 
@@ -865,7 +865,7 @@ function setFilter(key, val){
   toast(`Périmètre : <b>${AF.periode} · ${AF.dsp === 'Tous' ? 'tous DSP' : AF.dsp} · ${AF.pays}</b>`);
 }
 function resetFilters(){
-  AF.periode = '7 j'; AF.dsp = 'Tous'; AF.pays = 'Monde';
+  AF.periode = '1 sem'; AF.dsp = 'Tous'; AF.pays = 'Monde';
   const y = window.scrollY; render(); window.scrollTo(0, y);
   toast('Filtres réinitialisés');
 }
@@ -875,7 +875,7 @@ const afChips = (key, vals) => vals.map(p =>
 function filtersBar(ctx, slim=false){
   return `<div class="filters"><div class="wrap">
     <span class="group-label">Période</span>
-    ${afChips('periode', ['7 j','28 j','12 sem'])}
+    ${afChips('periode', ['1 sem','1 mois','3 mois'])}
     <span class="sep"></span>
     <span class="group-label">DSP</span>
     ${afChips('dsp', ['Tous','Spotify','Apple','Deezer','Amazon'])}
@@ -1248,7 +1248,7 @@ function vArtiste(id){
       <p class="h-sub">Comparaison semaine N vs N-1 · ${AF.dsp === 'Tous' ? 'Spotify, Apple, Deezer, Amazon' : AF.dsp} · ${AF.pays === 'Monde' ? 'Monde' : AF.pays} · ${P.lab}.</p>
       <div class="grid g-main">
         <div class="card hov rv">
-          <div class="kicker">MOMENTUM · ${leadSeries.labels.length} ${AF.periode === '7 j' ? 'JOURS' : 'SEMAINES'} · ${t0.titre.toUpperCase()}</div>
+          <div class="kicker">MOMENTUM · ${leadSeries.labels.length} ${AF.periode === '1 sem' ? 'JOURS' : 'SEMAINES'} · ${t0.titre.toUpperCase()}</div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 4px">
             <span class="num-xl">${fmt(leadSeries.total)}</span>
             ${momBadge(leadPeriodDelta)}
@@ -1427,7 +1427,7 @@ function vTitre(isrc){
     <div class="grid g-main">
       <div style="display:grid;gap:18px">
         <div class="card hov rv">
-          <div class="kicker">CADENCE · ${SERIES.labels.length} ${AF.periode === '7 j' ? 'JOURS' : 'SEMAINES'}${AF.periode === '7 j' ? '' : ' (VEN → VEN)'}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase()}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div>
+          <div class="kicker">CADENCE · ${SERIES.labels.length} ${AF.periode === '1 sem' ? 'JOURS' : 'SEMAINES'}${AF.periode === '1 sem' ? '' : ' (VEN → VEN)'}${AF.dsp === 'Tous' ? '' : ' · ' + AF.dsp.toUpperCase()}${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 4px">
             <span class="num-xl">${fmt(SERIES.total)}</span>
             ${momBadge(PERIOD_DELTA)}

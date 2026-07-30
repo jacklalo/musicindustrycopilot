@@ -1276,9 +1276,7 @@ function vAlertes(){
     <div class="note-line">ⓘ Seuils adaptatifs (historique artiste) : V2+ · Alerte playlist utilisateur > 100K : hors MVP, à arbitrer. * Seuil Shazam 300 vs 500/j à trancher.</div>
   </div></section>`;
 }
-function markAllRead(){ ALERTES.forEach(al => alertRead[al.id] = true); toast('✓&nbsp; Toutes les alertes marquées comme lues'); render(); }
-function toggleDone(id){ alertDone[id] = !alertDone[id]; alertRead[id] = true; toast(alertDone[id] ? '✓&nbsp; Alerte marquée <b>traitée</b>' : '↩&nbsp; Alerte rouverte'); render(); }
-function markRead(id){ if (!alertRead[id]) { alertRead[id] = true; render(); } }
+function toggleDone(id){ alertDone[id] = !alertDone[id]; toast(alertDone[id] ? '✓&nbsp; Alerte marquée <b>traitée</b>' : '↩&nbsp; Alerte rouverte'); render(); }
 
 /* ================================================================
    VUE — SAISIE MANUELLE (§7.5)

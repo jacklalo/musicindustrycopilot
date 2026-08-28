@@ -1753,10 +1753,10 @@ function vClassements(){
     </a>
   </div></section>
   <div class="kpi-float"><div class="kpi-band">
-    <div class="kpi rv"><div class="lab">Meilleure position albums · ${A.jour}</div><div class="val">#${bestA.pos} <span class="cmp" style="color:var(--muted-foreground)">${bestA.artiste}</span></div></div>
-    <div class="kpi rv"><div class="lab">Meilleure position titres · ${T.jour}</div><div class="val">#${bestT.pos} <span class="cmp" style="color:var(--muted-foreground)">${bestT.titre}</span></div></div>
-    <div class="kpi rv"><div class="lab">Équiv. ventes roster · top albums</div><div class="val">${fmt(ventes)} <span class="cmp" style="color:var(--muted-foreground)">${mA.length} entrées</span></div></div>
-    <div class="kpi rv"><div class="lab">Streams roster · top titres</div><div class="val">${fmt(strm)} <span class="cmp" style="color:var(--muted-foreground)">${mT.length} entrées</span></div></div>
+    <div class="kpi rv"><div class="lab">Top albums · ${A.jour.toLowerCase()}</div><div class="val">#${bestA.pos} <span class="cmp" style="color:var(--muted-foreground)">${bestA.artiste}</span></div></div>
+    <div class="kpi rv"><div class="lab">Top titres · ${T.jour.toLowerCase()}</div><div class="val">#${bestT.pos} <span class="cmp" style="color:var(--muted-foreground)">${bestT.titre}</span></div></div>
+    <div class="kpi rv"><div class="lab">Ventes roster · albums</div><div class="val">${fmt(ventes)} <span class="cmp" style="color:var(--muted-foreground)">${mA.length} entrées</span></div></div>
+    <div class="kpi rv"><div class="lab">Streams roster · titres</div><div class="val">${fmt(strm)} <span class="cmp" style="color:var(--muted-foreground)">${mT.length} entrées</span></div></div>
   </div></div>
   <section class="band"><div class="wrap">
     <h2 class="h-sect rv">Tops de la semaine<span style="color:var(--pop)">.</span> <small>relevés ${A.date} (albums) et ${T.date} (titres)</small></h2>
@@ -1987,7 +1987,7 @@ function vArtiste(id){
         <div class="ch-row head"><span>Rang</span><span>Entrée chart</span><span class="hm" style="text-align:right">Volume</span><span class="hm" style="text-align:right">Meilleur</span><span class="hm" style="text-align:right">Semaines</span><span class="hm" style="text-align:right">Certif.</span></div>
         ${es.map(e => `<div class="ch-row">
           <span class="ch-pos"><b>${String(e.pos).padStart(2,'0')}</b>${chMove(e.pos, e.prev)}</span>
-          <span class="ch-t"><b>${e.kind} « ${e.titre} »</b><span>${e.src.titre} · relevé ${e.src.jour.toLowerCase()} ${e.src.date}</span></span>
+          <span class="ch-t"><b>${e.kind} « ${e.titre} »</b><span>${e.src.titre} · relevé ${e.src.date}</span></span>
           <span class="ch-num hm">${fmt(e.val)}<div class="ch-sub">${e.src.unit}</div></span>
           <span class="ch-num hm">#${e.best}</span><span class="ch-num hm">${e.sem}</span>
           <span class="hm" style="text-align:right"><span class="ch-cert${e.cert !== '—' ? ' on' : ''}">${e.cert}</span></span></div>`).join('')}

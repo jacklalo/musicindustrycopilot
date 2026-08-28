@@ -1896,6 +1896,54 @@ function renderRosterOnly(){ $('#roster-grid').innerHTML = rosterRows(); }
    VUE DASHBOARD ARTISTE (§7.1)
 ================================================================ */
 const SECTIONS = [['synthese','Synthèse'],['titres','Titres'],['charts','Classements'],['streaming','Streaming'],['social','Social'],['demo','Démographie'],['physique','Physique'],['radio','Radios'],['actus','Actus']];
+
+/* ---- Social : une section propre par réseau ---- */
+const NETS = [
+  { key:'fb', nom:'Facebook',  col:'#1877F2', src:'Meta Graph API · Page Insights (relevé quotidien)' },
+  { key:'ig', nom:'Instagram', col:'#E1306C', src:'Meta Graph API · IG Business Insights' },
+  { key:'tt', nom:'TikTok',    col:'#111111', src:'TikTok for Business · Analytics API' },
+];
+function socialNets(a, geo, P){
+  const s = a.social;
+  const g = n => Math.round(n * geo);
+  const data = {
+    fb: [
+      ['Followers page', fmt(g(s.fb)), deltaHtml(s.fbD)],
+      ['Nouveaux followers · 7 j', fmt(Math.max(1, g(Math.round(s.fb * s.fbD / 100 / 4)))), `<span style="color:var(--muted-foreground)">page_fan_adds</span>`],
+      ['Portée · 28 j', fmt(g(Math.round(s.fb * 0.42))), deltaHtml(+(s.fbD * 2.4).toFixed(1))],
+      ['Engagements · 28 j', fmt(g(Math.round(s.fb * 0.061))), deltaHtml(+(s.fbD * 3.1).toFixed(1))],
+      ['Vues de vidéos 3 s · 28 j', fmt(g(Math.round(s.fb * 0.29))), deltaHtml(+(s.fbD * 4.2).toFixed(1))],
+      ['Taux d\'engagement', ((s.fb * 0.061) / (s.fb * 0.42) * 100).toFixed(1) + '%', `<span style="color:var(--muted-foreground)">engagements / portée</span>`],
+      ['Publications · 30 j', Math.max(1, Math.round(s.posts * 0.5)), `<span style="color:var(--muted-foreground)">posts · lives</span>`],
+    ],
+    ig: [
+      ['Followers', fmt(g(s.ig)), deltaHtml(s.igD)],
+      ['Portée · 28 j', fmt(g(Math.round(s.ig * 0.65))), deltaHtml(+(s.igD * 1.8).toFixed(1))],
+      ['Engagements · 28 j', fmt(g(Math.round(s.ig * 0.084))), deltaHtml(+(s.igD * 2.2).toFixed(1))],
+      ['Vues Reels · 28 j', fmt(g(Math.round(s.ig * 1.35))), deltaHtml(+(s.igD * 3.4).toFixed(1))],
+      ['Publications · 30 j', s.posts, `<span style="color:var(--muted-foreground)">posts · stories · reels</span>`],
+    ],
+    tt: [
+      ['Followers', fmt(g(s.tt)), deltaHtml(s.ttD)],
+      ['Vues vidéos · ' + P.lab, fmt(g(Math.round(s.tt * 4.2 * P.mult))), deltaHtml(+(s.ttD * 2.6).toFixed(1))],
+      ['Likes · ' + P.lab, fmt(g(Math.round(s.tt * 0.38 * P.mult))), deltaHtml(+(s.ttD * 2.1).toFixed(1))],
+      ['Vidéos UGC sticker son · ' + P.lab, fmt(g(Math.round(s.ugc * P.mult))), deltaHtml(s.ugcD)],
+      ['Vidéos publiées · 30 j', Math.max(1, Math.round(s.posts * 0.8)), `<span style="color:var(--muted-foreground)">compte officiel</span>`],
+    ],
+  };
+  return NETS.map(n => `
+  <div class="net rv">
+    <div class="net-head">
+      <span class="net-dot" style="background:${n.col}"></span>
+      <b>${n.nom}</b>
+      <span class="net-src">${n.src}</span>
+    </div>
+    <div class="grid g4" style="gap:12px">
+      ${data[n.key].map(([lab, val, cmp]) => `<div class="tile"><div class="lab">${lab}</div><div class="val">${val}</div><div class="cmp">${cmp}</div></div>`).join('')}
+    </div>
+  </div>`).join('');
+}
+
 function vArtiste(id){
   const a = artist(id);
   if (!a) return `<div class="empty" style="padding:100px">Artiste hors périmètre V1.</div>`;

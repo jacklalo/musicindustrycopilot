@@ -1321,6 +1321,7 @@ function pdfArtiste(id){
         </div>
         <div class="pdf-card">
           <div class="pdf-sec">Audience & social</div>
+          <div class="pdf-mini"><span class="k">Facebook</span><span class="v">${fmt(a.social.fb)} ${pdfD(a.social.fbD)}</span></div>
           <div class="pdf-mini"><span class="k">Instagram</span><span class="v">${fmt(a.social.ig)} ${pdfD(a.social.igD)}</span></div>
           <div class="pdf-mini"><span class="k">TikTok</span><span class="v">${fmt(a.social.tt)} ${pdfD(a.social.ttD)}</span></div>
           <div class="pdf-mini"><span class="k">Vidéos UGC</span><span class="v">${fmt(a.social.ugc)} ${pdfD(a.social.ugcD)}</span></div>
@@ -1653,7 +1654,7 @@ function labelHero(){
   const dLab = Math.round((tot/totPrev - 1) * 1000) / 10;
   const lis = ARTISTS.reduce((s,a) => s + a.listeners, 0);
   const shaz = ARTISTS.reduce((s,a) => s + shazamOf(a), 0);
-  const soc = ARTISTS.reduce((s,a) => s + a.social.ig + a.social.tt, 0);
+  const soc = ARTISTS.reduce((s,a) => s + a.social.fb + a.social.ig + a.social.tt, 0);
   const n1 = ranked()[0];
   const hero = `<section class="lab-hero"><div class="wrap">
         <div>
@@ -1686,7 +1687,7 @@ function labelKpis(tot, dLab, lis, shaz, soc){
       <div class="kpi rv"><div class="lab">Streams hebdo cumulés</div><div class="val">${fmt(tot)} <span class="cmp">${deltaHtml(dLab)}</span></div></div>
       <div class="kpi rv"><div class="lab">Auditeurs mensuels cumulés</div><div class="val">${fmt(lis)} <span class="cmp" style="color:var(--muted-foreground)">${ARTISTS.length} artistes</span></div></div>
       <div class="kpi rv"><div class="lab">Shazams / jour</div><div class="val">${fmt(shaz)} <span class="cmp" style="color:var(--muted-foreground)">seuil ${SEUILS.shazam}/titre</span></div></div>
-      <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(soc)} <span class="cmp" style="color:var(--muted-foreground)">IG + TikTok</span></div></div>
+      <div class="kpi rv"><div class="lab">Audience sociale</div><div class="val">${fmt(soc)} <span class="cmp" style="color:var(--muted-foreground)">FB + IG + TikTok</span></div></div>
     </div>
   </div>`;
 }
@@ -1727,7 +1728,7 @@ function chBody(){
       ${CHART_TABS.map(([k,l]) => `<button class="chip ${chartTab === k ? 'active' : ''}" onclick="setChartTab('${k}')">${l}</button>`).join('')}
       <span class="ch-sub" style="margin-left:auto">${c.src} · relevé ${c.date}</span>
     </div>
-    ${chRows(chartTab)}
+    <div class="ch-tbl">${chRows(chartTab)}</div>
     <div class="note-line">${mine.length} entrée${mine.length > 1 ? 's' : ''} du roster dans le ${c.titre} · meilleure position #${Math.min(...mine.map(i => i.pos))} (${mine.sort((x,y) => x.pos - y.pos)[0].artiste}).</div>`;
 }
 function vClassements(){
@@ -1855,7 +1856,7 @@ function renderRosterOnly(){ $('#roster-grid').innerHTML = rosterRows(); }
 /* ================================================================
    VUE DASHBOARD ARTISTE (§7.1)
 ================================================================ */
-const SECTIONS = [['synthese','Synthèse'],['titres','Titres'],['streaming','Streaming'],['social','Social'],['demo','Démographie'],['physique','Physique'],['radio','Radios'],['actus','Actus']];
+const SECTIONS = [['synthese','Synthèse'],['titres','Titres'],['charts','Classements'],['streaming','Streaming'],['social','Social'],['demo','Démographie'],['physique','Physique'],['radio','Radios'],['actus','Actus']];
 function vArtiste(id){
   const a = artist(id);
   if (!a) return `<div class="empty" style="padding:100px">Artiste hors périmètre V1.</div>`;
@@ -1979,9 +1980,25 @@ function vArtiste(id){
       </div>
     </div>
 
+    <div id="s-charts" style="scroll-margin-top:130px;margin-top:56px">
+      <h2 class="h-sect rv">Classements<span style="color:var(--accent)">.</span> <small>top albums jeudi · top titres vendredi · S${SEMAINE.num}</small></h2>
+      ${(() => { const es = chartEntries(a.id); return es.length ? `
+      <div class="ch-tbl" style="margin-top:14px">
+        <div class="ch-row head"><span>Rang</span><span>Entrée chart</span><span class="hm" style="text-align:right">Volume</span><span class="hm" style="text-align:right">Meilleur</span><span class="hm" style="text-align:right">Semaines</span><span class="hm" style="text-align:right">Certif.</span></div>
+        ${es.map(e => `<div class="ch-row">
+          <span class="ch-pos"><b>${String(e.pos).padStart(2,'0')}</b>${chMove(e.pos, e.prev)}</span>
+          <span class="ch-t"><b>${e.kind} « ${e.titre} »</b><span>${e.src.titre} · relevé ${e.src.jour.toLowerCase()} ${e.src.date}</span></span>
+          <span class="ch-num hm">${fmt(e.val)}<div class="ch-sub">${e.src.unit}</div></span>
+          <span class="ch-num hm">#${e.best}</span><span class="ch-num hm">${e.sem}</span>
+          <span class="hm" style="text-align:right"><span class="ch-cert${e.cert !== '—' ? ' on' : ''}">${e.cert}</span></span></div>`).join('')}
+      </div>
+      <div class="note-line"><a href="#/classements" style="font-weight:700">Voir tous les classements ↗</a>&nbsp; Source SNEP · les charts ne dépendent pas des filtres DSP.</div>` : '<div class="note-line">Aucune entrée dans les tops de la semaine.</div>'; })()}
+    </div>
+
     <div id="s-social" style="scroll-margin-top:130px;margin-top:56px">
       <h2 class="h-sect rv">Social<span style="color:var(--accent)">.</span> <small>following · prises de parole · UGC${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</small></h2>
       <div class="grid g4">
+        <div class="tile rv"><div class="lab">Followers Facebook${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.social.fb * geo))}</div><div class="cmp">${deltaHtml(a.social.fbD)}</div></div>
         <div class="tile rv"><div class="lab">Followers Instagram${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.social.ig * geo))}</div><div class="cmp">${deltaHtml(a.social.igD)}</div></div>
         <div class="tile rv"><div class="lab">Followers TikTok${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.social.tt * geo))}</div><div class="cmp">${deltaHtml(a.social.ttD)}</div></div>
         <div class="tile rv"><div class="lab">Prises de parole · 30 j</div><div class="val">${a.social.posts}</div><div class="cmp" style="color:var(--muted-foreground)">posts · stories · lives</div></div>

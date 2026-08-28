@@ -1819,7 +1819,29 @@ function setSpot(id){
   const el = $('#spot-card');
   if (el) el.outerHTML = spotlight(artist(id));
 }
+function albumRows(){
+  const list = [...ALBUMS].sort((x,y) => y.ventes - x.ventes)
+    .filter(al => (artist(al.artiste)?.nom || '').toLowerCase().includes(rosterQuery.toLowerCase()) || al.titre.toLowerCase().includes(rosterQuery.toLowerCase()));
+  const head = `<div class="lb-head lb-a">
+    <span>Rang</span><span></span><span>Album · artiste</span>
+    <span>8 semaines / équiv. ventes</span><span class="r">Équiv. ventes S${SEMAINE.num}</span><span></span>
+  </div>`;
+  const rows = list.map((al, i) => {
+    const a = artist(al.artiste);
+    const col = al.delta >= SEUILS.streaming ? 'var(--up)' : al.delta <= -SEUILS.streaming ? 'var(--down)' : al.delta > 0 ? 'var(--up)' : al.delta < 0 ? 'var(--down)' : 'var(--stable)';
+    return `<a class="lb-row lb-a" style="--acc:${a.accent}" href="#/artiste/${a.id}">
+      <span class="lb-rank">${String(i+1).padStart(2,'0')}</span>
+      <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${IMGS[a.id]}" loading="lazy" alt="" onerror="this.remove()"></span>
+      <span class="lb-name"><b>${al.titre}${al.cert !== '—' ? `<span class="flagpill" title="Certification SNEP">${al.cert}</span>` : ''}</b><span>${a.nom} · ${al.type} · ${al.sortie}</span></span>
+      <span class="lb-gauge hm" title="Équivalents ventes des 8 dernières semaines">${sparkMini(al.cadence, a.accent, 118, 34)}<span class="glab" style="margin:4px 0 0">${fmt(al.cadence[al.cadence.length-1])} éq. ventes / sem</span></span>
+      <span class="lb-val"><b>${fmt(al.ventes)}</b><span class="sub-d" style="color:${col}">${al.delta > 0 ? '▲ +' : al.delta < 0 ? '▼ ' : ' '}${al.delta}% <span style="color:var(--muted-foreground);font-weight:600">vs S${SEMAINE.num-1}</span></span></span>
+      <span class="go hm">↗</span>
+    </a>`;
+  }).join('') || '<div class="empty">Aucun album ne correspond.</div>';
+  return head + rows + `<div class="lb-foot">Source SNEP / GfK · relevé du jeudi · 1 équiv. vente = 1 500 streams premium pondérés.</div>`;
+}
 function rosterRows(){
+
   const all = ranked();
   const list = sorted().filter(a => a.nom.toLowerCase().includes(rosterQuery.toLowerCase()));
   const th = (k, lab, cls='') => `<button class="${cls} ${sortKey===k?'on':''}" onclick="setSort('${k}')">${lab}${sortKey===k?' ↓':''}</button>`;

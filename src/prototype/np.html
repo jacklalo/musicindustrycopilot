@@ -411,6 +411,14 @@
   .flagpill{display:inline-flex;width:max-content;align-self:flex-start;align-items:center;gap:3px;font-size:10px;font-weight:800;background:rgba(200,16,46,.09);color:#C8102E;border-radius:9999px;padding:1px 7px;margin-left:6px;vertical-align:middle}
   .lb-name b{display:flex;align-items:center;flex-wrap:wrap}
   .lb-val .sub-d{font-size:11px;font-weight:700;letter-spacing:0;text-transform:none;margin-top:5px;display:block}
+  /* Social : une section par réseau */
+  .net{margin-top:22px}
+  .net-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .net-head b{font-size:17px;font-weight:800;letter-spacing:-.02em}
+  .net-dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .net-src{font-size:11px;color:var(--muted-foreground);font-weight:500}
+  @media(max-width:960px){.net-src{width:100%}}
+
   .crit{display:inline-flex;align-items:center;gap:6px;font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;border-radius:9999px;padding:4px 9px;flex:none}
   .crit i{width:7px;height:7px;border-radius:50%;display:block;font-style:normal}
   .grp-lab{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-foreground);margin:24px 0 10px}
@@ -1142,6 +1150,19 @@ const TOPPOSTS = {
   'laura-ferre':    { plat:'Instagram', type:'Post', txt:'Coulisses France 3 annonce', eng:12000, engD:4 },
 };
 
+/* Leaderboard albums du roster (équiv. ventes hebdo : physique + digital + équiv. streams) */
+const ALBUMS = [
+  { artiste:'jeremy-frerot',  titre:'Frerot',              type:'Album',    sortie:'2026', ventes:18420, delta:14.2, cert:'Or',       cadence:[9800,11200,12400,13100,14800,15900,16800,18420] },
+  { artiste:'zazie',          titre:'Peu Importe',         type:'Album',    sortie:'2026', ventes:12680, delta:9.6,  cert:'—',        cadence:[7400,8100,9000,9800,10600,11300,11900,12680] },
+  { artiste:'krisy',          titre:'Amer',                type:'Album',    sortie:'2025', ventes:6240,  delta:-4.1, cert:'Or',       cadence:[7600,7400,7100,6900,6700,6500,6400,6240] },
+  { artiste:'skip-the-use',   titre:'We Are Good',         type:'Album',    sortie:'2025', ventes:5310,  delta:3.4,  cert:'—',        cadence:[4700,4800,4900,5000,5050,5150,5200,5310] },
+  { artiste:'hina',           titre:'Fantaisie',           type:'EP',       sortie:'2026', ventes:4890,  delta:38.7, cert:'—',        cadence:[1100,1450,1900,2400,3000,3600,4200,4890] },
+  { artiste:'laura-ferre',    titre:'Premiers pas',        type:'Album',    sortie:'2026', ventes:2140,  delta:6.2,  cert:'—',        cadence:[1500,1620,1710,1790,1880,1960,2040,2140] },
+  { artiste:'virgile-martini',titre:'EP I',                type:'EP',       sortie:'2026', ventes:1680,  delta:22.5, cert:'—',        cadence:[610,720,840,980,1140,1320,1500,1680] },
+];
+
+
+
 const ph = (src, acc, cls='', inner='') =>
   `<div class="ph ${cls}" style="--acc:${acc}"><img src="${src}" loading="lazy" alt="" onerror="this.remove()">${inner}</div>`;
 const coverPh = (a, isrc) => `<span class="ph cover-ph" style="--acc:${a.accent}"><img src="${U(TIMGS[isrc] || '')}" loading="lazy" alt="" onerror="this.remove()"></span>`;
@@ -1783,8 +1804,12 @@ function vArtistes(){
   ${labelHero()}
   <section class="band"><div class="wrap">
     ${whatChanged()}
-    <h2 class="h-sect rv">Leaderboard<span style="color:var(--pop)">.</span> <small>streams hebdo · S${SEMAINE.num} vs S${SEMAINE.num-1}</small></h2>
+    <h2 class="h-sect rv">Leaderboard albums<span style="color:var(--pop)">.</span> <small>équiv. ventes hebdo · S${SEMAINE.num} vs S${SEMAINE.num-1}</small></h2>
+    <p class="h-sub">Albums et EP du roster classés par équivalents ventes (physique + digital + streams pondérés). Cliquer une ligne ouvre la fiche artiste.</p>
+    <div class="lb rv" style="margin-bottom:46px">${albumRows()}</div>
+    <h2 class="h-sect rv">Leaderboard artistes<span style="color:var(--pop)">.</span> <small>streams hebdo · S${SEMAINE.num} vs S${SEMAINE.num-1}</small></h2>
     <p class="h-sub">Trajectoire sur 8 semaines, alertes actives signalées sur la ligne. Cliquer une ligne ouvre le dashboard artiste.</p>
+
     <div class="grid g-main" style="align-items:start">
       <div class="lb rv" id="roster-grid">${rosterRows()}</div>
       ${spotlight(spot)}
@@ -1802,7 +1827,29 @@ function setSpot(id){
   const el = $('#spot-card');
   if (el) el.outerHTML = spotlight(artist(id));
 }
+function albumRows(){
+  const list = [...ALBUMS].sort((x,y) => y.ventes - x.ventes)
+    .filter(al => (artist(al.artiste)?.nom || '').toLowerCase().includes(rosterQuery.toLowerCase()) || al.titre.toLowerCase().includes(rosterQuery.toLowerCase()));
+  const head = `<div class="lb-head lb-a">
+    <span>Rang</span><span></span><span>Album · artiste</span>
+    <span>8 semaines / équiv. ventes</span><span class="r">Équiv. ventes S${SEMAINE.num}</span><span></span>
+  </div>`;
+  const rows = list.map((al, i) => {
+    const a = artist(al.artiste);
+    const col = al.delta >= SEUILS.streaming ? 'var(--up)' : al.delta <= -SEUILS.streaming ? 'var(--down)' : al.delta > 0 ? 'var(--up)' : al.delta < 0 ? 'var(--down)' : 'var(--stable)';
+    return `<a class="lb-row lb-a" style="--acc:${a.accent}" href="#/artiste/${a.id}">
+      <span class="lb-rank">${String(i+1).padStart(2,'0')}</span>
+      <span class="ph lb-ph" style="--acc:${a.accent}"><img src="${IMGS[a.id]}" loading="lazy" alt="" onerror="this.remove()"></span>
+      <span class="lb-name"><b>${al.titre}${al.cert !== '—' ? `<span class="flagpill" title="Certification SNEP">${al.cert}</span>` : ''}</b><span>${a.nom} · ${al.type} · ${al.sortie}</span></span>
+      <span class="lb-gauge hm" title="Équivalents ventes des 8 dernières semaines">${sparkMini(al.cadence, a.accent, 118, 34)}<span class="glab" style="margin:4px 0 0">${fmt(al.cadence[al.cadence.length-1])} éq. ventes / sem</span></span>
+      <span class="lb-val"><b>${fmt(al.ventes)}</b><span class="sub-d" style="color:${col}">${al.delta > 0 ? '▲ +' : al.delta < 0 ? '▼ ' : ' '}${al.delta}% <span style="color:var(--muted-foreground);font-weight:600">vs S${SEMAINE.num-1}</span></span></span>
+      <span class="go hm">↗</span>
+    </a>`;
+  }).join('') || '<div class="empty">Aucun album ne correspond.</div>';
+  return head + rows + `<div class="lb-foot">Source SNEP / GfK · relevé du jeudi · 1 équiv. vente = 1 500 streams premium pondérés.</div>`;
+}
 function rosterRows(){
+
   const all = ranked();
   const list = sorted().filter(a => a.nom.toLowerCase().includes(rosterQuery.toLowerCase()));
   const th = (k, lab, cls='') => `<button class="${cls} ${sortKey===k?'on':''}" onclick="setSort('${k}')">${lab}${sortKey===k?' ↓':''}</button>`;
@@ -1857,6 +1904,54 @@ function renderRosterOnly(){ $('#roster-grid').innerHTML = rosterRows(); }
    VUE DASHBOARD ARTISTE (§7.1)
 ================================================================ */
 const SECTIONS = [['synthese','Synthèse'],['titres','Titres'],['charts','Classements'],['streaming','Streaming'],['social','Social'],['demo','Démographie'],['physique','Physique'],['radio','Radios'],['actus','Actus']];
+
+/* ---- Social : une section propre par réseau ---- */
+const NETS = [
+  { key:'fb', nom:'Facebook',  col:'#1877F2', src:'Meta Graph API · Page Insights (relevé quotidien)' },
+  { key:'ig', nom:'Instagram', col:'#E1306C', src:'Meta Graph API · IG Business Insights' },
+  { key:'tt', nom:'TikTok',    col:'#111111', src:'TikTok for Business · Analytics API' },
+];
+function socialNets(a, geo, P){
+  const s = a.social;
+  const g = n => Math.round(n * geo);
+  const data = {
+    fb: [
+      ['Followers page', fmt(g(s.fb)), deltaHtml(s.fbD)],
+      ['Nouveaux followers · 7 j', fmt(Math.max(1, g(Math.round(s.fb * s.fbD / 100 / 4)))), `<span style="color:var(--muted-foreground)">page_fan_adds</span>`],
+      ['Portée · 28 j', fmt(g(Math.round(s.fb * 0.42))), deltaHtml(+(s.fbD * 2.4).toFixed(1))],
+      ['Engagements · 28 j', fmt(g(Math.round(s.fb * 0.061))), deltaHtml(+(s.fbD * 3.1).toFixed(1))],
+      ['Vues de vidéos 3 s · 28 j', fmt(g(Math.round(s.fb * 0.29))), deltaHtml(+(s.fbD * 4.2).toFixed(1))],
+      ['Taux d\'engagement', ((s.fb * 0.061) / (s.fb * 0.42) * 100).toFixed(1) + '%', `<span style="color:var(--muted-foreground)">engagements / portée</span>`],
+      ['Publications · 30 j', Math.max(1, Math.round(s.posts * 0.5)), `<span style="color:var(--muted-foreground)">posts · lives</span>`],
+    ],
+    ig: [
+      ['Followers', fmt(g(s.ig)), deltaHtml(s.igD)],
+      ['Portée · 28 j', fmt(g(Math.round(s.ig * 0.65))), deltaHtml(+(s.igD * 1.8).toFixed(1))],
+      ['Engagements · 28 j', fmt(g(Math.round(s.ig * 0.084))), deltaHtml(+(s.igD * 2.2).toFixed(1))],
+      ['Vues Reels · 28 j', fmt(g(Math.round(s.ig * 1.35))), deltaHtml(+(s.igD * 3.4).toFixed(1))],
+      ['Publications · 30 j', s.posts, `<span style="color:var(--muted-foreground)">posts · stories · reels</span>`],
+    ],
+    tt: [
+      ['Followers', fmt(g(s.tt)), deltaHtml(s.ttD)],
+      ['Vues vidéos · ' + P.lab, fmt(g(Math.round(s.tt * 4.2 * P.mult))), deltaHtml(+(s.ttD * 2.6).toFixed(1))],
+      ['Likes · ' + P.lab, fmt(g(Math.round(s.tt * 0.38 * P.mult))), deltaHtml(+(s.ttD * 2.1).toFixed(1))],
+      ['Vidéos UGC sticker son · ' + P.lab, fmt(g(Math.round(s.ugc * P.mult))), deltaHtml(s.ugcD)],
+      ['Vidéos publiées · 30 j', Math.max(1, Math.round(s.posts * 0.8)), `<span style="color:var(--muted-foreground)">compte officiel</span>`],
+    ],
+  };
+  return NETS.map(n => `
+  <div class="net rv">
+    <div class="net-head">
+      <span class="net-dot" style="background:${n.col}"></span>
+      <b>${n.nom}</b>
+      <span class="net-src">${n.src}</span>
+    </div>
+    <div class="grid g4" style="gap:12px">
+      ${data[n.key].map(([lab, val, cmp]) => `<div class="tile"><div class="lab">${lab}</div><div class="val">${val}</div><div class="cmp">${cmp}</div></div>`).join('')}
+    </div>
+  </div>`).join('');
+}
+
 function vArtiste(id){
   const a = artist(id);
   if (!a) return `<div class="empty" style="padding:100px">Artiste hors périmètre V1.</div>`;
@@ -1996,15 +2091,10 @@ function vArtiste(id){
     </div>
 
     <div id="s-social" style="scroll-margin-top:130px;margin-top:56px">
-      <h2 class="h-sect rv">Social<span style="color:var(--accent)">.</span> <small>following · prises de parole · UGC${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</small></h2>
-      <div class="grid g4">
-        <div class="tile rv"><div class="lab">Followers Facebook${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.social.fb * geo))}</div><div class="cmp">${deltaHtml(a.social.fbD)}</div></div>
-        <div class="tile rv"><div class="lab">Followers Instagram${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.social.ig * geo))}</div><div class="cmp">${deltaHtml(a.social.igD)}</div></div>
-        <div class="tile rv"><div class="lab">Followers TikTok${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.social.tt * geo))}</div><div class="cmp">${deltaHtml(a.social.ttD)}</div></div>
-        <div class="tile rv"><div class="lab">Prises de parole · 30 j</div><div class="val">${a.social.posts}</div><div class="cmp" style="color:var(--muted-foreground)">posts · stories · lives</div></div>
-        <div class="tile rv"><div class="lab">Vidéos UGC sticker son · ${P.lab}</div><div class="val">${fmt(Math.round(a.social.ugc * P.mult * geo))}</div><div class="cmp">${deltaHtml(a.social.ugcD)}</div></div>
-      </div>
+      <h2 class="h-sect rv">Social<span style="color:var(--accent)">.</span> <small>une section par réseau · following · portée · engagement${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</small></h2>
+      ${socialNets(a, geo, P)}
       <div class="note-line">Périmètre social : ${AF.pays === 'Monde' ? 'monde' : 'part ' + AF.pays + ' estimée (' + Math.round(geo*100) + '%)'} · le filtre DSP ne s'applique pas aux réseaux sociaux.</div>
+
       ${(() => { const tp = TOPPOSTS[a.id]; return tp ? `
       <div class="card hov rv" style="margin-top:14px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
         <div style="flex:1;min-width:220px">

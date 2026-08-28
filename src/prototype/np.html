@@ -416,6 +416,8 @@
   .net-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
   .net-head b{font-size:17px;font-weight:800;letter-spacing:-.02em}
   .net-dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .net-ic{width:34px;height:34px;border-radius:11px;flex:none;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.14)}
+  .net-ic svg{width:19px;height:19px;display:block}
   .net-src{font-size:11px;color:var(--muted-foreground);font-weight:500}
   @media(max-width:960px){.net-src{width:100%}}
 
@@ -1906,10 +1908,15 @@ function renderRosterOnly(){ $('#roster-grid').innerHTML = rosterRows(); }
 const SECTIONS = [['synthese','Synthèse'],['titres','Titres'],['charts','Classements'],['streaming','Streaming'],['social','Social'],['demo','Démographie'],['physique','Physique'],['radio','Radios'],['actus','Actus']];
 
 /* ---- Social : une section propre par réseau ---- */
+const NET_LOGO = {
+  fb: `<svg viewBox="0 0 24 24" fill="#fff"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.14 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.52 1.5-3.9 3.77-3.9 1.09 0 2.24.19 2.24.19v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.89h2.78l-.45 2.9h-2.33V22c4.78-.8 8.44-4.94 8.44-9.94Z"/></svg>`,
+  ig: `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.5" cy="6.5" r="1.2" fill="#fff" stroke="none"/></svg>`,
+  tt: `<svg viewBox="0 0 24 24" fill="#fff"><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.86-2.49v-3.1a5.66 5.66 0 1 0 4.95 5.6V9.01a7.35 7.35 0 0 0 4.29 1.37V7.3a4.29 4.29 0 0 1-3.23-1.48Z"/></svg>`,
+};
 const NETS = [
-  { key:'fb', nom:'Facebook',  col:'#1877F2', src:'Meta Graph API · Page Insights (relevé quotidien)' },
-  { key:'ig', nom:'Instagram', col:'#E1306C', src:'Meta Graph API · IG Business Insights' },
-  { key:'tt', nom:'TikTok',    col:'#111111', src:'TikTok for Business · Analytics API' },
+  { key:'fb', nom:'Facebook',  col:'#1877F2', bg:'#1877F2', src:'Meta Graph API · Page Insights (relevé quotidien)' },
+  { key:'ig', nom:'Instagram', col:'#E1306C', bg:'linear-gradient(135deg,#FEDA75,#FA7E1E 30%,#D62976 60%,#962FBF 80%,#4F5BD5)', src:'Meta Graph API · IG Business Insights' },
+  { key:'tt', nom:'TikTok',    col:'#111111', bg:'#111111', src:'TikTok for Business · Analytics API' },
 ];
 function socialNets(a, geo, P){
   const s = a.social;
@@ -1942,7 +1949,7 @@ function socialNets(a, geo, P){
   return NETS.map(n => `
   <div class="net rv">
     <div class="net-head">
-      <span class="net-dot" style="background:${n.col}"></span>
+      <span class="net-ic" style="background:${n.bg}">${NET_LOGO[n.key]}</span>
       <b>${n.nom}</b>
       <span class="net-src">${n.src}</span>
     </div>

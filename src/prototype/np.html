@@ -2035,15 +2035,10 @@ function vArtiste(id){
     </div>
 
     <div id="s-social" style="scroll-margin-top:130px;margin-top:56px">
-      <h2 class="h-sect rv">Social<span style="color:var(--accent)">.</span> <small>following · prises de parole · UGC${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</small></h2>
-      <div class="grid g4">
-        <div class="tile rv"><div class="lab">Followers Facebook${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.social.fb * geo))}</div><div class="cmp">${deltaHtml(a.social.fbD)}</div></div>
-        <div class="tile rv"><div class="lab">Followers Instagram${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.social.ig * geo))}</div><div class="cmp">${deltaHtml(a.social.igD)}</div></div>
-        <div class="tile rv"><div class="lab">Followers TikTok${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</div><div class="val">${fmt(Math.round(a.social.tt * geo))}</div><div class="cmp">${deltaHtml(a.social.ttD)}</div></div>
-        <div class="tile rv"><div class="lab">Prises de parole · 30 j</div><div class="val">${a.social.posts}</div><div class="cmp" style="color:var(--muted-foreground)">posts · stories · lives</div></div>
-        <div class="tile rv"><div class="lab">Vidéos UGC sticker son · ${P.lab}</div><div class="val">${fmt(Math.round(a.social.ugc * P.mult * geo))}</div><div class="cmp">${deltaHtml(a.social.ugcD)}</div></div>
-      </div>
+      <h2 class="h-sect rv">Social<span style="color:var(--accent)">.</span> <small>une section par réseau · following · portée · engagement${AF.pays === 'Monde' ? '' : ' · ' + AF.pays}</small></h2>
+      ${socialNets(a, geo, P)}
       <div class="note-line">Périmètre social : ${AF.pays === 'Monde' ? 'monde' : 'part ' + AF.pays + ' estimée (' + Math.round(geo*100) + '%)'} · le filtre DSP ne s'applique pas aux réseaux sociaux.</div>
+
       ${(() => { const tp = TOPPOSTS[a.id]; return tp ? `
       <div class="card hov rv" style="margin-top:14px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
         <div style="flex:1;min-width:220px">

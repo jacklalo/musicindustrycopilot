@@ -1142,6 +1142,19 @@ const TOPPOSTS = {
   'laura-ferre':    { plat:'Instagram', type:'Post', txt:'Coulisses France 3 annonce', eng:12000, engD:4 },
 };
 
+/* Leaderboard albums du roster (équiv. ventes hebdo : physique + digital + équiv. streams) */
+const ALBUMS = [
+  { artiste:'jeremy-frerot',  titre:'Frerot',              type:'Album',    sortie:'2026', ventes:18420, delta:14.2, cert:'Or',       cadence:[9800,11200,12400,13100,14800,15900,16800,18420] },
+  { artiste:'zazie',          titre:'Peu Importe',         type:'Album',    sortie:'2026', ventes:12680, delta:9.6,  cert:'—',        cadence:[7400,8100,9000,9800,10600,11300,11900,12680] },
+  { artiste:'krisy',          titre:'Amer',                type:'Album',    sortie:'2025', ventes:6240,  delta:-4.1, cert:'Or',       cadence:[7600,7400,7100,6900,6700,6500,6400,6240] },
+  { artiste:'skip-the-use',   titre:'We Are Good',         type:'Album',    sortie:'2025', ventes:5310,  delta:3.4,  cert:'—',        cadence:[4700,4800,4900,5000,5050,5150,5200,5310] },
+  { artiste:'hina',           titre:'Fantaisie',           type:'EP',       sortie:'2026', ventes:4890,  delta:38.7, cert:'—',        cadence:[1100,1450,1900,2400,3000,3600,4200,4890] },
+  { artiste:'laura-ferre',    titre:'Premiers pas',        type:'Album',    sortie:'2026', ventes:2140,  delta:6.2,  cert:'—',        cadence:[1500,1620,1710,1790,1880,1960,2040,2140] },
+  { artiste:'virgile-martini',titre:'EP I',                type:'EP',       sortie:'2026', ventes:1680,  delta:22.5, cert:'—',        cadence:[610,720,840,980,1140,1320,1500,1680] },
+];
+
+
+
 const ph = (src, acc, cls='', inner='') =>
   `<div class="ph ${cls}" style="--acc:${acc}"><img src="${src}" loading="lazy" alt="" onerror="this.remove()">${inner}</div>`;
 const coverPh = (a, isrc) => `<span class="ph cover-ph" style="--acc:${a.accent}"><img src="${U(TIMGS[isrc] || '')}" loading="lazy" alt="" onerror="this.remove()"></span>`;

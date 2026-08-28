@@ -542,7 +542,7 @@
 
     /* --- Barre d'onglets bas (app-like) --- */
     .tabbar{
-      display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:70;
+      display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:70;
       background:rgba(254,253,252,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
       border-top:1px solid var(--line);
       padding:6px 4px calc(6px + env(safe-area-inset-bottom));
@@ -744,6 +744,28 @@
     .intro-card{padding:30px 20px 24px;border-radius:24px}
     .intro-card h1{font-size:22px}
   }
+
+  /* ===== CLASSEMENTS ===== */
+  .ch-tbl{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-card);overflow:hidden}
+  .ch-row{display:grid;grid-template-columns:58px 1fr 122px 96px 108px 78px;align-items:center;gap:12px;padding:13px 20px;border-top:1px solid var(--line);text-decoration:none;color:inherit;transition:background .2s}
+  .ch-row.head{border-top:0;background:var(--surface);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-foreground);font-weight:700;padding:12px 20px}
+  a.ch-row:hover{background:var(--muted)}
+  .ch-pos{display:flex;align-items:baseline;gap:7px}
+  .ch-pos b{font-size:20px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .ch-mv{font-size:11px;font-weight:800}
+  .ch-t b{display:block;font-size:14.5px;font-weight:700;letter-spacing:-.01em}
+  .ch-t span{font-size:11.5px;color:var(--muted-foreground)}
+  .ch-num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;font-size:13.5px}
+  .ch-sub{font-size:11px;color:var(--muted-foreground);font-weight:600}
+  .ch-cert{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-foreground)}
+  .ch-cert.on{color:#B08D2F}
+  .ch-mine{width:6px;height:6px;border-radius:50%;background:var(--pop);display:inline-block;margin-left:6px;vertical-align:middle}
+  @media(max-width:860px){
+    .ch-row{grid-template-columns:46px 1fr auto;gap:10px;padding:12px 14px}
+    .ch-row .hm{display:none}
+    .ch-row.head{font-size:9px}
+  }
+
   /* ===== PDF PREVIEW ===== */
   .pdfv{position:fixed;inset:0;z-index:200;background:rgba(11,11,11,.86);backdrop-filter:blur(10px);display:none;flex-direction:column}
   .pdfv.show{display:flex}
@@ -821,6 +843,7 @@
     <nav class="main" id="nav">
       <a href="#/home" data-r="home">Accueil</a>
       <a href="#/artistes" data-r="artistes">Artistes</a>
+      <a href="#/classements" data-r="classements">Classements</a>
       <a href="#/saisie" data-r="saisie">Saisie</a>
       <a href="#/alertes" data-r="alertes">Alertes <span class="count" id="nav-alert-count"></span></a>
     </nav>
@@ -865,6 +888,7 @@
 <nav class="tabbar" id="tabbar" aria-label="Navigation mobile">
   <a href="#/home" data-r="home"><span class="ic">◎</span>Accueil</a>
   <a href="#/artistes" data-r="artistes"><span class="ic">♪</span>Artistes</a>
+  <a href="#/classements" data-r="classements"><span class="ic">▤</span>Tops</a>
   <a href="#/saisie" data-r="saisie"><span class="ic">✚</span>Saisie</a>
   <a href="#/alertes" data-r="alertes"><span class="ic">⚑</span>Alertes<span class="count" data-alert-count></span></a>
 </nav>
@@ -1666,6 +1690,91 @@ function labelKpis(tot, dLab, lis, shaz, soc){
     </div>
   </div>`;
 }
+
+/* ================================================================
+   VUE CLASSEMENTS (tops hebdo)
+================================================================ */
+function chMove(pos, prev){
+  if (!prev || prev === 0) return `<span class="ch-mv" style="color:var(--pop)">NEW</span>`;
+  const d = prev - pos;
+  if (d === 0) return `<span class="ch-mv" style="color:var(--stable)">=</span>`;
+  return `<span class="ch-mv" style="color:${d > 0 ? 'var(--up)' : 'var(--down)'}">${d > 0 ? '▲ +' + d : '▼ ' + d}</span>`;
+}
+function chRows(key){
+  const c = CLASSEMENTS[key];
+  const head = `<div class="ch-row head">
+    <span>Rang</span><span>${key === 'albums' ? 'Album · artiste' : 'Titre · artiste'}</span>
+    <span class="hm" style="text-align:right">${key === 'albums' ? 'Équiv. ventes' : 'Streams sem.'}</span>
+    <span class="hm" style="text-align:right">Meilleur</span><span class="hm" style="text-align:right">Semaines</span><span class="hm" style="text-align:right">Certif.</span>
+  </div>`;
+  return head + c.items.map(i => {
+    const href = i.id ? (key === 'titres' && i.isrc ? '#/titre/' + i.isrc : '#/artiste/' + i.id) : '';
+    const inner = `
+      <span class="ch-pos"><b>${String(i.pos).padStart(2,'0')}</b>${chMove(i.pos, i.prev)}</span>
+      <span class="ch-t"><b>${i.titre}${i.id ? '<i class="ch-mine" title="Artiste du roster"></i>' : ''}</b><span>${i.artiste}${i.id ? ' · roster 6&7' : ''}</span></span>
+      <span class="ch-num hm">${fmt(i.val)}<div class="ch-sub">${c.unit}</div></span>
+      <span class="ch-num hm">#${i.best}</span>
+      <span class="ch-num hm">${i.sem}</span>
+      <span class="hm" style="text-align:right"><span class="ch-cert${i.cert !== '—' ? ' on' : ''}">${i.cert}</span></span>`;
+    return i.id ? `<a class="ch-row" href="${href}">${inner}</a>` : `<div class="ch-row">${inner}</div>`;
+  }).join('');
+}
+function setChartTab(k){ chartTab = k; const el = $('#ch-body'); if (el) el.innerHTML = chBody(); }
+function chBody(){
+  const c = CLASSEMENTS[chartTab];
+  const mine = c.items.filter(i => i.id);
+  return `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      ${CHART_TABS.map(([k,l]) => `<button class="chip ${chartTab === k ? 'active' : ''}" onclick="setChartTab('${k}')">${l}</button>`).join('')}
+      <span class="ch-sub" style="margin-left:auto">${c.src} · relevé ${c.date}</span>
+    </div>
+    ${chRows(chartTab)}
+    <div class="note-line">${mine.length} entrée${mine.length > 1 ? 's' : ''} du roster dans le ${c.titre} · meilleure position #${Math.min(...mine.map(i => i.pos))} (${mine.sort((x,y) => x.pos - y.pos)[0].artiste}).</div>`;
+}
+function vClassements(){
+  const A = CLASSEMENTS.albums, T = CLASSEMENTS.titres;
+  const mA = A.items.filter(i => i.id), mT = T.items.filter(i => i.id);
+  const ventes = mA.reduce((s,i) => s + i.val, 0);
+  const strm = mT.reduce((s,i) => s + i.val, 0);
+  const bestA = mA.sort((x,y) => x.pos - y.pos)[0], bestT = mT.sort((x,y) => x.pos - y.pos)[0];
+  return `
+  <section class="lab-hero"><div class="wrap">
+    <div>
+      <div class="head-row"><div class="kicker"><span class="dot"></span>CLASSEMENTS · S${SEMAINE.num} · TOP JEUDI (VENTES) + TOP VENDREDI (STREAMS)</div></div>
+      <h1 class="rv in">Classements<span style="color:#C8102E">.</span></h1>
+      <p class="lead">Les deux relevés de la semaine : le top albums du jeudi (ventes) et le top titres du vendredi (streams), avec les positions chart du roster.</p>
+      <div class="actions">
+        <button class="btn btn-light" onclick="openExport('Classements S${SEMAINE.num}','roster')">Exporter les tops <span class="ar">↗</span></button>
+        <a class="btn btn-outline-w" href="#/artistes">Voir le roster <span class="ar">↗</span></a>
+      </div>
+    </div>
+    <a href="${bestT.isrc ? '#/titre/' + bestT.isrc : '#/artiste/' + bestT.id}" style="display:block" title="${bestT.artiste}">
+      ${ph(IMGS[bestT.id], '#C8102E', '', `<span class="track-chip"><span class="dot"></span>#${bestT.pos} TOP TITRES · ${bestT.titre.toUpperCase()}</span>`)}
+    </a>
+  </div></section>
+  <div class="kpi-float"><div class="kpi-band">
+    <div class="kpi rv"><div class="lab">Meilleure position albums · ${A.jour}</div><div class="val">#${bestA.pos} <span class="cmp" style="color:var(--muted-foreground)">${bestA.artiste}</span></div></div>
+    <div class="kpi rv"><div class="lab">Meilleure position titres · ${T.jour}</div><div class="val">#${bestT.pos} <span class="cmp" style="color:var(--muted-foreground)">${bestT.titre}</span></div></div>
+    <div class="kpi rv"><div class="lab">Équiv. ventes roster · top albums</div><div class="val">${fmt(ventes)} <span class="cmp" style="color:var(--muted-foreground)">${mA.length} entrées</span></div></div>
+    <div class="kpi rv"><div class="lab">Streams roster · top titres</div><div class="val">${fmt(strm)} <span class="cmp" style="color:var(--muted-foreground)">${mT.length} entrées</span></div></div>
+  </div></div>
+  <section class="band"><div class="wrap">
+    <h2 class="h-sect rv">Tops de la semaine<span style="color:var(--pop)">.</span> <small>relevés ${A.date} (albums) et ${T.date} (titres)</small></h2>
+    <p class="h-sub">Position, mouvement, meilleure position et nombre de semaines de présence. Les lignes du roster sont cliquables.</p>
+    <div id="ch-body">${chBody()}</div>
+
+    <h2 class="h-sect rv" style="margin-top:56px">Données chart du roster<span style="color:var(--pop)">.</span> <small>positions consolidées par artiste</small></h2>
+    <div class="ch-tbl" style="margin-top:14px">
+      <div class="ch-row head"><span>Rang</span><span>Artiste · entrée chart</span><span class="hm" style="text-align:right">Position</span><span class="hm" style="text-align:right">Meilleur</span><span class="hm" style="text-align:right">Semaines</span><span class="hm" style="text-align:right">Type</span></div>
+      ${ARTISTS.map(a => chartEntries(a.id).map(e => `<a class="ch-row" href="#/artiste/${a.id}">
+        <span class="ch-pos"><b>${String(e.pos).padStart(2,'0')}</b>${chMove(e.pos, e.prev)}</span>
+        <span class="ch-t"><b>${a.nom}</b><span>${e.kind === 'Album' ? 'Album' : 'Titre'} « ${e.titre} » · ${e.src.titre} ${e.src.jour.toLowerCase()}</span></span>
+        <span class="ch-num hm">#${e.pos}</span><span class="ch-num hm">#${e.best}</span><span class="ch-num hm">${e.sem}</span>
+        <span class="hm" style="text-align:right"><span class="ch-cert">${e.kind}</span></span></a>`).join('')).join('')}
+    </div>
+    <div class="note-line">ⓘ Source chart : relevés SNEP hebdomadaires · top albums publié le jeudi, top titres le vendredi.</div>
+  </div></section>`;
+}
+
 function vArtistes(){
 
   const spot = spotArtist();
@@ -2586,6 +2695,7 @@ function render(){
   if (route === 'home') app.innerHTML = vHome();
   else if (route === 'artiste' && param) app.innerHTML = vArtiste(param);
   else if (route === 'titre' && param) app.innerHTML = vTitre(param);
+  else if (route === 'classements') app.innerHTML = vClassements();
   else if (route === 'alertes') app.innerHTML = vAlertes();
   else if (route === 'saisie') app.innerHTML = vSaisie();
   else { spotId = null; document.documentElement.style.setProperty('--accent', '#C8102E'); app.innerHTML = vArtistes(); }

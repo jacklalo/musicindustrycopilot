@@ -1796,8 +1796,12 @@ function vArtistes(){
   ${labelHero()}
   <section class="band"><div class="wrap">
     ${whatChanged()}
-    <h2 class="h-sect rv">Leaderboard<span style="color:var(--pop)">.</span> <small>streams hebdo · S${SEMAINE.num} vs S${SEMAINE.num-1}</small></h2>
+    <h2 class="h-sect rv">Leaderboard albums<span style="color:var(--pop)">.</span> <small>équiv. ventes hebdo · S${SEMAINE.num} vs S${SEMAINE.num-1}</small></h2>
+    <p class="h-sub">Albums et EP du roster classés par équivalents ventes (physique + digital + streams pondérés). Cliquer une ligne ouvre la fiche artiste.</p>
+    <div class="lb rv" style="margin-bottom:46px">${albumRows()}</div>
+    <h2 class="h-sect rv">Leaderboard artistes<span style="color:var(--pop)">.</span> <small>streams hebdo · S${SEMAINE.num} vs S${SEMAINE.num-1}</small></h2>
     <p class="h-sub">Trajectoire sur 8 semaines, alertes actives signalées sur la ligne. Cliquer une ligne ouvre le dashboard artiste.</p>
+
     <div class="grid g-main" style="align-items:start">
       <div class="lb rv" id="roster-grid">${rosterRows()}</div>
       ${spotlight(spot)}

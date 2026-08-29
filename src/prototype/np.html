@@ -2749,7 +2749,6 @@ function profClose(){
 }
 function profAct(label){
   profClose();
-  if (label === 'Aide & raccourcis' && typeof openSearch === 'function') { openSearch(); return; }
   toast(`<b>${label}</b>&nbsp; disponible prochainement`);
 }
 document.addEventListener('click', e => { if (!e.target.closest('.prof')) profClose(); });
